@@ -41,6 +41,7 @@ protected:
 	CButton m_checkboxSmooth;
 	CSliderCtrl m_lineSizeSlider;
 	CSliderCtrl m_gausBlurSlider;
+	CSliderCtrl m_rotateSlider;
 
 	bool m_bToDrawCurve = false;
 	bool m_bIsDrawing = false;

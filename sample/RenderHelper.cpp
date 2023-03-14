@@ -240,6 +240,7 @@ void RenderTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest)
 	pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, texs);
 }
 
+extern int g_rotatePeriod;
 texture_handle getRotatedTexture(texture_handle tex, texture_handle &canvasTex)
 {
 	AUTO_GRAPHIC_CONTEXT(pGraphic);
@@ -267,11 +268,10 @@ texture_handle getRotatedTexture(texture_handle tex, texture_handle &canvasTex)
 		FillTextureVertex(-(float)oldInfo.width / 2, (float)oldInfo.height / 2, (float)oldInfo.width / 2,
 				  -(float)oldInfo.height / 2, false, false, 0.f, 0.f, 0.f, 0.f, outputVertex);
 
-		const auto circleDuration = 10000;
-		const auto temp = (float)(GetTickCount64() % circleDuration);
+		const auto temp = (float)(GetTickCount64() % g_rotatePeriod);
 
 		WorldVector rt;
-		rt.z = (temp / circleDuration) * 360;
+		rt.z = (temp / g_rotatePeriod) * 360;
 
 		WorldDesc wd;
 		wd.rotate = rt;

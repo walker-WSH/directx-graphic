@@ -14,6 +14,7 @@
 
 float g_lineStride = 2.f;
 float g_blurValue = 10.f;
+int g_rotatePeriod = 10 * 1000;
 
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 
@@ -68,6 +69,7 @@ void CMFCDemoDlg::DoDataExchange(CDataExchange *pDX)
 	DDX_Control(pDX, IDC_CHECK_SMOOTH, m_checkboxSmooth);
 	DDX_Control(pDX, IDC_SLIDER1, m_lineSizeSlider);
 	DDX_Control(pDX, IDC_SLIDER2, m_gausBlurSlider);
+	DDX_Control(pDX, IDC_SLIDER3, m_rotateSlider);
 }
 
 BEGIN_MESSAGE_MAP(CMFCDemoDlg, CDialogEx)
@@ -140,6 +142,9 @@ BOOL CMFCDemoDlg::OnInitDialog()
 
 	m_gausBlurSlider.SetRange(0, 50);
 	m_gausBlurSlider.SetPos((int)g_blurValue);
+
+	m_rotateSlider.SetRange(1 * 1000, 20 * 1000);
+	m_rotateSlider.SetPos(g_rotatePeriod);
 
 	m_bExit = false;
 	m_hThread = (HANDLE)_beginthreadex(0, 0, ThreadFunc, this, 0, 0);
@@ -369,6 +374,7 @@ void CMFCDemoDlg::OnTimer(UINT_PTR nIDEvent)
 {
 	g_lineStride = (float)m_lineSizeSlider.GetPos();
 	g_blurValue = (float)m_gausBlurSlider.GetPos();
+	g_rotatePeriod = m_rotateSlider.GetPos();
 
 	CDialogEx::OnTimer(nIDEvent);
 }
