@@ -1,0 +1,149 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="render">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="render\HLSL">
+      <UniqueIdentifier>{1e7c9d4c-2190-45d6-a973-02c11d68b993}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="render\dx">
+      <UniqueIdentifier>{08cbb433-3207-4173-9405-ad472d4dc1b8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MFCDemo.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="MFCDemoDlg.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoConvertColor.h">
+      <Filter>render\dx</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoConvertDefine.h">
+      <Filter>render\dx</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoConvertToRGB.h">
+      <Filter>render\dx</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoConvertToYUV.h">
+      <Filter>render\dx</Filter>
+    </ClInclude>
+    <ClInclude Include="CustomVideoFrame.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderHelper.h">
+      <Filter>render\dx</Filter>
+    </ClInclude>
+    <ClInclude Include="AsyncTask.h">
+      <Filter>render</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="RenderThread.cpp">
+      <Filter>render</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="MFCDemo.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="MFCDemoDlg.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoConvertColor.cpp">
+      <Filter>render\dx</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoConvertToRGB.cpp">
+      <Filter>render\dx</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoConvertToYUV.cpp">
+      <Filter>render\dx</Filter>
+    </ClCompile>
+    <ClCompile Include="CustomVideoFrame.cpp">
+      <Filter>render</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderHelper.cpp">
+      <Filter>render\dx</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderHelperMatrix.cpp">
+      <Filter>render\dx</Filter>
+    </ClCompile>
+    <ClCompile Include="AsyncTask.cpp">
+      <Filter>render</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MFCDemo.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\MFCDemo.rc2">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="HLSL\ps-to-rgb-base.hlsli">
+      <Filter>render\HLSL</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\MFCDemo.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="HLSL\default-ps.hlsl">
+      <Filter>render\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\default-vs.hlsl">
+      <Filter>render\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\fill-rect-ps.hlsl">
+      <Filter>render\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\fill-rect-vs.hlsl">
+      <Filter>render\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\ps-rgb-to-uv.hlsl">
+      <Filter>render\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\ps-rgb-to-y.hlsl">
+      <Filter>render\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\ps-to-rgb-i420.hlsl">
+      <Filter>render\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\ps-to-rgb-nv12.hlsl">
+      <Filter>render\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\ps-to-rgb-uyvy.hlsl">
+      <Filter>render\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\ps-to-rgb-yuy2.hlsl">
+      <Filter>render\HLSL</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>

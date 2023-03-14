@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="common">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="source">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="export">
+      <UniqueIdentifier>{152c74ae-a0f6-46c9-9a28-456c4a6da6be}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="EnumAdapter.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Texture2D.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11SwapChain.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11Shader.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="common\StringConvert.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="common\WindowsPlatformHelper.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
+    <ClCompile Include="D2DTextFormat.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="D2DRenderTarget.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="D2DGeometry.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="D2DLineStyle.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicSessionImp.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="SessionContext.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicEngineImpl.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicBase.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="common\ComPtr.hpp">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="EnumAdapter.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Texture2D.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11SwapChain.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Shader.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="common\StringConvert.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="common\WindowsPlatformHelper.h">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="D2DTextFormat.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="D2DRenderTarget.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="D2DGeometry.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="D2DLineStyle.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="common\ListHelper.hpp">
+      <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="export\IGeometryInterface.h">
+      <Filter>export</Filter>
+    </ClInclude>
+    <ClInclude Include="export\IGraphicDefine.h">
+      <Filter>export</Filter>
+    </ClInclude>
+    <ClInclude Include="export\IGraphicEngine.h">
+      <Filter>export</Filter>
+    </ClInclude>
+    <ClInclude Include="export\IGraphicSession.h">
+      <Filter>export</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicSessionImp.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicBase.h">
+      <Filter>source</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

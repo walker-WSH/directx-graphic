@@ -1,0 +1,23 @@
+ffplay -f rawvideo -pixel_format yuyv422 -video_size 1920x1080 1080p.yuy2
+
+
+ffplay -f rawvideo -pixel_format nv12 -video_size 1920x1080 1920x1080.nv12
+ffplay -f rawvideo -pixel_format nv12 -video_size 1440x1080 1440x1080.nv12
+
+
+
+
+ffplay -f rawvideo -pixel_format yuv420p -video_size 1920x1080 1920x1080.yuv420p
+ffplay -f rawvideo -pixel_format yuv420p -video_size 480x270 480x270.yuv420p
+ffplay -f rawvideo -pixel_format yuv420p -video_size 1440x1080 1440x1080.i420
+
+
+
+
+ffplay -f rawvideo -pixel_format yuyv422 -video_size 640x480 640x480.yuyv422
+ffplay -f rawvideo -pixel_format yuyv422 -video_size 1920x1080 1920x1080.yuyv422
+
+
+
+
+ffplay -f s16le -ar 48000 -ac 1 1_48000_16_1230131433.pcm
