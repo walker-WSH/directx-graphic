@@ -266,7 +266,10 @@ void D2DRenderTarget::DrawImageWithGaussianBlur(texture_handle srcCanvas, float 
 		pD2DContext->Clear(D2D1::ColorF::ColorF(0x00000000));
 		pD2DContext->DrawImage(pEffect, targetOffset, imageRectangle, interpolationMode, compositeMode);
 		auto hr = pD2DContext->EndDraw();
+
+		// Here we must reset its parameters, otherwise swapchain will fail to resize.
 		pD2DContext->SetTarget(nullptr);
+		pEffect->SetInput(0, nullptr, FALSE);
 
 		if (hr == D2DERR_RECREATE_TARGET) {
 			LOG_WARN("D2D request rebuild %X, D2DRenderTarget: %X", hr, this);

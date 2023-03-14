@@ -135,6 +135,7 @@ HRESULT DX11SwapChain::CreateTargetView()
 	if (m_descTexture.Format == D2D_COMPATIBLE_FORMAT) {
 		ComPtr<IDXGISurface1> sfc;
 		hr = m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface1), reinterpret_cast<void **>(sfc.Assign()));
+		assert(SUCCEEDED(hr));
 		if (SUCCEEDED(hr))
 			D2DRenderTarget::BuildD2D(sfc);
 	}
