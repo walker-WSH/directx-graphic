@@ -258,6 +258,7 @@ void D2DRenderTarget::DrawImageWithGaussianBlur(texture_handle srcCanvas, float 
 	if (pD2DContext && pEffect) {
 		pEffect->SetInput(0, srcTex->m_pD2DBitmapOnDXGI);
 		pEffect->SetValue(D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION, value);
+		pEffect->SetValue(D2D1_GAUSSIANBLUR_PROP_OPTIMIZATION, D2D1_GAUSSIANBLUR_OPTIMIZATION_SPEED);
 
 		pD2DContext->SetTarget(m_pD2DBitmapOnDXGI);
 
