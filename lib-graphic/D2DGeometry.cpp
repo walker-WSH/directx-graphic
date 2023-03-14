@@ -15,7 +15,7 @@ D2DGeometry::D2DGeometry(DX11GraphicSession &graphic, const std::vector<D2D1_POI
 
 bool D2DGeometry::BuildGraphic()
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_graphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 
 	auto pointCount = m_listPoints.size();
 	if (pointCount < MIN_POINTS_NUM) {
@@ -23,7 +23,7 @@ bool D2DGeometry::BuildGraphic()
 		return false;
 	}
 
-	auto d2d1Factory = m_graphic.D2DFactory();
+	auto d2d1Factory = m_graphicSession.D2DFactory();
 	if (!d2d1Factory) {
 		LOG_WARN("there is no D2DFactory %X", this);
 		return false;
@@ -68,13 +68,13 @@ bool D2DGeometry::BuildGraphic()
 
 void D2DGeometry::ReleaseGraphic()
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_graphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 	m_pD2DGeometry = nullptr;
 }
 
 bool D2DGeometry::IsBuilt()
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_graphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 	return m_pD2DGeometry;
 }
 

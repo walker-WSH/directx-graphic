@@ -19,15 +19,15 @@
 namespace graphic {
 
 D2DRenderTarget::D2DRenderTarget(DX11GraphicSession &graphic, bool forSwapchain)
-	: m_d3dGraphic(graphic), m_bIsForSwapchain(forSwapchain)
+	: m_graphicSession(graphic), m_bIsForSwapchain(forSwapchain)
 {
 }
 
 bool D2DRenderTarget::BeginDrawD2D(std::source_location location)
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_d3dGraphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 
-	if (m_bIsForSwapchain && !m_d3dGraphic.IsDuringRender()) {
+	if (m_bIsForSwapchain && !m_graphicSession.IsDuringRender()) {
 		LOG_WARN("D2D is not used during render HWND %X from %s", this, location.function_name());
 		assert(false);
 	}
@@ -49,9 +49,9 @@ bool D2DRenderTarget::BeginDrawD2D(std::source_location location)
 
 HRESULT D2DRenderTarget::EndDrawD2D(std::source_location location)
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_d3dGraphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 
-	if (m_bIsForSwapchain && !m_d3dGraphic.IsDuringRender()) {
+	if (m_bIsForSwapchain && !m_graphicSession.IsDuringRender()) {
 		LOG_WARN("D2D is not used during render HWND %X from %s", this, location.function_name());
 		assert(false);
 	}
@@ -82,13 +82,13 @@ HRESULT D2DRenderTarget::EndDrawD2D(std::source_location location)
 
 bool D2DRenderTarget::IsInterfaceValid()
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_d3dGraphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 	return m_pRenderTarget && m_pSolidBrush && m_pD2DBitmapOnDXGI;
 }
 
 void D2DRenderTarget::ClearBackground(const ColorRGBA *bkClr)
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_d3dGraphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 	CHECK_D2D_RENDER_STATE(return );
 
 	m_pRenderTarget->Clear(D2D1::ColorF(bkClr->red, bkClr->green, bkClr->blue, bkClr->alpha));
@@ -97,7 +97,7 @@ void D2DRenderTarget::ClearBackground(const ColorRGBA *bkClr)
 void D2DRenderTarget::DrawString(const wchar_t *text, size_t len, font_handle font, const ColorRGBA *color,
 				 D2D1_RECT_F *region)
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_d3dGraphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 	CHECK_D2D_RENDER_STATE(return );
 	assert(text);
 
@@ -117,26 +117,26 @@ void D2DRenderTarget::DrawString(const wchar_t *text, size_t len, font_handle fo
 		temp.bottom = size.height;
 	}
 
-	CHECK_GRAPHIC_OBJECT_VALID(m_d3dGraphic, font, D2DTextFormat, realObj, return );
+	CHECK_GRAPHIC_OBJECT_VALID(m_graphicSession, font, D2DTextFormat, realObj, return );
 	m_pRenderTarget->DrawText(text, (uint32_t)len, realObj->m_pTextFormat, temp, brush);
 }
 
 void D2DRenderTarget::DrawLine(D2D1_POINT_2F start, D2D1_POINT_2F end, const ColorRGBA *color, FLOAT strokeWidth,
 			       LINE_DASH_STYLE style)
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_d3dGraphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 	CHECK_D2D_RENDER_STATE(return );
 
 	auto brush = GetSolidBrush(color);
 	if (!brush)
 		return;
 
-	m_pRenderTarget->DrawLine(start, end, brush, strokeWidth, m_d3dGraphic.GetLineStyle(style));
+	m_pRenderTarget->DrawLine(start, end, brush, strokeWidth, m_graphicSession.GetLineStyle(style));
 }
 
 void D2DRenderTarget::FillEllipse(const D2D1_ELLIPSE &ellipse, const ColorRGBA *color)
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_d3dGraphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 	CHECK_D2D_RENDER_STATE(return );
 
 	auto brush = GetSolidBrush(color);
@@ -149,32 +149,32 @@ void D2DRenderTarget::FillEllipse(const D2D1_ELLIPSE &ellipse, const ColorRGBA *
 void D2DRenderTarget::DrawEllipse(const D2D1_ELLIPSE &ellipse, const ColorRGBA *color, FLOAT strokeWidth,
 				  LINE_DASH_STYLE style)
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_d3dGraphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 	CHECK_D2D_RENDER_STATE(return );
 
 	auto brush = GetSolidBrush(color);
 	if (!brush)
 		return;
 
-	m_pRenderTarget->DrawEllipse(ellipse, brush, strokeWidth, m_d3dGraphic.GetLineStyle(style));
+	m_pRenderTarget->DrawEllipse(ellipse, brush, strokeWidth, m_graphicSession.GetLineStyle(style));
 }
 
 void D2DRenderTarget::DrawRectangle(const D2D1_RECT_F &rect, const ColorRGBA *color, FLOAT strokeWidth,
 				    LINE_DASH_STYLE style)
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_d3dGraphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 	CHECK_D2D_RENDER_STATE(return );
 
 	auto brush = GetSolidBrush(color);
 	if (!brush)
 		return;
 
-	m_pRenderTarget->DrawRectangle(rect, brush, strokeWidth, m_d3dGraphic.GetLineStyle(style));
+	m_pRenderTarget->DrawRectangle(rect, brush, strokeWidth, m_graphicSession.GetLineStyle(style));
 }
 
 void D2DRenderTarget::FillRectangle(const D2D1_RECT_F &rect, const ColorRGBA *color)
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_d3dGraphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 	CHECK_D2D_RENDER_STATE(return );
 
 	auto brush = GetSolidBrush(color);
@@ -186,7 +186,7 @@ void D2DRenderTarget::FillRectangle(const D2D1_RECT_F &rect, const ColorRGBA *co
 
 void D2DRenderTarget::FillRoundedRectangle(const D2D1_ROUNDED_RECT &roundedRect, const ColorRGBA *color)
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_d3dGraphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 	CHECK_D2D_RENDER_STATE(return );
 
 	auto brush = GetSolidBrush(color);
@@ -199,26 +199,26 @@ void D2DRenderTarget::FillRoundedRectangle(const D2D1_ROUNDED_RECT &roundedRect,
 void D2DRenderTarget::DrawRoundedRectangle(const D2D1_ROUNDED_RECT &roundedRect, const ColorRGBA *color,
 					   FLOAT strokeWidth, LINE_DASH_STYLE style)
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_d3dGraphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 	CHECK_D2D_RENDER_STATE(return );
 
 	auto brush = GetSolidBrush(color);
 	if (!brush)
 		return;
 
-	m_pRenderTarget->DrawRoundedRectangle(roundedRect, brush, strokeWidth, m_d3dGraphic.GetLineStyle(style));
+	m_pRenderTarget->DrawRoundedRectangle(roundedRect, brush, strokeWidth, m_graphicSession.GetLineStyle(style));
 }
 
 void D2DRenderTarget::FillGeometry(geometry_handle path, const ColorRGBA *color)
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_d3dGraphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 	CHECK_D2D_RENDER_STATE(return );
 
 	auto brush = GetSolidBrush(color);
 	if (!brush)
 		return;
 
-	CHECK_GRAPHIC_OBJECT_VALID(m_d3dGraphic, path, D2DGeometry, realObj, return );
+	CHECK_GRAPHIC_OBJECT_VALID(m_graphicSession, path, D2DGeometry, realObj, return );
 	assert(realObj->m_listPoints.size() >= 3);
 	m_pRenderTarget->FillGeometry(realObj->m_pD2DGeometry, brush);
 }
@@ -226,16 +226,17 @@ void D2DRenderTarget::FillGeometry(geometry_handle path, const ColorRGBA *color)
 void D2DRenderTarget::DrawGeometry(geometry_handle path, const ColorRGBA *color, FLOAT strokeWidth,
 				   LINE_DASH_STYLE style)
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_d3dGraphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 	CHECK_D2D_RENDER_STATE(return );
 
 	auto brush = GetSolidBrush(color);
 	if (!brush)
 		return;
 
-	CHECK_GRAPHIC_OBJECT_VALID(m_d3dGraphic, path, D2DGeometry, realObj, return );
+	CHECK_GRAPHIC_OBJECT_VALID(m_graphicSession, path, D2DGeometry, realObj, return );
 	assert(realObj->m_listPoints.size() >= 2);
-	m_pRenderTarget->DrawGeometry(realObj->m_pD2DGeometry, brush, strokeWidth, m_d3dGraphic.GetLineStyle(style));
+	m_pRenderTarget->DrawGeometry(realObj->m_pD2DGeometry, brush, strokeWidth,
+				      m_graphicSession.GetLineStyle(style));
 }
 
 void D2DRenderTarget::DrawImageWithGaussianBlur(texture_handle srcCanvas, float value,
@@ -243,15 +244,15 @@ void D2DRenderTarget::DrawImageWithGaussianBlur(texture_handle srcCanvas, float 
 						D2D1_INTERPOLATION_MODE interpolationMode,
 						D2D1_COMPOSITE_MODE compositeMode)
 {
-	CHECK_GRAPHIC_OBJECT_VALID(m_d3dGraphic, srcCanvas, DX11Texture2D, srcTex, return );
+	CHECK_GRAPHIC_OBJECT_VALID(m_graphicSession, srcCanvas, DX11Texture2D, srcTex, return );
 
 	if (!IsInterfaceValid() || !srcTex->IsInterfaceValid()) {
 		assert(false);
 		return;
 	}
 
-	ID2D1DeviceContext *pD2DContext = m_d3dGraphic.D2DDeviceContext();
-	auto pEffect = m_d3dGraphic.GetGaussianBlurEffect();
+	ID2D1DeviceContext *pD2DContext = m_graphicSession.D2DDeviceContext();
+	auto pEffect = m_graphicSession.GetGaussianBlurEffect();
 
 	assert(pD2DContext && pEffect);
 	if (pD2DContext && pEffect) {
@@ -265,15 +266,17 @@ void D2DRenderTarget::DrawImageWithGaussianBlur(texture_handle srcCanvas, float 
 		pD2DContext->Clear(D2D1::ColorF::ColorF(0x00000000));
 		pD2DContext->DrawImage(pEffect, targetOffset, imageRectangle, interpolationMode, compositeMode);
 		auto hr = pD2DContext->EndDraw();
+		pD2DContext->SetTarget(nullptr);
+
 		if (hr == D2DERR_RECREATE_TARGET) {
-			LOG_WARN("D2D request rebuild %X", hr);
+			LOG_WARN("D2D request rebuild %X, D2DRenderTarget: %X", hr, this);
 		}
 	}
 }
 
 HRESULT D2DRenderTarget::FlushGeometry(std::source_location location)
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_d3dGraphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 	CHECK_D2D_RENDER_STATE(return S_FALSE);
 
 	auto hr = EndDrawD2D(location);
@@ -284,13 +287,13 @@ HRESULT D2DRenderTarget::FlushGeometry(std::source_location location)
 
 bool D2DRenderTarget::BuildD2D(ComPtr<IDXGISurface1> sfc)
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_d3dGraphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 
 	auto dsProps = D2D1::RenderTargetProperties(
 		D2D1_RENDER_TARGET_TYPE_DEFAULT, D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED));
 
-	auto hr =
-		m_d3dGraphic.D2DFactory()->CreateDxgiSurfaceRenderTarget(sfc.Get(), &dsProps, m_pRenderTarget.Assign());
+	auto hr = m_graphicSession.D2DFactory()->CreateDxgiSurfaceRenderTarget(sfc.Get(), &dsProps,
+									       m_pRenderTarget.Assign());
 	if (FAILED(hr)) {
 		LOG_WARN("CreateDxgiSurfaceRenderTarget failed with 0x%x, D2DRenderTarget: %X", hr, this);
 		assert(false);
@@ -316,7 +319,7 @@ bool D2DRenderTarget::BuildD2D(ComPtr<IDXGISurface1> sfc)
 	}
 
 	D2D1_BITMAP_PROPERTIES1 prt = D2D1::BitmapProperties1(options, pixelFormat);
-	hr = m_d3dGraphic.D2DDeviceContext()->CreateBitmapFromDxgiSurface(sfc, &prt, &m_pD2DBitmapOnDXGI);
+	hr = m_graphicSession.D2DDeviceContext()->CreateBitmapFromDxgiSurface(sfc, &prt, &m_pD2DBitmapOnDXGI);
 	if (FAILED(hr)) {
 		LOG_WARN("CreateBitmapFromDxgiSurface failed with 0x%x, D2DRenderTarget: %X", hr, this);
 		assert(false);
@@ -328,7 +331,7 @@ bool D2DRenderTarget::BuildD2D(ComPtr<IDXGISurface1> sfc)
 
 void D2DRenderTarget::ReleaseD2D()
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_d3dGraphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 	m_pSolidBrush = nullptr;
 	m_pRenderTarget = nullptr;
 	m_pD2DBitmapOnDXGI = nullptr;
@@ -336,7 +339,7 @@ void D2DRenderTarget::ReleaseD2D()
 
 ComPtr<ID2D1SolidColorBrush> D2DRenderTarget::GetSolidBrush(const ColorRGBA *color)
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_d3dGraphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 
 	assert(m_pSolidBrush);
 	if (!m_pSolidBrush)

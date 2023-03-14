@@ -22,7 +22,7 @@ D2DTextFormat::D2DTextFormat(DX11GraphicSession &graphic, const TextFormatDesc &
 	: DX11GraphicBase(graphic, "D2D TextFormat"), m_textFormat(desc)
 {
 	if (m_textFormat.fontName.empty()) {
-		CHECK_GRAPHIC_CONTEXT_EX(m_graphic);
+		CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 		m_textFormat.fontName = GetDefaultFont();
 	}
 
@@ -31,9 +31,9 @@ D2DTextFormat::D2DTextFormat(DX11GraphicSession &graphic, const TextFormatDesc &
 
 bool D2DTextFormat::BuildGraphic()
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_graphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 
-	auto wf = m_graphic.D2DWriteFactory();
+	auto wf = m_graphicSession.D2DWriteFactory();
 
 	DWRITE_FONT_WEIGHT bold = m_textFormat.bold ? DWRITE_FONT_WEIGHT_DEMI_BOLD : DWRITE_FONT_WEIGHT_NORMAL;
 	DWRITE_FONT_STYLE style = m_textFormat.italic ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL;
@@ -87,14 +87,14 @@ bool D2DTextFormat::BuildGraphic()
 
 void D2DTextFormat::ReleaseGraphic()
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_graphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 	m_pTextCutShow = nullptr;
 	m_pTextFormat = nullptr;
 }
 
 bool D2DTextFormat::IsBuilt()
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_graphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 	return m_pTextFormat;
 }
 

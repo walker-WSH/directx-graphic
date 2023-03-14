@@ -61,7 +61,7 @@ private:
 		ComPtr<ID2D1SolidColorBrush> brush = nullptr;
 	};
 
-	DX11GraphicSession &m_d3dGraphic;
+	DX11GraphicSession &m_graphicSession;
 	const bool m_bIsForSwapchain = false;
 
 	std::atomic<bool> m_bD2DRendering = false;

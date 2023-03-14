@@ -23,7 +23,7 @@ DX11Shader::DX11Shader(DX11GraphicSession &graphic, const ShaderInformation *inf
 
 bool DX11Shader::BuildGraphic()
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_graphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 
 	ComPtr<ID3D10Blob> vertexShaderBuffer;
 	ComPtr<ID3D10Blob> pixelShaderBuffer;
@@ -42,18 +42,18 @@ bool DX11Shader::BuildGraphic()
 		return false;
 	}
 
-	hr = m_graphic.D3DDevice()->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(),
-						       vertexShaderBuffer->GetBufferSize(), NULL,
-						       m_pVertexShader.Assign());
+	hr = m_graphicSession.D3DDevice()->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(),
+							      vertexShaderBuffer->GetBufferSize(), NULL,
+							      m_pVertexShader.Assign());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateVertexShader %X", this);
 		assert(false);
 		return false;
 	}
 
-	hr = m_graphic.D3DDevice()->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(),
-						      pixelShaderBuffer->GetBufferSize(), NULL,
-						      m_pPixelShader.Assign());
+	hr = m_graphicSession.D3DDevice()->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(),
+							     pixelShaderBuffer->GetBufferSize(), NULL,
+							     m_pPixelShader.Assign());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreatePixelShader %X", this);
 		assert(false);
@@ -61,9 +61,10 @@ bool DX11Shader::BuildGraphic()
 	}
 
 	std::vector<D3D11_INPUT_ELEMENT_DESC> inputLayoutDesc = GetInputLayout();
-	hr = m_graphic.D3DDevice()->CreateInputLayout(inputLayoutDesc.data(), (uint32_t)inputLayoutDesc.size(),
-						      vertexShaderBuffer->GetBufferPointer(),
-						      vertexShaderBuffer->GetBufferSize(), m_pInputLayout.Assign());
+	hr = m_graphicSession.D3DDevice()->CreateInputLayout(inputLayoutDesc.data(), (uint32_t)inputLayoutDesc.size(),
+							     vertexShaderBuffer->GetBufferPointer(),
+							     vertexShaderBuffer->GetBufferSize(),
+							     m_pInputLayout.Assign());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateInputLayout %X", this);
 		assert(false);
@@ -74,7 +75,7 @@ bool DX11Shader::BuildGraphic()
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDesc.ByteWidth = m_shaderInfo.vertexCount * m_shaderInfo.perVertexSize;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	hr = m_graphic.D3DDevice()->CreateBuffer(&vertexBufferDesc, NULL, m_pVertexBuffer.Assign());
+	hr = m_graphicSession.D3DDevice()->CreateBuffer(&vertexBufferDesc, NULL, m_pVertexBuffer.Assign());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "DX-CreateBuffer size:%u %X", vertexBufferDesc.ByteWidth, this);
 		assert(false);
@@ -86,7 +87,7 @@ bool DX11Shader::BuildGraphic()
 		CBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 		CBufferDesc.ByteWidth = m_shaderInfo.vsBufferSize;
 		CBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		hr = m_graphic.D3DDevice()->CreateBuffer(&CBufferDesc, NULL, m_pVSConstBuffer.Assign());
+		hr = m_graphicSession.D3DDevice()->CreateBuffer(&CBufferDesc, NULL, m_pVSConstBuffer.Assign());
 		if (FAILED(hr)) {
 			CHECK_DX_ERROR(hr, "DX-CreateBuffer size:%u %X", CBufferDesc.ByteWidth, this);
 			assert(false);
@@ -99,7 +100,7 @@ bool DX11Shader::BuildGraphic()
 		CBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 		CBufferDesc.ByteWidth = m_shaderInfo.psBufferSize;
 		CBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		hr = m_graphic.D3DDevice()->CreateBuffer(&CBufferDesc, NULL, m_pPSConstBuffer.Assign());
+		hr = m_graphicSession.D3DDevice()->CreateBuffer(&CBufferDesc, NULL, m_pPSConstBuffer.Assign());
 		if (FAILED(hr)) {
 			CHECK_DX_ERROR(hr, "DX-CreateBuffer size:%u %X", CBufferDesc.ByteWidth, this);
 			assert(false);
@@ -112,7 +113,7 @@ bool DX11Shader::BuildGraphic()
 
 void DX11Shader::ReleaseGraphic()
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_graphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 
 	m_pVertexShader = nullptr;
 	m_pVSConstBuffer = nullptr;
@@ -126,7 +127,7 @@ void DX11Shader::ReleaseGraphic()
 
 bool DX11Shader::IsBuilt()
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_graphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 	return m_pVertexShader && m_pPixelShader && m_pInputLayout && m_pVertexBuffer;
 }
 

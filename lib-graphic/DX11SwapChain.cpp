@@ -17,7 +17,7 @@ DX11SwapChain::DX11SwapChain(DX11GraphicSession &graphic, HWND hWnd)
 
 bool DX11SwapChain::BuildGraphic()
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_graphic);
+	CHECK_GRAPHIC_CONTEXT_EX(DX11GraphicBase::DX11GraphicBase::m_graphicSession);
 
 	HRESULT hr = InitSwapChain();
 	if (FAILED(hr)) {
@@ -31,7 +31,7 @@ bool DX11SwapChain::BuildGraphic()
 
 void DX11SwapChain::ReleaseGraphic()
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_graphic);
+	CHECK_GRAPHIC_CONTEXT_EX(DX11GraphicBase::DX11GraphicBase::m_graphicSession);
 
 	ZeroMemory(&m_descTexture, sizeof(D3D11_TEXTURE2D_DESC));
 	m_pSwapChain = nullptr;
@@ -43,7 +43,7 @@ void DX11SwapChain::ReleaseGraphic()
 
 bool DX11SwapChain::IsBuilt()
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_graphic);
+	CHECK_GRAPHIC_CONTEXT_EX(DX11GraphicBase::m_graphicSession);
 	return m_pSwapChain && m_pSwapBackTexture2D && m_pRenderTargetView;
 }
 
@@ -55,7 +55,7 @@ void DX11SwapChain::SetDisplaySize(uint32_t width, uint32_t height)
 
 HRESULT DX11SwapChain::TestResizeSwapChain()
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_graphic);
+	CHECK_GRAPHIC_CONTEXT_EX(DX11GraphicBase::m_graphicSession);
 
 	if (!m_pSwapChain || !m_dwWidth || !m_dwHeight)
 		return S_FALSE;
@@ -64,7 +64,7 @@ HRESULT DX11SwapChain::TestResizeSwapChain()
 		D2DRenderTarget::ReleaseD2D();
 
 		ID3D11RenderTargetView *pRenderView = NULL;
-		m_graphic.D3DContext()->OMSetRenderTargets(1, &pRenderView, NULL);
+		DX11GraphicBase::m_graphicSession.D3DContext()->OMSetRenderTargets(1, &pRenderView, NULL);
 
 		m_pRenderTargetView = nullptr;
 		m_pSwapBackTexture2D = nullptr;
@@ -73,6 +73,7 @@ HRESULT DX11SwapChain::TestResizeSwapChain()
 		HRESULT hr = m_pSwapChain->ResizeBuffers(1, m_dwWidth, m_dwHeight, SWAPCHAIN_TEXTURE_FORMAT, 0);
 		if (FAILED(hr)) {
 			CHECK_DX_ERROR(hr, "ResizeBuffers %ux%u %X", m_dwWidth, m_dwHeight, this);
+			assert(false && "m_pSwapChain->ResizeBuffers failed");
 			return hr;
 		}
 
@@ -84,7 +85,7 @@ HRESULT DX11SwapChain::TestResizeSwapChain()
 
 HRESULT DX11SwapChain::InitSwapChain()
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_graphic);
+	CHECK_GRAPHIC_CONTEXT_EX(DX11GraphicBase::m_graphicSession);
 
 	assert(m_dwWidth > 0 && m_dwHeight > 0);
 
@@ -101,7 +102,8 @@ HRESULT DX11SwapChain::InitSwapChain()
 	sd.BufferDesc.RefreshRate.Numerator = 60;
 	sd.BufferDesc.RefreshRate.Denominator = 1;
 
-	HRESULT hr = m_graphic.D3DFactory()->CreateSwapChain(m_graphic.D3DDevice(), &sd, m_pSwapChain.Assign());
+	HRESULT hr = DX11GraphicBase::m_graphicSession.D3DFactory()->CreateSwapChain(
+		DX11GraphicBase::m_graphicSession.D3DDevice(), &sd, m_pSwapChain.Assign());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateSwapChain %ux%u %X", m_dwWidth, m_dwHeight, this);
 		assert(false);
@@ -121,7 +123,8 @@ HRESULT DX11SwapChain::CreateTargetView()
 		return hr;
 	}
 
-	hr = m_graphic.D3DDevice()->CreateRenderTargetView(m_pSwapBackTexture2D, nullptr, m_pRenderTargetView.Assign());
+	hr = DX11GraphicBase::m_graphicSession.D3DDevice()->CreateRenderTargetView(m_pSwapBackTexture2D, nullptr,
+										   m_pRenderTargetView.Assign());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateRenderTargetView %X", this);
 		assert(false);

@@ -20,18 +20,18 @@
 namespace graphic {
 
 DX11GraphicBase::DX11GraphicBase(DX11GraphicSession &graphic, const char *name)
-	: m_graphic(graphic), m_strName(name ? name : "EmptyName")
+	: m_graphicSession(graphic), m_strName(name ? name : "EmptyName")
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_graphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 	LOG_INFO("\"%s\" graphic object is created: %X", m_strName.c_str(), (void *)this);
-	m_graphic.PushObject(this);
+	m_graphicSession.PushObject(this);
 }
 
 DX11GraphicBase::~DX11GraphicBase()
 {
-	CHECK_GRAPHIC_CONTEXT_EX(m_graphic);
+	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 	LOG_INFO("\"%s\" graphic object is deleted %X", m_strName.c_str(), (void *)this);
-	m_graphic.RemoveObject(this);
+	m_graphicSession.RemoveObject(this);
 }
 
 void DX11GraphicBase::SetUserData(void *data)

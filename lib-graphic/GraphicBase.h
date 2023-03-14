@@ -99,7 +99,7 @@ public:
 	virtual void ReleaseGraphic() = 0;
 
 protected:
-	DX11GraphicSession &m_graphic;
+	DX11GraphicSession &m_graphicSession;
 	const std::string m_strName;
 	void *m_userData = nullptr;
 };
