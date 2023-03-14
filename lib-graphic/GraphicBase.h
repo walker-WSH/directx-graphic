@@ -78,11 +78,17 @@ static const auto SWAPCHAIN_TEXTURE_FORMAT = DXGI_FORMAT_B8G8R8A8_UNORM;
 	}
 
 DEFINE_GUID(D2D_CLSID_D2D1GaussianBlur, 0x1feb6d69, 0x2fe6, 0x4ac9, 0x8c, 0x58, 0x1d, 0x7f, 0x93, 0xe7, 0xa6, 0xa5);
+DEFINE_GUID(D2D_CLSID_D2D1DirectionalBlur, 0x174319a6, 0x58e9, 0x49b2, 0xbb, 0x63, 0xca, 0xf2, 0xc8, 0x11, 0xa3, 0xdb);
 
 const static std::vector<D3D_FEATURE_LEVEL> featureLevels = {
 	D3D_FEATURE_LEVEL_11_0,
 	D3D_FEATURE_LEVEL_10_1,
 	D3D_FEATURE_LEVEL_10_0,
+};
+
+enum class D2D_EFFECT_TYPE {
+	D2D_EFFECT_GAUSSIAN_BLUR = 0,
+	D2D_EFFECT_DIRECT_BLUR,
 };
 
 class DX11GraphicSession;

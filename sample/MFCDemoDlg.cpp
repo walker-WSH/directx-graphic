@@ -13,7 +13,7 @@
 #endif
 
 float g_lineStride = 2.f;
-float g_blurValue = 10.f;
+float g_blurValue = 50.f;
 int g_rotatePeriod = 10 * 1000;
 
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
@@ -140,7 +140,7 @@ BOOL CMFCDemoDlg::OnInitDialog()
 	m_lineSizeSlider.SetRange(1, 20);
 	m_lineSizeSlider.SetPos((int)g_lineStride);
 
-	m_gausBlurSlider.SetRange(0, 50);
+	m_gausBlurSlider.SetRange(0, 100);
 	m_gausBlurSlider.SetPos((int)g_blurValue);
 
 	m_rotateSlider.SetRange(1 * 1000, 20 * 1000);

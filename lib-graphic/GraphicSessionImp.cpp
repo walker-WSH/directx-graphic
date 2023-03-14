@@ -345,10 +345,11 @@ ComPtr<ID2D1StrokeStyle> DX11GraphicSession::GetLineStyle(LINE_DASH_STYLE style)
 		return nullptr;
 }
 
-ComPtr<ID2D1Effect> DX11GraphicSession::GetGaussianBlurEffect()
+ComPtr<ID2D1Effect> DX11GraphicSession::GetD2DEffect(D2D_EFFECT_TYPE effect)
 {
 	CHECK_GRAPHIC_CONTEXT;
-	return m_pD2DEffectGausBlur;
+	assert(FindItemInMap(m_mapD2DEffect, effect));
+	return m_mapD2DEffect[effect];
 }
 
 IGeometryInterface *DX11GraphicSession::OpenGeometryInterface(shader_handle hdl)
@@ -1152,11 +1153,21 @@ bool DX11GraphicSession::BuildD2D()
 	}
 	m_pD2DDeviceContext->SetUnitMode(D2D1_UNIT_MODE_PIXELS);
 
-	hr = m_pD2DDeviceContext->CreateEffect(D2D_CLSID_D2D1GaussianBlur, &m_pD2DEffectGausBlur);
-	if (FAILED(hr)) {
-		LOG_WARN("CLSID_D2D1GaussianBlurtEST failed 0x%x", hr);
-		assert(false);
-		return false;
+	//------------------------------------------ create effects ------------------------------------------------
+	std::map<D2D_EFFECT_TYPE, IID> effectList = {
+		{D2D_EFFECT_TYPE::D2D_EFFECT_GAUSSIAN_BLUR, D2D_CLSID_D2D1GaussianBlur},
+		{D2D_EFFECT_TYPE::D2D_EFFECT_DIRECT_BLUR, D2D_CLSID_D2D1DirectionalBlur},
+	};
+
+	ComPtr<ID2D1Effect> pEffect = nullptr;
+	for (const auto &item : effectList) {
+		hr = m_pD2DDeviceContext->CreateEffect(item.second, &pEffect);
+		if (FAILED(hr)) {
+			LOG_WARN("Create d2d effect failed 0x%x", hr);
+			assert(false);
+			return false;
+		}
+		m_mapD2DEffect[item.first] = pEffect;
 	}
 
 	return true;
@@ -1167,7 +1178,7 @@ void DX11GraphicSession::ReleaseD2D()
 	LOG_TRACE();
 	CHECK_GRAPHIC_CONTEXT;
 
-	m_pD2DEffectGausBlur = nullptr;
+	m_mapD2DEffect.clear();
 	m_pD2DDeviceContext = nullptr;
 	m_pDWriteFactory = nullptr;
 	m_pD2DFactory = nullptr;

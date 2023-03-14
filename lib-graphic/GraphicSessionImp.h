@@ -98,7 +98,7 @@ public:
 	ComPtr<IDWriteFactory1> D2DWriteFactory();
 	ComPtr<ID2D1DeviceContext> D2DDeviceContext();
 	ComPtr<ID2D1StrokeStyle> GetLineStyle(LINE_DASH_STYLE style);
-	ComPtr<ID2D1Effect> GetGaussianBlurEffect();
+	ComPtr<ID2D1Effect> GetD2DEffect(D2D_EFFECT_TYPE effect);
 
 	void PushObject(DX11GraphicBase *obj);
 	void RemoveObject(DX11GraphicBase *obj);
@@ -138,8 +138,8 @@ private:
 	ComPtr<ID2D1Factory1> m_pD2DFactory = nullptr;
 	ComPtr<IDWriteFactory1> m_pDWriteFactory = nullptr;
 	ComPtr<ID2D1DeviceContext> m_pD2DDeviceContext = nullptr;
-	ComPtr<ID2D1Effect> m_pD2DEffectGausBlur = nullptr;
 	std::map<LINE_DASH_STYLE, D2DLineStyle *> m_mapLineStyle; // lifetime is managed in m_listObject
+	std::map<D2D_EFFECT_TYPE, ComPtr<ID2D1Effect>> m_mapD2DEffect;
 
 	ComPtr<IDXGIAdapter1> m_pAdapter = nullptr;
 	ComPtr<IDXGIFactory1> m_pDX11Factory = nullptr;

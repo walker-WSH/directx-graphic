@@ -37,14 +37,16 @@ public:
 	virtual void FillRoundedRectangle(const D2D1_ROUNDED_RECT &roundedRect, const ColorRGBA *clr);
 	virtual void FillGeometry(geometry_handle path, const ColorRGBA *clr);
 
+	virtual HRESULT FlushGeometry(std::source_location location = std::source_location::current());
+
 	virtual void
-	DrawImageWithGaussianBlur(texture_handle srcCanvas, float value = 5.f,
+	DrawImageWithGaussianBlur(texture_handle srcCanvas, float value = 50.f,
 				  const D2D1_POINT_2F *targetOffset = nullptr,
 				  const D2D1_RECT_F *imageRectangle = nullptr,
 				  D2D1_INTERPOLATION_MODE interpolationMode = D2D1_INTERPOLATION_MODE_LINEAR,
 				  D2D1_COMPOSITE_MODE compositeMode = D2D1_COMPOSITE_MODE_SOURCE_OVER);
 
-	virtual HRESULT FlushGeometry(std::source_location location = std::source_location::current());
+	virtual void DrawImageWithDirectBlur(texture_handle srcCanvas, float value = 50.f, float angle = 135.f);
 
 protected:
 	bool BeginDrawD2D(std::source_location location = std::source_location::current());
