@@ -13,6 +13,7 @@
 #endif
 
 float g_lineStride = 2.f;
+float g_blurValue = 10.f;
 
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 
@@ -66,6 +67,7 @@ void CMFCDemoDlg::DoDataExchange(CDataExchange *pDX)
 	DDX_Control(pDX, IDC_BUTTON1, m_btnTest);
 	DDX_Control(pDX, IDC_CHECK_SMOOTH, m_checkboxSmooth);
 	DDX_Control(pDX, IDC_SLIDER1, m_lineSizeSlider);
+	DDX_Control(pDX, IDC_SLIDER2, m_gausBlurSlider);
 }
 
 BEGIN_MESSAGE_MAP(CMFCDemoDlg, CDialogEx)
@@ -135,6 +137,9 @@ BOOL CMFCDemoDlg::OnInitDialog()
 
 	m_lineSizeSlider.SetRange(1, 20);
 	m_lineSizeSlider.SetPos((int)g_lineStride);
+
+	m_gausBlurSlider.SetRange(0, 50);
+	m_gausBlurSlider.SetPos((int)g_blurValue);
 
 	m_bExit = false;
 	m_hThread = (HANDLE)_beginthreadex(0, 0, ThreadFunc, this, 0, 0);
@@ -363,6 +368,7 @@ void CMFCDemoDlg::OnNMThemeChangedSlider1(NMHDR *pNMHDR, LRESULT *pResult)
 void CMFCDemoDlg::OnTimer(UINT_PTR nIDEvent)
 {
 	g_lineStride = (float)m_lineSizeSlider.GetPos();
+	g_blurValue = (float)m_gausBlurSlider.GetPos();
 
 	CDialogEx::OnTimer(nIDEvent);
 }

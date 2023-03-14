@@ -56,6 +56,7 @@ AVFrame *preFrame = nullptr;
 bool bFullscreenCrop = false;
 bool g_clearBk = false;
 extern float g_lineStride;
+extern float g_blurValue;
 
 bool InitGraphic(HWND hWnd);
 void UnInitGraphic();
@@ -163,7 +164,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFunc(void *pParam)
 
 		auto api = pGraphic->OpenGeometryInterface(texCanvas2);
 		if (api) {
-			api->DrawImageWithGaussianBlur(texCanvas, 10.f);
+			api->DrawImageWithGaussianBlur(texCanvas, g_blurValue);
 			pGraphic->CloseGeometryInterface(texCanvas2);
 		}
 
@@ -374,7 +375,7 @@ bool InitGraphic(HWND hWnd)
 	desc.wordWrap = TEXT_WORD_WRAP::WORD_WRAPPING_NO_WRAP_WITH_ELLIPSIS;
 	fontFormat = pGraphic->CreateTextFont(desc);
 
-	desc.fontSize = 40.f;
+	desc.fontSize = 30.f;
 	desc.bold = true;
 	desc.italic = false;
 	desc.alignH = TEXT_ALIGNMENT_TYPE::ALIGNMENT_CENTER;
