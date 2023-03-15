@@ -410,15 +410,14 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForSubRegionMosic(void *pParam)
 		if (reinitPathTex) {
 			IGeometryInterface *d2d = nullptr;
 			if (pGraphic->BeginRenderCanvas(canvasPath, &d2d)) {
-				ColorRGBA clr = {0, 0, 0, 0};
-				pGraphic->ClearBackground(&clr);
+				ColorRGBA clrBk = {0, 0, 0, 0};
+				ColorRGBA clrSubRegion = {1.f, 0, 0, 1.f};
+
+				pGraphic->ClearBackground(&clrBk);
 				pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
 
-				if (!finishedPathList.empty()) {
-					auto lastOne = finishedPathList.size() - 1;
-					auto path = finishedPathList[lastOne];
-					ColorRGBA clrSubRegion = {1.f, 0, 0, 1.f};
-					d2d->DrawGeometry(path, &clrSubRegion, g_lineStride,
+				for (const auto &item : finishedPathList) {
+					d2d->DrawGeometry(item, &clrSubRegion, g_lineStride,
 							  LINE_DASH_STYLE::LINE_SOLID);
 				}
 
