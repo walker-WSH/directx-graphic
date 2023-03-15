@@ -395,7 +395,7 @@ void DX11GraphicSession::CloseGeometryInterface(shader_handle hdl)
 	}
 
 	auto hr = obj->EndDrawD2D();
-	HandleDXHResult(hr);
+	HandleDirectResult(hr);
 }
 
 display_handle DX11GraphicSession::CreateDisplay(HWND hWnd)
@@ -836,7 +836,7 @@ bool DX11GraphicSession::BeginRenderWindow(display_handle hdl, IGeometryInterfac
 	HRESULT hr = obj->TestResizeSwapChain();
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "TestResizeSwapChain");
-		HandleDXHResult(hr);
+		HandleDirectResult(hr);
 		return false;
 	}
 
@@ -1007,23 +1007,26 @@ void DX11GraphicSession::EndRender(IGeometryInterface *geometryInterface)
 	m_bDuringRendering = false;
 	LeaveContext(std::source_location::current());
 
-	HandleDXHResult(hr);
+	HandleDirectResult(hr);
 }
 
-void DX11GraphicSession::HandleDXHResult(HRESULT hr, std::source_location location)
+void DX11GraphicSession::HandleDirectResult(HRESULT hr, std::source_location location)
 {
 	CHECK_GRAPHIC_CONTEXT;
 
 	if (FAILED(hr)) {
+		bool rebuild = (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET ||
+				hr == D2DERR_RECREATE_TARGET);
+
+		LOG_WARN("Device Error %X from %s, rebuild: %s", hr, location.function_name(), rebuild ? "yes" : "no");
+
 		for (auto &item : m_pGraphicCallbacks) {
 			auto cb = item.lock();
 			if (cb)
 				cb->OnGraphicError(hr);
 		}
 
-		if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET || hr == D2DERR_RECREATE_TARGET) {
-			LOG_WARN("Device Error... %X", hr);
-
+		if (rebuild && !m_bDuringRendering) {
 			for (auto &item : m_pGraphicCallbacks) {
 				auto cb = item.lock();
 				if (cb)

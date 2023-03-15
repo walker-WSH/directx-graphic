@@ -73,7 +73,7 @@ HRESULT D2DRenderTarget::EndDrawD2D(std::source_location location)
 
 	auto ret = m_pRenderTarget->EndDraw();
 	if (FAILED(ret)) {
-		LOG_WARN("D2D EndDraw failed with %X %s ,from %s", ret,
+		LOG_WARN("D2D failed to end draw with %X %s ,from %s", ret,
 			 (D2DERR_RECREATE_TARGET == ret) ? ", need to recreate" : "", location.function_name());
 	}
 
@@ -239,15 +239,21 @@ void D2DRenderTarget::DrawGeometry(geometry_handle path, const ColorRGBA *color,
 				      m_graphicSession.GetLineStyle(style));
 }
 
-HRESULT D2DRenderTarget::FlushGeometry(std::source_location location)
+bool D2DRenderTarget::FlushGeometry(std::source_location location)
 {
 	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 	CHECK_D2D_RENDER_STATE(return S_FALSE);
 
 	auto hr = EndDrawD2D(location);
-	BeginDrawD2D();
 
-	return hr;
+	if (hr == D2DERR_RECREATE_TARGET && !m_bD2DRendering)
+		m_graphicSession.HandleDirectResult(hr);
+
+	if (SUCCEEDED(hr)) {
+		BeginDrawD2D();
+		return true;
+	}
+	return false;
 }
 
 void D2DRenderTarget::DrawImageWithGaussianBlur(texture_handle srcCanvas, float value,
@@ -283,9 +289,8 @@ void D2DRenderTarget::DrawImageWithGaussianBlur(texture_handle srcCanvas, float 
 		pD2DContext->SetTarget(nullptr);
 		pEffect->SetInput(0, nullptr, FALSE);
 
-		if (hr == D2DERR_RECREATE_TARGET) {
-			LOG_WARN("D2D request rebuild %X, D2DRenderTarget: %X", hr, this);
-		}
+		if (hr == D2DERR_RECREATE_TARGET && !m_bD2DRendering)
+			m_graphicSession.HandleDirectResult(hr);
 	}
 }
 
@@ -320,9 +325,8 @@ void D2DRenderTarget::DrawImageWithDirectBlur(texture_handle srcCanvas, float va
 		pD2DContext->SetTarget(nullptr);
 		pEffect->SetInput(0, nullptr, FALSE);
 
-		if (hr == D2DERR_RECREATE_TARGET) {
-			LOG_WARN("D2D request rebuild %X, D2DRenderTarget: %X", hr, this);
-		}
+		if (hr == D2DERR_RECREATE_TARGET && !m_bD2DRendering)
+			m_graphicSession.HandleDirectResult(hr);
 	}
 }
 

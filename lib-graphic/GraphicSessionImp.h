@@ -104,13 +104,13 @@ public:
 	void RemoveObject(DX11GraphicBase *obj);
 	bool IsGraphicObjectAlive(IGraphicObject *obj);
 	bool IsDuringRender() { return m_bDuringRendering; }
+	void HandleDirectResult(HRESULT hr, std::source_location location = std::source_location::current());
 
 protected:
 	bool BuildAllDX();
 	void ReleaseAllDX();
 	bool InitBlendState();
 	bool InitSamplerState();
-	void HandleDXHResult(HRESULT hr, std::source_location location = std::source_location::current());
 
 	void SetRenderContext(ComPtr<ID3D11RenderTargetView> target, uint32_t width, uint32_t height,
 			      ComPtr<IDXGISwapChain> swapChain);

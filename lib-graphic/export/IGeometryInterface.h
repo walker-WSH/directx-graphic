@@ -30,7 +30,7 @@ public:
 	virtual void FillRoundedRectangle(const D2D1_ROUNDED_RECT &roundedRect, const ColorRGBA *clr) = 0;
 	virtual void FillGeometry(geometry_handle path, const ColorRGBA *clr) = 0;
 
-	virtual HRESULT FlushGeometry(std::source_location caller = std::source_location::current()) = 0;
+	virtual bool FlushGeometry(std::source_location caller = std::source_location::current()) = 0;
 
 	virtual void
 	DrawImageWithGaussianBlur(texture_handle srcCanvas, float value = 50.f,

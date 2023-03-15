@@ -1,2 +1,3 @@
 3rd\
+sample\resource.h
 sample\Resource.h
