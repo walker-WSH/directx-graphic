@@ -191,10 +191,22 @@ unsigned __stdcall CMFCDemoDlg::ThreadFunc(void *pParam)
 				if (!item.region.right || !item.region.bottom)
 					break; // no region to draw it
 
-				RenderTexture(std::vector<texture_handle>{item.tex}, canvasSize, item.region);
-
-				if (item.selected)
+				if (item.selected) {
 					rcSelected = item.region;
+
+					auto temp = pGraphic->GetTextureInfo(item.tex);
+
+					MosaicParam mosaic;
+					mosaic.texWidth = temp.width;
+					mosaic.texHeight = temp.height;
+					mosaic.mosaicSizeCX = 20;
+					mosaic.mosaicSizeCY = 20;
+
+					RenderTexture(std::vector<texture_handle>{item.tex}, canvasSize, item.region,
+						      &mosaic);
+				} else {
+					RenderTexture(std::vector<texture_handle>{item.tex}, canvasSize, item.region);
+				}
 			}
 
 			// draw grid

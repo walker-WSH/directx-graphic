@@ -145,5 +145,8 @@
     <FxCompile Include="HLSL\ps-to-rgb-yuy2.hlsl">
       <Filter>render\HLSL</Filter>
     </FxCompile>
+    <FxCompile Include="HLSL\mosaic-ps.hlsl">
+      <Filter>render\HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

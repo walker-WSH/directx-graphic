@@ -8,8 +8,9 @@
 using namespace graphic;
 
 enum class VIDEO_SHADER_TYPE {
-	SHADER_TEXTURE = 0,
-	SHADER_FILL_RECT,
+	SHADER_FILL_RECT = 0,
+	SHADER_TEXTURE,
+	SHADER_TEXTURE_MOSAIC,
 
 	// yuv to rgb
 	SHADER_I420_TO_RGB,
@@ -43,6 +44,13 @@ struct ColorVertexDesc {
 	float x, y, z, w;
 };
 
+struct MosaicParam {
+	int texWidth = 0;
+	int texHeight = 0;
+	int mosaicSizeCX = 0;
+	int mosaicSizeCY = 0;
+};
+
 extern IGraphicSession *pGraphic;
 extern std::map<VIDEO_SHADER_TYPE, shader_handle> shaders;
 void InitShader();
@@ -57,7 +65,7 @@ void TransposeMatrixWVP(const SIZE &canvas, bool convertCoord, WorldDesc wd, flo
 
 texture_handle getRotatedTexture(texture_handle tex, texture_handle &cv);
 
-void RenderTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest);
+void RenderTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest, const MosaicParam *mosaic = nullptr);
 
 // 这个渲染border的方法 性能太低 应该优化
 // 方法1：连续性渲染若干个三角形 一次性渲染整个border

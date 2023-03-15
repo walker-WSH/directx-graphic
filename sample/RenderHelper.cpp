@@ -37,6 +37,18 @@ void InitShader()
 	}
 
 	{
+		shaderInfo.vsFile = dir + L"default-vs.cso";
+		shaderInfo.psFile = dir + L"mosaic-ps.cso";
+		shaderInfo.vsBufferSize = sizeof(matrixWVP);
+		shaderInfo.psBufferSize = sizeof(MosaicParam);
+		shaderInfo.vertexCount = TEXTURE_VERTEX_COUNT;
+		shaderInfo.perVertexSize = sizeof(TextureVertexDesc);
+		shader_handle shader = pGraphic->CreateShader(shaderInfo);
+		assert(shader);
+		shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_MOSAIC] = shader;
+	}
+
+	{
 		ShaderInformation shaderInfo;
 
 		VertexInputDesc desc;
@@ -160,13 +172,16 @@ void FillColorVertex(float left, float top, float right, float bottom,
 }
 
 extern bool bFullscreenCrop;
-void RenderTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest)
+void RenderTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest, const MosaicParam *mosaic)
 {
 	AUTO_GRAPHIC_CONTEXT(pGraphic);
 
 	TextureInformation texInfo = pGraphic->GetTextureInfo(texs.at(0));
 	shader_handle shader = shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE];
-	SIZE texSize(texInfo.width, texInfo.height);
+	if (mosaic) {
+		shader = shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_MOSAIC];
+		pGraphic->SetPSConstBuffer(shader, mosaic, sizeof(MosaicParam));
+	}
 
 	RECT realDrawDest = drawDest;
 	float cropL = 0;
