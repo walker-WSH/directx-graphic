@@ -54,7 +54,8 @@ protected:
 	bool m_bSaveImage = false;
 	HANDLE m_hThread = 0;
 	IGraphicSession *m_pGraphic = nullptr;
-	static unsigned __stdcall ThreadFunc(void *pParam);
+	static unsigned __stdcall ThreadFuncNormalRender(void *pParam);
+	static unsigned __stdcall ThreadFuncForSubRegionMosic(void *pParam);
 
 public:
 	// 生成的消息映射函数
