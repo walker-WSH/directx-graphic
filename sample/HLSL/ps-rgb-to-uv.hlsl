@@ -1,4 +1,4 @@
-SamplerState SampleType : register(s0);
+SamplerState sampleType : register(s0);
 Texture2D image0 : register(t0);
 
 cbuffer PSConstants : register(b0)
@@ -14,7 +14,7 @@ struct VertexOut {
 
 float4 main(VertexOut pIn) : SV_Target
 {
-	float4 rgba = image0.Sample(SampleType, pIn.uv);
+	float4 rgba = image0.Sample(sampleType, pIn.uv);
 	float u = dot(color_vec_u.xyz, rgba.xyz) + color_vec_u.w;
 	float v = dot(color_vec_v.xyz, rgba.xyz) + color_vec_v.w;
 	return float4(u, v, 0.0, 1.0);
