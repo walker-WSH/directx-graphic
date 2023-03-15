@@ -31,6 +31,7 @@ texture_handle texCanvas = nullptr;
 texture_handle texCanvas2 = nullptr;
 texture_handle texGirlRotated = nullptr;
 texture_handle texGirlOrigin = nullptr;
+texture_handle texGrid = nullptr;
 texture_handle texShared = nullptr;
 texture_handle texAlpha = nullptr;
 texture_handle texImg = nullptr;
@@ -38,8 +39,9 @@ texture_handle texImg2 = nullptr;
 texture_handle texForWrite = nullptr;
 font_handle fontFormat = nullptr;
 font_handle fontFormat2 = nullptr;
-std::vector<geometry_handle> finishedPathList;
 geometry_handle drawingPath = nullptr;
+std::vector<geometry_handle> finishedPathList;
+bool pathListChanged = false;
 
 struct texRegionInfo {
 	texture_handle tex = nullptr;
@@ -71,7 +73,7 @@ void TestCopyDisplay(display_handle display);
 
 extern int gridX;
 extern int gridY;
-unsigned __stdcall CMFCDemoDlg::ThreadFunc(void *pParam)
+unsigned __stdcall CMFCDemoDlg::ThreadFuncNormalRender(void *pParam)
 {
 	HRESULT hr = CoInitialize(NULL);
 
@@ -107,6 +109,9 @@ unsigned __stdcall CMFCDemoDlg::ThreadFunc(void *pParam)
 		texRegions.push_back(info);
 
 		info.tex = texImg2;
+		texRegions.push_back(info);
+
+		info.tex = texGrid;
 		texRegions.push_back(info);
 
 		info.tex = texForWrite;
@@ -203,7 +208,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFunc(void *pParam)
 					mosaic.mosaicSizeCY = 20;
 
 					RenderTexture(std::vector<texture_handle>{item.tex}, canvasSize, item.region,
-						      &mosaic);
+						      VIDEO_SHADER_TYPE::SHADER_TEXTURE_MOSAIC, &mosaic);
 				} else {
 					RenderTexture(std::vector<texture_handle>{item.tex}, canvasSize, item.region);
 				}
@@ -316,6 +321,156 @@ unsigned __stdcall CMFCDemoDlg::ThreadFunc(void *pParam)
 	return 0;
 }
 
+unsigned __stdcall CMFCDemoDlg::ThreadFuncForSubRegionMosic(void *pParam)
+{
+	HRESULT hr = CoInitialize(NULL);
+
+	CMFCDemoDlg *self = reinterpret_cast<CMFCDemoDlg *>(pParam);
+	pGraphic = self->m_pGraphic;
+
+	if (!InitGraphic(self->m_hWnd))
+		return 1;
+
+	TextureInformation canvasInfo;
+	canvasInfo.usage = TEXTURE_USAGE::CANVAS_TARGET;
+	canvasInfo.format = D2D_COMPATIBLE_FORMAT;
+
+	texture_handle canvasTex = 0;  // 窗口画面 先画到这上面 再present到窗口
+	texture_handle canvasPath = 0; // path的mask
+
+	{
+		RECT rc;
+		::GetClientRect(self->m_hWnd, &rc);
+
+		canvasInfo.width = rc.right;
+		canvasInfo.height = rc.bottom;
+
+		AUTO_GRAPHIC_CONTEXT(pGraphic);
+		canvasPath = pGraphic->CreateTexture(canvasInfo);
+		canvasTex = pGraphic->CreateTexture(canvasInfo);
+	}
+
+	int64_t frameInterval = 1000 / 30;
+	int64_t startCaptureTime = GetTickCount64();
+	int64_t capturedCount = 0;
+	while (!self->m_bExit) {
+		if (!self->m_asyncTask.RunAllTask()) {
+			int64_t nextCaptureTime = startCaptureTime + capturedCount * frameInterval;
+			int64_t currentTime = GetTickCount64();
+			int64_t sleepTime = 0;
+			if (currentTime < nextCaptureTime) {
+				sleepTime = nextCaptureTime - currentTime;
+				sleepTime = min(sleepTime, int64_t(100));
+			}
+
+			Sleep((DWORD)sleepTime);
+		}
+
+		if (self->m_nResizeState > 1)
+			continue;
+
+		++capturedCount;
+
+		RECT rc;
+		::GetClientRect(self->m_hWnd, &rc);
+
+		rc.right = (rc.right / 2) * 2;
+		rc.bottom = (rc.bottom / 2) * 2;
+
+		AUTO_GRAPHIC_CONTEXT(pGraphic);
+
+		SIZE canvasSize(rc.right - rc.left, rc.bottom - rc.top);
+		pGraphic->SetDisplaySize(display, canvasSize.cx, canvasSize.cy);
+
+		if (!pGraphic->IsGraphicBuilt()) {
+			if (!pGraphic->ReBuildGraphic())
+				continue;
+		}
+
+		bool reinitPathTex = false;
+		canvasInfo = pGraphic->GetTextureInfo(canvasTex);
+		if (canvasInfo.width != rc.right || canvasInfo.height != rc.bottom) {
+			pGraphic->DestroyGraphicObject(canvasPath);
+			pGraphic->DestroyGraphicObject(canvasTex);
+
+			canvasInfo.width = rc.right;
+			canvasInfo.height = rc.bottom;
+
+			canvasPath = pGraphic->CreateTexture(canvasInfo);
+			canvasTex = pGraphic->CreateTexture(canvasInfo);
+
+			reinitPathTex = true;
+		}
+
+		if (pathListChanged) {
+			reinitPathTex = true;
+			pathListChanged = false;
+		}
+
+		if (reinitPathTex) {
+			IGeometryInterface *d2d = nullptr;
+			if (pGraphic->BeginRenderCanvas(canvasPath, &d2d)) {
+				ColorRGBA clr = {0, 0, 0, 0};
+				pGraphic->ClearBackground(&clr);
+				pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
+
+				if (!finishedPathList.empty()) {
+					auto lastOne = finishedPathList.size() - 1;
+					auto path = finishedPathList[lastOne];
+					ColorRGBA clrSubRegion = {1.f, 0, 0, 1.f};
+					d2d->DrawGeometry(path, &clrSubRegion, g_lineStride,
+							  LINE_DASH_STYLE::LINE_SOLID);
+				}
+
+				pGraphic->EndRender(d2d);
+			}
+		}
+
+		IGeometryInterface *d2d = nullptr;
+		if (pGraphic->BeginRenderCanvas(canvasTex, &d2d)) {
+			ColorRGBA clr = {0, 0, 0, 1.f};
+			pGraphic->ClearBackground(&clr);
+			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
+
+			RECT left = rc;
+			left.right = rc.right / 2;
+			RenderTexture(std::vector<texture_handle>{texGirlOrigin}, canvasSize, left);
+
+			RECT right = rc;
+			right.left = rc.right / 2;
+			RenderTexture(std::vector<texture_handle>{texGrid}, canvasSize, right);
+
+			if (drawingPath) {
+				d2d->DrawGeometry(drawingPath, &clrRed, g_lineStride, LINE_DASH_STYLE::LINE_SOLID);
+			}
+
+			pGraphic->EndRender(d2d);
+		}
+
+		if (pGraphic->BeginRenderWindow(display)) {
+			pGraphic->ClearBackground(&clrGrey);
+			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::DISABLE);
+
+			MosaicParam mosaic;
+			mosaic.texWidth = rc.right;
+			mosaic.texHeight = rc.bottom;
+			mosaic.mosaicSizeCX = 20;
+			mosaic.mosaicSizeCY = 20;
+			RenderTexture(std::vector<texture_handle>{canvasTex, canvasPath}, canvasSize, rc,
+				      VIDEO_SHADER_TYPE::SHADER_TEXTURE_MOSAIC_SUB, &mosaic);
+
+			pGraphic->EndRender();
+		}
+	}
+
+	UnInitGraphic();
+
+	if (SUCCEEDED(hr))
+		CoUninitialize();
+
+	return 0;
+}
+
 bool InitGraphic(HWND hWnd)
 {
 	auto listGraphic = graphic::EnumGraphicCard();
@@ -340,6 +495,8 @@ bool InitGraphic(HWND hWnd)
 
 	//------------------------------------------------------------------
 	texGirlOrigin = pGraphic->OpenImageTexture(L"testGirl.jpg");
+
+	texGrid = pGraphic->OpenImageTexture(L"testGrid.png");
 
 	texAlpha = pGraphic->OpenImageTexture(L"testAlpha.png");
 
@@ -623,6 +780,7 @@ void UpdatePath(std::vector<CPoint> pt, bool finished)
 		if (finished) {
 			temp->SetUserData((void *)GetTickCount64());
 			finishedPathList.push_back(temp);
+			pathListChanged = true;
 		} else {
 			drawingPath = temp;
 		}
@@ -643,6 +801,7 @@ void CMFCDemoDlg::OnBnClickedClearAllDraw()
 
 		finishedPathList.clear();
 		drawingPath = nullptr;
+		pathListChanged = true;
 	});
 }
 

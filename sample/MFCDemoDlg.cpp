@@ -12,7 +12,7 @@
 #define new DEBUG_NEW
 #endif
 
-float g_lineStride = 2.f;
+float g_lineStride = 100.f;
 float g_blurValue = 50.f;
 int g_rotatePeriod = 10 * 1000;
 
@@ -24,7 +24,7 @@ public:
 
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_ABOUTBOX };
+	enum {IDD = IDD_ABOUTBOX};
 #endif
 
 protected:
@@ -137,7 +137,7 @@ BOOL CMFCDemoDlg::OnInitDialog()
 	MoveWindow(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 	CenterWindow();
 
-	m_lineSizeSlider.SetRange(1, 20);
+	m_lineSizeSlider.SetRange(1, 200);
 	m_lineSizeSlider.SetPos((int)g_lineStride);
 
 	m_gausBlurSlider.SetRange(0, 100);
@@ -147,7 +147,11 @@ BOOL CMFCDemoDlg::OnInitDialog()
 	m_rotateSlider.SetPos(g_rotatePeriod);
 
 	m_bExit = false;
-	m_hThread = (HANDLE)_beginthreadex(0, 0, ThreadFunc, this, 0, 0);
+#if 1
+	m_hThread = (HANDLE)_beginthreadex(0, 0, ThreadFuncNormalRender, this, 0, 0);
+#else
+	m_hThread = (HANDLE)_beginthreadex(0, 0, ThreadFuncForSubRegionMosic, this, 0, 0);
+#endif
 
 	SetTimer(3000, 50, nullptr);
 	return TRUE; // 除非将焦点设置到控件，否则返回 TRUE

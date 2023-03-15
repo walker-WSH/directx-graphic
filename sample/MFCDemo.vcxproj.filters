@@ -148,5 +148,8 @@
     <FxCompile Include="HLSL\mosaic-ps.hlsl">
       <Filter>render\HLSL</Filter>
     </FxCompile>
+    <FxCompile Include="HLSL\mosaic-subregion-ps.hlsl">
+      <Filter>render\HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

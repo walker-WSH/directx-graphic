@@ -40,7 +40,7 @@ f.close()
 print('\n\n================================= format files =====================================')
 for root, dirs, files in os.walk(currentDir):
     for name in files:
-        if (name.endswith(".h") or name.endswith(".hpp") or name.endswith(".hxx") or name.endswith(".c") or name.endswith(".cpp") or name.endswith(".cc") or name.endswith(".cxx")):
+        if (name.endswith(".h") or name.endswith(".hpp") or name.endswith(".hxx") or name.endswith(".c") or name.endswith(".cpp") or name.endswith(".cc") or name.endswith(".cxx") or name.endswith(".hlsl") or name.endswith(".hlsli")):
             fullPath = root + '\\' + name
             ignoreFile = IsInIgnoreList(fullPath)
             if ignoreFile == True:
