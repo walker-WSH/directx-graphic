@@ -65,7 +65,6 @@ CMFCDemoDlg::~CMFCDemoDlg()
 void CMFCDemoDlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_BUTTON1, m_btnTest);
 	DDX_Control(pDX, IDC_CHECK_SMOOTH, m_checkboxSmooth);
 	DDX_Control(pDX, IDC_SLIDER1, m_lineSizeSlider);
 	DDX_Control(pDX, IDC_SLIDER2, m_gausBlurSlider);
@@ -84,7 +83,6 @@ ON_WM_SETCURSOR()
 ON_WM_LBUTTONDBLCLK()
 ON_WM_MBUTTONDOWN()
 ON_WM_RBUTTONDOWN()
-ON_BN_CLICKED(IDC_BUTTON1, &CMFCDemoDlg::OnBnClickedButton1)
 ON_WM_ERASEBKGND()
 ON_WM_ENTERSIZEMOVE()
 ON_WM_EXITSIZEMOVE()
@@ -268,11 +266,6 @@ BOOL CMFCDemoDlg::OnSetCursor(CWnd *pWnd, UINT nHitTest, UINT message)
 	}
 }
 
-void CMFCDemoDlg::OnBnClickedButton1()
-{
-	m_btnTest.ShowWindow(SW_HIDE);
-}
-
 BOOL CMFCDemoDlg::OnEraseBkgnd(CDC *pDC)
 {
 	return TRUE; // 不擦除背景
@@ -320,18 +313,13 @@ void CMFCDemoDlg::OnSizing(UINT fwSide, LPRECT pRect)
 void CMFCDemoDlg::OnSize(UINT nType, int cx, int cy)
 {
 	CDialogEx::OnSize(nType, cx, cy);
+
 	if (m_nResizeState == 1)
 		m_nResizeState += 1;
 	if (m_nResizeState > 1)
 		RedrawWindow(); // 立即触发一次重绘
 
-	if (m_btnTest.GetSafeHwnd()) {
-		const int width = 200;
-		const int height = 30;
-		int left = (cx - width) / 2;
-		int top = cy - height - 10;
-		m_btnTest.MoveWindow(left, top, width, height);
-
+	if (m_btnExit.GetSafeHwnd()) {
 		const auto exitBtnSize = 50;
 		const auto border = 10;
 		m_btnExit.MoveWindow(cx - exitBtnSize - border, border, exitBtnSize, exitBtnSize);

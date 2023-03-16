@@ -37,7 +37,6 @@ protected:
 	// 实现
 protected:
 	HICON m_hIcon;
-	CButton m_btnTest;
 	CButton m_btnExit;
 	CButton m_checkboxSmooth;
 	CSliderCtrl m_lineSizeSlider;
@@ -72,7 +71,6 @@ public:
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnMButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnBnClickedButton1();
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	afx_msg void OnEnterSizeMove();
 	afx_msg void OnExitSizeMove();
