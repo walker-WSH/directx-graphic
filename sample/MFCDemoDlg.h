@@ -89,4 +89,6 @@ public:
 	afx_msg void OnNMThemeChangedSlider1(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnBnClickedButton10();
+	afx_msg void OnBnClickedButtonTestMosaic();
+	afx_msg void OnBnClickedButtonRunNormal();
 };

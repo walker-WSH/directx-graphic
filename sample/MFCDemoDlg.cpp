@@ -18,13 +18,46 @@ int g_rotatePeriod = 10 * 1000;
 
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 
+static const std::wstring TEST_MOSAIC_CMD = L"test_mosaic";
+enum class RUN_TEST_FOR {
+	RUN_NORMAL = 0,
+	RUN_SUB_MOSAIC,
+};
+RUN_TEST_FOR InitCmdParams()
+{
+	RUN_TEST_FOR ret = RUN_TEST_FOR::RUN_NORMAL;
+	LPWSTR *szArgList = NULL;
+
+	do {
+		int argCount = 0;
+		szArgList = CommandLineToArgvW(GetCommandLineW(), &argCount);
+		if (!szArgList) {
+			break;
+		}
+
+		for (int i = 0; i < argCount; i++) {
+			auto str = szArgList[i];
+			if (str == TEST_MOSAIC_CMD) {
+				ret = RUN_TEST_FOR::RUN_SUB_MOSAIC;
+				break;
+			}
+		}
+
+	} while (0);
+
+	if (szArgList)
+		LocalFree(szArgList);
+
+	return ret;
+}
+
 class CAboutDlg : public CDialogEx {
 public:
 	CAboutDlg();
 
 // 对话框数据
 #ifdef AFX_DESIGN_TIME
-	enum {IDD = IDD_ABOUTBOX};
+	enum { IDD = IDD_ABOUTBOX };
 #endif
 
 protected:
@@ -101,6 +134,8 @@ ON_BN_CLICKED(IDC_BUTTON9, &CMFCDemoDlg::OnBnClickedClearAllDraw)
 ON_NOTIFY(NM_THEMECHANGED, IDC_SLIDER1, &CMFCDemoDlg::OnNMThemeChangedSlider1)
 ON_WM_TIMER()
 ON_BN_CLICKED(IDC_BUTTON10, &CMFCDemoDlg::OnBnClickedButton10)
+ON_BN_CLICKED(IDC_BUTTON_TEST_MOSAIC, &CMFCDemoDlg::OnBnClickedButtonTestMosaic)
+ON_BN_CLICKED(IDC_BUTTON_RUN_NORMAL, &CMFCDemoDlg::OnBnClickedButtonRunNormal)
 END_MESSAGE_MAP()
 
 // CMFCDemoDlg 消息处理程序
@@ -146,11 +181,15 @@ BOOL CMFCDemoDlg::OnInitDialog()
 	m_rotateSlider.SetPos(g_rotatePeriod);
 
 	m_bExit = false;
-#if 1
-	m_hThread = (HANDLE)_beginthreadex(0, 0, ThreadFuncNormalRender, this, 0, 0);
-#else
-	m_hThread = (HANDLE)_beginthreadex(0, 0, ThreadFuncForSubRegionMosic, this, 0, 0);
-#endif
+	switch (InitCmdParams()) {
+	case RUN_TEST_FOR::RUN_SUB_MOSAIC:
+		m_hThread = (HANDLE)_beginthreadex(0, 0, ThreadFuncForSubRegionMosic, this, 0, 0);
+		break;
+	case RUN_TEST_FOR::RUN_NORMAL:
+	default:
+		m_hThread = (HANDLE)_beginthreadex(0, 0, ThreadFuncNormalRender, this, 0, 0);
+		break;
+	}
 
 	SetTimer(3000, 50, nullptr);
 	return TRUE; // 除非将焦点设置到控件，否则返回 TRUE
@@ -175,95 +214,6 @@ void CMFCDemoDlg::OnSysCommand(UINT nID, LPARAM lParam)
 HCURSOR CMFCDemoDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
-}
-
-LRESULT CMFCDemoDlg::OnNcHitTest(CPoint pt)
-{
-	RECT rcWindow;
-	::GetWindowRect(m_hWnd, &rcWindow);
-
-	// 最好将四个角的判断放在前面
-	if (pt.x <= rcWindow.left + RESIZE_REGION_SIZE && pt.y <= rcWindow.top + RESIZE_REGION_SIZE)
-		return HTTOPLEFT;
-	else if (pt.x >= rcWindow.right - RESIZE_REGION_SIZE && pt.y <= rcWindow.top + RESIZE_REGION_SIZE)
-		return HTTOPRIGHT;
-	else if (pt.x <= rcWindow.left + RESIZE_REGION_SIZE && pt.y >= rcWindow.bottom - RESIZE_REGION_SIZE)
-		return HTBOTTOMLEFT;
-	else if (pt.x >= rcWindow.right - RESIZE_REGION_SIZE && pt.y >= rcWindow.bottom - RESIZE_REGION_SIZE)
-		return HTBOTTOMRIGHT;
-	else if (pt.x <= rcWindow.left + RESIZE_REGION_SIZE)
-		return HTLEFT;
-	else if (pt.x >= rcWindow.right - RESIZE_REGION_SIZE)
-		return HTRIGHT;
-	else if (pt.y <= rcWindow.top + RESIZE_REGION_SIZE)
-		return HTTOP;
-	else if (pt.y >= rcWindow.bottom - RESIZE_REGION_SIZE)
-		return HTBOTTOM;
-
-	if (pt.y <= (rcWindow.top + DRAGE_REGION_SIZE))
-		return HTCAPTION;
-	else
-		return __super::OnNcHitTest(pt);
-}
-
-void CMFCDemoDlg::OnNcLButtonDown(UINT nHitTest, CPoint point)
-{
-	switch (nHitTest) {
-	case HTTOP:
-		SendMessage(WM_SYSCOMMAND, SC_SIZE | WMSZ_TOP, MAKELPARAM(point.x, point.y));
-		break;
-	case HTBOTTOM:
-		SendMessage(WM_SYSCOMMAND, SC_SIZE | WMSZ_BOTTOM, MAKELPARAM(point.x, point.y));
-		break;
-	case HTLEFT:
-		SendMessage(WM_SYSCOMMAND, SC_SIZE | WMSZ_LEFT, MAKELPARAM(point.x, point.y));
-		break;
-	case HTRIGHT:
-		SendMessage(WM_SYSCOMMAND, SC_SIZE | WMSZ_RIGHT, MAKELPARAM(point.x, point.y));
-		break;
-	case HTTOPLEFT:
-		SendMessage(WM_SYSCOMMAND, SC_SIZE | WMSZ_TOPLEFT, MAKELPARAM(point.x, point.y));
-		break;
-	case HTTOPRIGHT:
-		SendMessage(WM_SYSCOMMAND, SC_SIZE | WMSZ_TOPRIGHT, MAKELPARAM(point.x, point.y));
-		break;
-	case HTBOTTOMLEFT:
-		SendMessage(WM_SYSCOMMAND, SC_SIZE | WMSZ_BOTTOMLEFT, MAKELPARAM(point.x, point.y));
-		break;
-	case HTBOTTOMRIGHT:
-		SendMessage(WM_SYSCOMMAND, SC_SIZE | WMSZ_BOTTOMRIGHT, MAKELPARAM(point.x, point.y));
-		break;
-	default:
-		__super::OnNcLButtonDown(nHitTest, point);
-	}
-}
-
-BOOL CMFCDemoDlg::OnSetCursor(CWnd *pWnd, UINT nHitTest, UINT message)
-{
-	switch (nHitTest) {
-	case HTTOP:
-	case HTBOTTOM:
-		SetCursor(LoadCursor(NULL, MAKEINTRESOURCE(IDC_SIZENS)));
-		return TRUE;
-
-	case HTLEFT:
-	case HTRIGHT:
-		SetCursor(LoadCursor(NULL, MAKEINTRESOURCE(IDC_SIZEWE)));
-		return TRUE;
-
-	case HTTOPLEFT:
-	case HTBOTTOMRIGHT:
-		SetCursor(LoadCursor(NULL, MAKEINTRESOURCE(IDC_SIZENWSE)));
-		return TRUE;
-
-	case HTTOPRIGHT:
-	case HTBOTTOMLEFT:
-		SetCursor(LoadCursor(NULL, MAKEINTRESOURCE(IDC_SIZENESW)));
-		return TRUE;
-
-	default:
-		return __super::OnSetCursor(pWnd, nHitTest, message);
-	}
 }
 
 BOOL CMFCDemoDlg::OnEraseBkgnd(CDC *pDC)
@@ -379,4 +329,40 @@ void CMFCDemoDlg::OnTimer(UINT_PTR nIDEvent)
 void CMFCDemoDlg::OnBnClickedButton10()
 {
 	m_bSaveImage = true;
+}
+
+void RunChildProcess(const wchar_t *param)
+{
+	wchar_t path[MAX_PATH] = {};
+	GetModuleFileNameW(0, path, MAX_PATH);
+
+	wchar_t cmd[2048];
+	swprintf_s(cmd, 2048, L"\"%s\" \"%s\" ", path, param ? param : L"");
+
+	PROCESS_INFORMATION pi = {};
+	STARTUPINFO si = {};
+	si.cb = sizeof(STARTUPINFO);
+	si.dwFlags = STARTF_FORCEOFFFEEDBACK;
+	si.wShowWindow = SW_HIDE;
+
+	BOOL bOK = CreateProcessW(path, cmd, NULL, NULL, TRUE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+	if (!bOK) {
+		assert(false);
+		return;
+	}
+
+	CloseHandle(pi.hThread);
+	CloseHandle(pi.hProcess);
+}
+
+void CMFCDemoDlg::OnBnClickedButtonTestMosaic()
+{
+	RunChildProcess(TEST_MOSAIC_CMD.c_str());
+	DestroyWindow(); // exit current process
+}
+
+void CMFCDemoDlg::OnBnClickedButtonRunNormal()
+{
+	RunChildProcess(nullptr);
+	DestroyWindow(); // exit current process
 }

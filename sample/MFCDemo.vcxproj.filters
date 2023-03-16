@@ -95,6 +95,9 @@
     <ClCompile Include="AsyncTask.cpp">
       <Filter>render</Filter>
     </ClCompile>
+    <ClCompile Include="MFCDemoDlgResize.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MFCDemo.rc">
