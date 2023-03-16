@@ -10,6 +10,7 @@
 #include <d2d1helper.h>
 #include <dwrite.h>
 #include <source_location>
+#include <functional>
 
 #ifdef GRAPHIC_API_EXPORTS
 #define GRAPHIC_API __declspec(dllexport)
@@ -36,6 +37,7 @@ using display_handle = IGraphicObject *;
 using shader_handle = IGraphicObject *;
 using font_handle = IGraphicObject *;
 using geometry_handle = IGraphicObject *;
+using graphic_cb = long;
 
 enum class TEXTURE_USAGE {
 	UNKNOWN = 0,
@@ -212,6 +214,12 @@ public:
 	virtual ~IGraphicObject() = default;
 
 	virtual bool IsBuilt() = 0;
+
+	virtual graphic_cb RegisterCallback(std::function<void(IGraphicObject *obj)> cbRebuilt,
+					    std::function<void(IGraphicObject *obj)> cbReleased) = 0;
+	virtual void UnregisterCallback(graphic_cb hdl) = 0;
+	virtual void ClearCallback() = 0;
+
 	virtual void SetUserData(void *data) = 0;
 	virtual void *GetUserData() = 0;
 };

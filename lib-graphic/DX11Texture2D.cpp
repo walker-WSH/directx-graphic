@@ -68,15 +68,17 @@ bool DX11Texture2D::BuildGraphic()
 		break;
 	}
 
-	if (bSuccessed)
+	if (bSuccessed) {
 		m_pTexture2D->GetDesc(&m_descTexture);
-	else
-		ReleaseGraphic();
+		NotifyRebuildEvent();
+	} else {
+		ReleaseGraphic(false);
+	}
 
 	return bSuccessed;
 }
 
-void DX11Texture2D::ReleaseGraphic()
+void DX11Texture2D::ReleaseGraphic(bool isForRebuild)
 {
 	CHECK_GRAPHIC_CONTEXT_EX(DX11GraphicBase::m_graphicSession);
 
@@ -86,6 +88,8 @@ void DX11Texture2D::ReleaseGraphic()
 	m_pTextureResView = nullptr;
 
 	D2DRenderTarget::ReleaseD2D();
+
+	NotifyReleaseEvent(isForRebuild);
 }
 
 bool DX11Texture2D::InitWriteTexture()

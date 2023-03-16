@@ -532,6 +532,17 @@ bool InitGraphic(HWND hWnd)
 		pGraphic->UnmapTexture(texForWrite);
 	}
 
+	texForWrite->RegisterCallback(
+		[](IGraphicObject *self) {
+			auto info = pGraphic->GetTextureInfo(self);
+			D3D11_MAPPED_SUBRESOURCE mapdata;
+			if (pGraphic->MapTexture(self, MAP_TEXTURE_FEATURE::FOR_WRITE_TEXTURE, &mapdata)) {
+				memset(mapdata.pData, 0XFF, (size_t)mapdata.RowPitch * info.height);
+				pGraphic->UnmapTexture(self);
+			}
+		},
+		[](IGraphicObject *self) {});
+
 	info.usage = TEXTURE_USAGE::READ_TEXTURE;
 	auto texForRead = pGraphic->CreateTexture(info);
 	pGraphic->CopyTexture(texForRead, texCanvas);

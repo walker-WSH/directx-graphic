@@ -108,10 +108,11 @@ bool DX11Shader::BuildGraphic()
 		}
 	}
 
+	NotifyRebuildEvent();
 	return true;
 }
 
-void DX11Shader::ReleaseGraphic()
+void DX11Shader::ReleaseGraphic(bool isForRebuild)
 {
 	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 
@@ -123,6 +124,8 @@ void DX11Shader::ReleaseGraphic()
 
 	m_pInputLayout = nullptr;
 	m_pVertexBuffer = nullptr;
+
+	NotifyReleaseEvent(isForRebuild);
 }
 
 bool DX11Shader::IsBuilt()

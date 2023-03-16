@@ -63,13 +63,18 @@ bool D2DGeometry::BuildGraphic()
 	pSink->Close();
 
 	m_pD2DGeometry = pathGeometry;
+
+	NotifyRebuildEvent();
 	return true;
 }
 
-void D2DGeometry::ReleaseGraphic()
+void D2DGeometry::ReleaseGraphic(bool isForRebuild)
 {
 	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
+
 	m_pD2DGeometry = nullptr;
+
+	NotifyReleaseEvent(isForRebuild);
 }
 
 bool D2DGeometry::IsBuilt()

@@ -108,7 +108,7 @@ public:
 
 protected:
 	bool BuildAllDX();
-	void ReleaseAllDX();
+	void ReleaseAllDX(bool isForRebuild);
 	bool InitBlendState();
 	bool InitSamplerState();
 

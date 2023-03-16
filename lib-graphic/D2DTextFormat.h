@@ -14,7 +14,7 @@ public:
 	D2DTextFormat(DX11GraphicSession &graphic, const TextFormatDesc &desc);
 
 	virtual bool BuildGraphic();
-	virtual void ReleaseGraphic();
+	virtual void ReleaseGraphic(bool isForRebuild);
 	virtual bool IsBuilt();
 
 protected:

@@ -15,7 +15,7 @@ public:
 		    GEOMETRY_FRONT_END_STYLE style);
 
 	virtual bool BuildGraphic();
-	virtual void ReleaseGraphic();
+	virtual void ReleaseGraphic(bool isForRebuild);
 	virtual bool IsBuilt();
 
 private:

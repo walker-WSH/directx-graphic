@@ -19,18 +19,22 @@ bool D2DLineStyle::BuildGraphic()
 		nullptr, 0, m_pStrokeStyle.Assign());
 	if (FAILED(hr)) {
 		LOG_WARN("CreateStrokeStyle failed with 0x%x, m_style:%d, D2DLineStyle:%X", hr, (int)m_style, this);
-		ReleaseGraphic();
+		ReleaseGraphic(false);
 		assert(false);
 		return false;
 	}
 
+	NotifyRebuildEvent();
 	return true;
 }
 
-void D2DLineStyle::ReleaseGraphic()
+void D2DLineStyle::ReleaseGraphic(bool isForRebuild)
 {
 	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
+
 	m_pStrokeStyle = nullptr;
+
+	NotifyReleaseEvent(isForRebuild);
 }
 
 bool D2DLineStyle::IsBuilt()

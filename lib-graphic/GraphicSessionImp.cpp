@@ -53,7 +53,7 @@ void DX11GraphicSession::UnInitializeGraphic()
 	LOG_TRACE();
 	CHECK_GRAPHIC_CONTEXT;
 
-	ReleaseAllDX();
+	ReleaseAllDX(false);
 
 	if (!m_listObject.empty()) {
 		LOG_WARN("you should destory all graphic objects");
@@ -108,7 +108,7 @@ void DX11GraphicSession::DestroyGraphicObject(IGraphicObject *&hdl)
 	CHECK_GRAPHIC_CONTEXT;
 	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11GraphicBase, obj, return );
 
-	obj->ReleaseGraphic();
+	obj->ReleaseGraphic(false);
 	delete hdl;
 	hdl = nullptr;
 }
@@ -124,7 +124,7 @@ void DX11GraphicSession::DestroyAllGraphicObject()
 		auto obj = item.first;
 		LOG_INFO("destroy graphic object: %s, %X", obj->GetObjectName(), (void *)obj);
 
-		obj->ReleaseGraphic();
+		obj->ReleaseGraphic(false);
 		delete obj;
 	}
 
@@ -494,7 +494,7 @@ void DX11GraphicSession::RemoveObject(DX11GraphicBase *obj)
 	RemoveItemInMap(m_listObject, obj);
 }
 
-void DX11GraphicSession::ReleaseAllDX()
+void DX11GraphicSession::ReleaseAllDX(bool isForRebuild)
 {
 	LOG_TRACE();
 	CHECK_GRAPHIC_CONTEXT;
@@ -510,10 +510,10 @@ void DX11GraphicSession::ReleaseAllDX()
 		LeaveContext(std::source_location::current());
 	}
 
-	m_bBuildSuccessed = false;
-
 	for (auto &item : m_listObject)
-		item.first->ReleaseGraphic();
+		item.first->ReleaseGraphic(isForRebuild);
+
+	m_bBuildSuccessed = false;
 
 	ReleaseD2D();
 
@@ -595,6 +595,8 @@ bool DX11GraphicSession::BuildAllDX()
 		return false;
 	}
 
+	m_bBuildSuccessed = true;
+
 	for (auto &item : m_listObject)
 		item.first->BuildGraphic();
 
@@ -624,7 +626,6 @@ bool DX11GraphicSession::BuildAllDX()
 		 (DWORD64)descAdapter.DedicatedSystemMemory / ONE_MB_BYTES,
 		 (DWORD64)descAdapter.SharedSystemMemory / ONE_MB_BYTES);
 
-	m_bBuildSuccessed = true;
 	return true;
 }
 
@@ -1033,7 +1034,7 @@ void DX11GraphicSession::HandleDirectResult(HRESULT hr, std::source_location loc
 					cb->OnRequestRebuild();
 			}
 
-			ReleaseAllDX();
+			ReleaseAllDX(true);
 			BuildAllDX();
 		}
 	}

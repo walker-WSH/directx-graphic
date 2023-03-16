@@ -14,7 +14,7 @@ public:
 	D2DLineStyle(DX11GraphicSession &graphic, LINE_DASH_STYLE style);
 
 	virtual bool BuildGraphic();
-	virtual void ReleaseGraphic();
+	virtual void ReleaseGraphic(bool isForRebuild);
 	virtual bool IsBuilt();
 
 private:

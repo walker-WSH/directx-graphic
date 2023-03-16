@@ -99,15 +99,31 @@ public:
 
 	const char *GetObjectName() { return m_strName.c_str(); }
 
+	virtual graphic_cb RegisterCallback(std::function<void(IGraphicObject *obj)> cbRebuilt,
+					    std::function<void(IGraphicObject *obj)> cbReleased);
+	virtual void UnregisterCallback(graphic_cb hdl);
+	virtual void ClearCallback();
+
 	virtual void SetUserData(void *data);
 	virtual void *GetUserData();
+
 	virtual bool BuildGraphic() = 0;
-	virtual void ReleaseGraphic() = 0;
+	virtual void ReleaseGraphic(bool isForRebuild) = 0;
 
 protected:
+	void NotifyReleaseEvent(bool isForRebuild);
+	void NotifyRebuildEvent();
+
+	struct GraphicCallback {
+		graphic_cb id = 0;
+		std::function<void(IGraphicObject *obj)> cbRebuilt;
+		std::function<void(IGraphicObject *obj)> cbReleased;
+	};
+
 	DX11GraphicSession &m_graphicSession;
 	const std::string m_strName;
 	void *m_userData = nullptr;
+	std::vector<GraphicCallback> m_callbacks;
 };
 
 } // namespace graphic

@@ -82,14 +82,18 @@ bool D2DTextFormat::BuildGraphic()
 		break;
 	}
 
+	NotifyRebuildEvent();
 	return true;
 }
 
-void D2DTextFormat::ReleaseGraphic()
+void D2DTextFormat::ReleaseGraphic(bool isForRebuild)
 {
 	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
+
 	m_pTextCutShow = nullptr;
 	m_pTextFormat = nullptr;
+
+	NotifyReleaseEvent(isForRebuild);
 }
 
 bool D2DTextFormat::IsBuilt()

@@ -22,14 +22,15 @@ bool DX11SwapChain::BuildGraphic()
 	HRESULT hr = InitSwapChain();
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "InitSwapChain %X", this);
-		ReleaseGraphic();
+		ReleaseGraphic(false);
 		return false;
 	}
 
+	NotifyRebuildEvent();
 	return true;
 }
 
-void DX11SwapChain::ReleaseGraphic()
+void DX11SwapChain::ReleaseGraphic(bool isForRebuild)
 {
 	CHECK_GRAPHIC_CONTEXT_EX(DX11GraphicBase::DX11GraphicBase::m_graphicSession);
 
@@ -39,6 +40,8 @@ void DX11SwapChain::ReleaseGraphic()
 	m_pRenderTargetView = nullptr;
 
 	D2DRenderTarget::ReleaseD2D();
+
+	NotifyReleaseEvent(isForRebuild);
 }
 
 bool DX11SwapChain::IsBuilt()

@@ -38,6 +38,7 @@ protected:
 protected:
 	HICON m_hIcon;
 	CButton m_btnTest;
+	CButton m_btnExit;
 	CButton m_checkboxSmooth;
 	CSliderCtrl m_lineSizeSlider;
 	CSliderCtrl m_gausBlurSlider;

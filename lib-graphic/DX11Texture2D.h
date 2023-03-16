@@ -18,7 +18,7 @@ public:
 	DX11Texture2D(DX11GraphicSession &graphic, const WCHAR *fullPath);
 
 	virtual bool BuildGraphic();
-	virtual void ReleaseGraphic();
+	virtual void ReleaseGraphic(bool isForRebuild);
 	virtual bool IsBuilt() { return m_pTexture2D; }
 
 protected:

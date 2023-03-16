@@ -70,6 +70,7 @@ void CMFCDemoDlg::DoDataExchange(CDataExchange *pDX)
 	DDX_Control(pDX, IDC_SLIDER1, m_lineSizeSlider);
 	DDX_Control(pDX, IDC_SLIDER2, m_gausBlurSlider);
 	DDX_Control(pDX, IDC_SLIDER3, m_rotateSlider);
+	DDX_Control(pDX, IDC_BUTTON2, m_btnExit);
 }
 
 BEGIN_MESSAGE_MAP(CMFCDemoDlg, CDialogEx)
@@ -325,11 +326,15 @@ void CMFCDemoDlg::OnSize(UINT nType, int cx, int cy)
 		RedrawWindow(); // 立即触发一次重绘
 
 	if (m_btnTest.GetSafeHwnd()) {
-		const int width = 400;
-		const int height = 50;
+		const int width = 200;
+		const int height = 30;
 		int left = (cx - width) / 2;
 		int top = cy - height - 10;
 		m_btnTest.MoveWindow(left, top, width, height);
+
+		const auto exitBtnSize = 50;
+		const auto border = 10;
+		m_btnExit.MoveWindow(cx - exitBtnSize - border, border, exitBtnSize, exitBtnSize);
 	}
 }
 

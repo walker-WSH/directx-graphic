@@ -16,7 +16,7 @@ public:
 	HRESULT TestResizeSwapChain();
 
 	virtual bool BuildGraphic();
-	virtual void ReleaseGraphic();
+	virtual void ReleaseGraphic(bool isForRebuild);
 	virtual bool IsBuilt();
 
 private:
