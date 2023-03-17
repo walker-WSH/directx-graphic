@@ -57,7 +57,6 @@ protected:
 	CDlgBulge m_dlgBulge;
 	IGraphicSession *m_pGraphic = nullptr;
 
-
 	static unsigned __stdcall ThreadFuncNormalRender(void *pParam);
 	static unsigned __stdcall ThreadFuncForSubRegionMosic(void *pParam);
 	static unsigned __stdcall ThreadFuncForBulge(void *pParam);
