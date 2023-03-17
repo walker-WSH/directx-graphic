@@ -14,6 +14,7 @@ enum class VIDEO_SHADER_TYPE {
 	SHADER_TEXTURE_MOSAIC_SUB,
 	SHADER_TEXTURE_BULGE,
 	SHADER_TEXTURE_REDUCE,
+	SHADER_TEXTURE_SHIFT,
 
 	// yuv to rgb
 	SHADER_I420_TO_RGB,
@@ -66,6 +67,17 @@ struct BulgeParam {
 	float reserve;
 };
 
+struct ShiftParam {
+	int texWidth = 0;  // 纹理宽度
+	int texHeight = 0; // 纹理高度
+	int originPositionX = 0;
+	int originPositionY = 0;
+	int targetPositionX = 0;
+	int targetPositionY = 0;
+	float radius = 0.f;
+	float curve = 1.f; // default 1
+};
+
 extern IGraphicSession *pGraphic;
 extern std::map<VIDEO_SHADER_TYPE, shader_handle> shaders;
 void InitShader();
@@ -84,6 +96,8 @@ void RenderTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest,
 		   VIDEO_SHADER_TYPE shader = VIDEO_SHADER_TYPE::SHADER_TEXTURE, const MosaicParam *mosaic = nullptr);
 
 void RenderBulgeTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest, const BulgeParam *psParam);
+
+void RenderShiftTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest, const ShiftParam *psParam);
 
 // 这个渲染border的方法 性能太低 应该优化
 // 方法1：连续性渲染若干个三角形 一次性渲染整个border

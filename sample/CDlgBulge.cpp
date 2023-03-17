@@ -23,6 +23,12 @@ void CDlgBulge::DoDataExchange(CDataExchange *pDX)
 	DDX_Control(pDX, IDC_SLIDER1, m_sliderRadius);
 	DDX_Control(pDX, IDC_CHECK3, m_checkReduce);
 	DDX_Control(pDX, IDC_SLIDER2, m_sliderWeight);
+	DDX_Control(pDX, IDC_EDIT4, m_editOrgX);
+	DDX_Control(pDX, IDC_EDIT5, m_editOrgY);
+	DDX_Control(pDX, IDC_EDIT6, m_editTgtX);
+	DDX_Control(pDX, IDC_EDIT7, m_editTgtY);
+	DDX_Control(pDX, IDC_SLIDER3, m_sliderMoveRadius);
+	DDX_Control(pDX, IDC_SLIDER4, m_sliderMoveWeight);
 }
 
 BEGIN_MESSAGE_MAP(CDlgBulge, CDialogEx)
@@ -44,6 +50,18 @@ BOOL CDlgBulge::OnInitDialog()
 	m_sliderWeight.SetRange(0, 100);
 	m_sliderWeight.SetPos(20);
 
+	m_sliderMoveRadius.SetRange(0, 300);
+	m_sliderMoveRadius.SetPos(50);
+
+	m_sliderMoveWeight.SetRange(1, 100);
+	m_sliderMoveWeight.SetPos(1);
+
+	m_editOrgX.SetWindowText(L"90");
+	m_editOrgY.SetWindowText(L"390");
+
+	m_editTgtX.SetWindowText(L"170");
+	m_editTgtY.SetWindowText(L"350");
+
 	SetTimer(20000, 100, nullptr);
 
 	return TRUE; // 除非将焦点设置到控件，否则返回 TRUE
@@ -54,20 +72,35 @@ int g_nCenterX = 100;
 int g_nCenterY = 100;
 int g_nRadius = 40;
 float g_fWeight = 30.f;
-void CDlgBulge::OnTimer(UINT_PTR nIDEvent)
+
+int g_nOrigX = 0;
+int g_nOrigY = 0;
+int g_nTgtX = 0;
+int g_nTgtY = 0;
+float g_nMoveRadius = 0.f;
+float g_nMoveCurve = 1.f; // default 1
+
+int getEditNum(CEdit &editCenterX)
 {
 	CString text;
+	editCenterX.GetWindowText(text);
+	return _wtoi(text.GetBuffer());
+}
 
+void CDlgBulge::OnTimer(UINT_PTR nIDEvent)
+{
 	g_bReduce = !!m_checkReduce.GetCheck();
-
-	m_editCenterX.GetWindowText(text);
-	g_nCenterX = _wtoi(text.GetBuffer());
-
-	m_editCenterY.GetWindowText(text);
-	g_nCenterY = _wtoi(text.GetBuffer());
-
+	g_nCenterX = getEditNum(m_editCenterX);
+	g_nCenterY = getEditNum(m_editCenterY);
 	g_nRadius = m_sliderRadius.GetPos();
 	g_fWeight = (float)m_sliderWeight.GetPos();
+
+	g_nOrigX = getEditNum(m_editOrgX);
+	g_nOrigY = getEditNum(m_editOrgY);
+	g_nTgtX = getEditNum(m_editTgtX);
+	g_nTgtY = getEditNum(m_editTgtY);
+	g_nMoveRadius = (float)m_sliderMoveRadius.GetPos();
+	g_nMoveCurve = (float)m_sliderMoveWeight.GetPos();
 
 	CDialogEx::OnTimer(nIDEvent);
 }

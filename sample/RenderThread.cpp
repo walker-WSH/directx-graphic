@@ -474,6 +474,14 @@ extern int g_nCenterX;
 extern int g_nCenterY;
 extern int g_nRadius;
 extern float g_fWeight;
+
+extern int g_nOrigX;
+extern int g_nOrigY;
+extern int g_nTgtX;
+extern int g_nTgtY;
+extern float g_nMoveRadius;
+extern float g_nMoveCurve; // default 1
+
 unsigned __stdcall CMFCDemoDlg::ThreadFuncForBulge(void *pParam)
 {
 	HRESULT hr = CoInitialize(NULL);
@@ -489,6 +497,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForBulge(void *pParam)
 	canvasInfo.format = D2D_COMPATIBLE_FORMAT;
 
 	texture_handle bulgeTex = 0; // 窗口画面 先画到这上面 再present到窗口
+	texture_handle copyTex = 0;  // 窗口画面 先画到这上面 再present到窗口
 
 	int64_t frameInterval = 1000 / 30;
 	int64_t startCaptureTime = GetTickCount64();
@@ -531,6 +540,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForBulge(void *pParam)
 		if (!bulgeTex) {
 			info.usage = TEXTURE_USAGE::CANVAS_TARGET;
 			bulgeTex = pGraphic->CreateTexture(info);
+			copyTex = pGraphic->CreateTexture(info);
 		}
 
 		BulgeParam psParam;
@@ -542,6 +552,16 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForBulge(void *pParam)
 		psParam.intensity = g_fWeight;
 		psParam.intensityDiv100 = g_fWeight / 100.f;
 
+		ShiftParam moveParam;
+		moveParam.texWidth = info.width;
+		moveParam.texHeight = info.height;
+		moveParam.originPositionX = g_nOrigX;
+		moveParam.originPositionY = g_nOrigY;
+		moveParam.targetPositionX = g_nTgtX;
+		moveParam.targetPositionY = g_nTgtY;
+		moveParam.radius = g_nMoveRadius;
+		moveParam.curve = g_nMoveCurve;
+
 		if (pGraphic->BeginRenderCanvas(bulgeTex)) {
 			ColorRGBA clr = {0, 0, 0, 1.f};
 			pGraphic->ClearBackground(&clr);
@@ -549,6 +569,18 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForBulge(void *pParam)
 
 			RenderBulgeTexture(std::vector<texture_handle>{texGrid}, SIZE(info.width, info.height),
 					   RECT(0, 0, info.width, info.height), &psParam);
+
+			pGraphic->EndRender();
+		}
+
+		pGraphic->CopyTexture(copyTex, bulgeTex);
+		if (pGraphic->BeginRenderCanvas(bulgeTex)) {
+			ColorRGBA clr = {0, 0, 0, 1.f};
+			pGraphic->ClearBackground(&clr);
+			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
+
+			RenderShiftTexture(std::vector<texture_handle>{copyTex}, SIZE(info.width, info.height),
+					   RECT(0, 0, info.width, info.height), &moveParam);
 
 			pGraphic->EndRender();
 		}

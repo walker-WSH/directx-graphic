@@ -166,5 +166,8 @@
     <FxCompile Include="HLSL\reduce-ps.hlsl">
       <Filter>render\HLSL</Filter>
     </FxCompile>
+    <FxCompile Include="HLSL\shift-ps.hlsl">
+      <Filter>render\HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
