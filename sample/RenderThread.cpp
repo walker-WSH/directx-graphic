@@ -470,6 +470,9 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForSubRegionMosic(void *pParam)
 	return 0;
 }
 
+extern int g_nCenterX;
+extern int g_nCenterY;
+extern int g_nRadius;
 unsigned __stdcall CMFCDemoDlg::ThreadFuncForBulge(void *pParam)
 {
 	HRESULT hr = CoInitialize(NULL);
@@ -529,15 +532,20 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForBulge(void *pParam)
 			bulgeTex = pGraphic->CreateTexture(info);
 		}
 
+		BulgeParam psParam;
+		psParam.texWidth = info.width;
+		psParam.texHeight = info.height;
+		psParam.centerX = g_nCenterX;
+		psParam.centerY = g_nCenterY;
+		psParam.radius = g_nRadius;
+
 		if (pGraphic->BeginRenderCanvas(bulgeTex)) {
 			ColorRGBA clr = {0, 0, 0, 1.f};
 			pGraphic->ClearBackground(&clr);
 			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
 
-			RECT left = rc;
-			left.right = rc.right / 2;
-			RenderTexture(std::vector<texture_handle>{texGrid}, SIZE(info.width, info.height),
-				      RECT(0, 0, info.width, info.height));
+			RenderBulgeTexture(std::vector<texture_handle>{texGrid}, SIZE(info.width, info.height),
+					   RECT(0, 0, info.width, info.height), &psParam);
 
 			pGraphic->EndRender();
 		}
@@ -546,7 +554,13 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForBulge(void *pParam)
 			pGraphic->ClearBackground(&clrGrey);
 			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::DISABLE);
 
-			RenderTexture(std::vector<texture_handle>{bulgeTex}, wndSize, rc);
+			RECT left = rc;
+			left.right = rc.right / 2;
+			RenderTexture(std::vector<texture_handle>{texGrid}, wndSize, left);
+
+			RECT right = rc;
+			right.left = rc.right / 2;
+			RenderTexture(std::vector<texture_handle>{bulgeTex}, wndSize, right);
 
 			pGraphic->EndRender();
 		}

@@ -61,6 +61,18 @@ void InitShader()
 	}
 
 	{
+		shaderInfo.vsFile = dir + L"default-vs.cso";
+		shaderInfo.psFile = dir + L"bulge-ps.cso";
+		shaderInfo.vsBufferSize = sizeof(matrixWVP);
+		shaderInfo.psBufferSize = sizeof(BulgeParam);
+		shaderInfo.vertexCount = TEXTURE_VERTEX_COUNT;
+		shaderInfo.perVertexSize = sizeof(TextureVertexDesc);
+		shader_handle shader = pGraphic->CreateShader(shaderInfo);
+		assert(shader);
+		shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_BULGE] = shader;
+	}
+
+	{
 		ShaderInformation shaderInfo;
 
 		VertexInputDesc desc;
@@ -263,6 +275,29 @@ void RenderTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest,
 	if (mosaic) {
 		pGraphic->SetPSConstBuffer(shader, mosaic, sizeof(MosaicParam));
 	}
+
+	pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, texs);
+}
+
+void RenderBulgeTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest, const BulgeParam *psParam)
+{
+	AUTO_GRAPHIC_CONTEXT(pGraphic);
+
+	TextureInformation texInfo = pGraphic->GetTextureInfo(texs.at(0));
+	shader_handle shader = shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_BULGE];
+
+	RECT realDrawDest = drawDest;
+
+	float matrixWVP[4][4];
+	TransposeMatrixWVP(canvas, true, WorldDesc(), matrixWVP);
+
+	TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT];
+	FillTextureVertex((float)realDrawDest.left, (float)realDrawDest.top, (float)realDrawDest.right,
+			  (float)realDrawDest.bottom, false, false, 0.f, 0.f, 0.f, 0.f, outputVertex);
+
+	pGraphic->SetVertexBuffer(shader, outputVertex, sizeof(outputVertex));
+	pGraphic->SetVSConstBuffer(shader, &(matrixWVP[0][0]), sizeof(matrixWVP));
+	pGraphic->SetPSConstBuffer(shader, psParam, sizeof(BulgeParam));
 
 	pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, texs);
 }

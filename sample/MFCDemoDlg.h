@@ -10,6 +10,7 @@
 #include "AsyncTask.h"
 #include "IGraphicDefine.h"
 #include "IGraphicEngine.h"
+#include "CDlgBulge.h"
 
 using namespace graphic;
 
@@ -53,7 +54,10 @@ protected:
 	int m_nResizeState = 0;
 	bool m_bSaveImage = false;
 	HANDLE m_hThread = 0;
+	CDlgBulge m_dlgBulge;
 	IGraphicSession *m_pGraphic = nullptr;
+
+
 	static unsigned __stdcall ThreadFuncNormalRender(void *pParam);
 	static unsigned __stdcall ThreadFuncForSubRegionMosic(void *pParam);
 	static unsigned __stdcall ThreadFuncForBulge(void *pParam);

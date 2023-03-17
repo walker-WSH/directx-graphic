@@ -60,6 +60,9 @@
     <ClInclude Include="AsyncTask.h">
       <Filter>render</Filter>
     </ClInclude>
+    <ClInclude Include="CDlgBulge.h">
+      <Filter>UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RenderThread.cpp">
@@ -96,6 +99,9 @@
       <Filter>render</Filter>
     </ClCompile>
     <ClCompile Include="MFCDemoDlgResize.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="CDlgBulge.cpp">
       <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>
@@ -152,6 +158,9 @@
       <Filter>render\HLSL</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\mosaic-subregion-ps.hlsl">
+      <Filter>render\HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\bulge-ps.hlsl">
       <Filter>render\HLSL</Filter>
     </FxCompile>
   </ItemGroup>
