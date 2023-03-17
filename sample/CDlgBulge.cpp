@@ -33,12 +33,11 @@ BOOL CDlgBulge::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	m_editCenterX.SetWindowText(L"500");
-	m_editCenterY.SetWindowText(L"400");
-	m_editRadius.SetWindowText(L"100");
+	m_editCenterX.SetWindowText(L"160");
+	m_editCenterY.SetWindowText(L"240");
 
 	m_sliderRadius.SetRange(0, 300);
-	m_sliderRadius.SetPos(120);
+	m_sliderRadius.SetPos(30);
 
 	m_sliderWeight.SetRange(0, 100);
 	m_sliderWeight.SetPos(20);
