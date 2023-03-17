@@ -473,6 +473,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForSubRegionMosic(void *pParam)
 extern int g_nCenterX;
 extern int g_nCenterY;
 extern int g_nRadius;
+extern float g_fWeight;
 unsigned __stdcall CMFCDemoDlg::ThreadFuncForBulge(void *pParam)
 {
 	HRESULT hr = CoInitialize(NULL);
@@ -537,7 +538,9 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForBulge(void *pParam)
 		psParam.texHeight = info.height;
 		psParam.centerX = g_nCenterX;
 		psParam.centerY = g_nCenterY;
-		psParam.radius = g_nRadius;
+		psParam.radius = (float)g_nRadius;
+		psParam.intensity = g_fWeight;
+		psParam.intensityDiv100 = g_fWeight / 100.f;
 
 		if (pGraphic->BeginRenderCanvas(bulgeTex)) {
 			ColorRGBA clr = {0, 0, 0, 1.f};

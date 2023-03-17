@@ -22,6 +22,7 @@ void CDlgBulge::DoDataExchange(CDataExchange *pDX)
 	DDX_Control(pDX, IDC_EDIT3, m_editRadius);
 	DDX_Control(pDX, IDC_SLIDER1, m_sliderRadius);
 	DDX_Control(pDX, IDC_CHECK3, m_checkReduce);
+	DDX_Control(pDX, IDC_SLIDER2, m_sliderWeight);
 }
 
 BEGIN_MESSAGE_MAP(CDlgBulge, CDialogEx)
@@ -39,6 +40,9 @@ BOOL CDlgBulge::OnInitDialog()
 	m_sliderRadius.SetRange(0, 300);
 	m_sliderRadius.SetPos(10);
 
+	m_sliderWeight.SetRange(0, 100);
+	m_sliderWeight.SetPos(30);
+
 	SetTimer(20000, 100, nullptr);
 
 	return TRUE; // 除非将焦点设置到控件，否则返回 TRUE
@@ -48,6 +52,7 @@ bool g_bReduce = false;
 int g_nCenterX = 100;
 int g_nCenterY = 100;
 int g_nRadius = 40;
+float g_fWeight = 30.f;
 void CDlgBulge::OnTimer(UINT_PTR nIDEvent)
 {
 	CString text;
@@ -61,6 +66,7 @@ void CDlgBulge::OnTimer(UINT_PTR nIDEvent)
 	g_nCenterY = _wtoi(text.GetBuffer());
 
 	g_nRadius = m_sliderRadius.GetPos();
+	g_fWeight = (float)m_sliderWeight.GetPos();
 
 	CDialogEx::OnTimer(nIDEvent);
 }

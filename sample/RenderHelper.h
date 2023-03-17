@@ -59,10 +59,11 @@ struct BulgeParam {
 	int texHeight = 0;
 	int centerX = 0;
 	int centerY = 0;
-	int radius = 0;
-	int power = 2;
-	float reserve1;
-	float reserve2;
+
+	float radius;
+	float intensity = 20.f;               // [0.f, 100.f]
+	float intensityDiv100 = 20.f / 100.f; // intensity / 100.f
+	float reserve;
 };
 
 extern IGraphicSession *pGraphic;
