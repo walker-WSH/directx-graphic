@@ -38,10 +38,10 @@ BOOL CDlgBulge::OnInitDialog()
 	m_editRadius.SetWindowText(L"100");
 
 	m_sliderRadius.SetRange(0, 300);
-	m_sliderRadius.SetPos(10);
+	m_sliderRadius.SetPos(120);
 
 	m_sliderWeight.SetRange(0, 100);
-	m_sliderWeight.SetPos(30);
+	m_sliderWeight.SetPos(20);
 
 	SetTimer(20000, 100, nullptr);
 
