@@ -50,17 +50,17 @@ BOOL CDlgBulge::OnInitDialog()
 	m_sliderWeight.SetRange(0, 100);
 	m_sliderWeight.SetPos(20);
 
-	m_sliderMoveRadius.SetRange(0, 300);
-	m_sliderMoveRadius.SetPos(50);
-
-	m_sliderMoveWeight.SetRange(1, 100);
-	m_sliderMoveWeight.SetPos(1);
-
-	m_editOrgX.SetWindowText(L"90");
-	m_editOrgY.SetWindowText(L"390");
+	m_editOrgX.SetWindowText(L"65");
+	m_editOrgY.SetWindowText(L"410");
 
 	m_editTgtX.SetWindowText(L"170");
 	m_editTgtY.SetWindowText(L"350");
+
+	m_sliderMoveRadius.SetRange(0, 300);
+	m_sliderMoveRadius.SetPos(80);
+
+	m_sliderMoveWeight.SetRange(1, 100);
+	m_sliderMoveWeight.SetPos(1);
 
 	SetTimer(20000, 100, nullptr);
 
