@@ -33,6 +33,8 @@ BOOL CDlgBulge::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
+	MoveWindow(0, 0, 300, 400);
+
 	m_editCenterX.SetWindowText(L"160");
 	m_editCenterY.SetWindowText(L"240");
 

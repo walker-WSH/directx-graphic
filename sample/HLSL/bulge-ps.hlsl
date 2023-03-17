@@ -27,7 +27,7 @@ float4 main(PixelInputType input) : SV_TARGET
 	if (dis < radius) {
 		float temp = pow(dis, 2) / pow(radius, 2);
 		float k = 1.f - (1.f - temp) * intensityDiv100;
-
+		k = clamp(k, 0.f, 1.f);
 		curCoord = circleCenter + (curCoord - circleCenter) * k;
 
 		float2 newTexUV = float2(curCoord.x / (float)texWidth, curCoord.y / (float)texHeight);
