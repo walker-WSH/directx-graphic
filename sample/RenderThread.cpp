@@ -379,8 +379,8 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForSubRegionMosic(void *pParam)
 
 		AUTO_GRAPHIC_CONTEXT(pGraphic);
 
-		SIZE canvasSize(rc.right - rc.left, rc.bottom - rc.top);
-		pGraphic->SetDisplaySize(display, canvasSize.cx, canvasSize.cy);
+		SIZE wndSize(rc.right - rc.left, rc.bottom - rc.top);
+		pGraphic->SetDisplaySize(display, wndSize.cx, wndSize.cy);
 
 		if (!pGraphic->IsGraphicBuilt()) {
 			if (!pGraphic->ReBuildGraphic())
@@ -433,11 +433,11 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForSubRegionMosic(void *pParam)
 
 			RECT left = rc;
 			left.right = rc.right / 2;
-			RenderTexture(std::vector<texture_handle>{texGirlOrigin}, canvasSize, left);
+			RenderTexture(std::vector<texture_handle>{texGirlOrigin}, wndSize, left);
 
 			RECT right = rc;
 			right.left = rc.right / 2;
-			RenderTexture(std::vector<texture_handle>{texGrid}, canvasSize, right);
+			RenderTexture(std::vector<texture_handle>{texGrid}, wndSize, right);
 
 			if (drawingPath) {
 				d2d->DrawGeometry(drawingPath, &clrRed, g_lineStride, LINE_DASH_STYLE::LINE_SOLID);
@@ -455,8 +455,98 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForSubRegionMosic(void *pParam)
 			mosaic.texHeight = rc.bottom;
 			mosaic.mosaicSizeCX = 20;
 			mosaic.mosaicSizeCY = 20;
-			RenderTexture(std::vector<texture_handle>{canvasTex, canvasPath}, canvasSize, rc,
+			RenderTexture(std::vector<texture_handle>{canvasTex, canvasPath}, wndSize, rc,
 				      VIDEO_SHADER_TYPE::SHADER_TEXTURE_MOSAIC_SUB, &mosaic);
+
+			pGraphic->EndRender();
+		}
+	}
+
+	UnInitGraphic();
+
+	if (SUCCEEDED(hr))
+		CoUninitialize();
+
+	return 0;
+}
+
+unsigned __stdcall CMFCDemoDlg::ThreadFuncForBulge(void *pParam)
+{
+	HRESULT hr = CoInitialize(NULL);
+
+	CMFCDemoDlg *self = reinterpret_cast<CMFCDemoDlg *>(pParam);
+	pGraphic = self->m_pGraphic;
+
+	if (!InitGraphic(self->m_hWnd))
+		return 1;
+
+	TextureInformation canvasInfo;
+	canvasInfo.usage = TEXTURE_USAGE::CANVAS_TARGET;
+	canvasInfo.format = D2D_COMPATIBLE_FORMAT;
+
+	texture_handle bulgeTex = 0; // 窗口画面 先画到这上面 再present到窗口
+
+	int64_t frameInterval = 1000 / 30;
+	int64_t startCaptureTime = GetTickCount64();
+	int64_t capturedCount = 0;
+	while (!self->m_bExit) {
+		if (!self->m_asyncTask.RunAllTask()) {
+			int64_t nextCaptureTime = startCaptureTime + capturedCount * frameInterval;
+			int64_t currentTime = GetTickCount64();
+			int64_t sleepTime = 0;
+			if (currentTime < nextCaptureTime) {
+				sleepTime = nextCaptureTime - currentTime;
+				sleepTime = min(sleepTime, int64_t(100));
+			}
+
+			Sleep((DWORD)sleepTime);
+		}
+
+		if (self->m_nResizeState > 1)
+			continue;
+
+		++capturedCount;
+
+		RECT rc;
+		::GetClientRect(self->m_hWnd, &rc);
+
+		rc.right = (rc.right / 2) * 2;
+		rc.bottom = (rc.bottom / 2) * 2;
+
+		AUTO_GRAPHIC_CONTEXT(pGraphic);
+
+		SIZE wndSize(rc.right - rc.left, rc.bottom - rc.top);
+		pGraphic->SetDisplaySize(display, wndSize.cx, wndSize.cy);
+
+		if (!pGraphic->IsGraphicBuilt()) {
+			if (!pGraphic->ReBuildGraphic())
+				continue;
+		}
+
+		auto info = pGraphic->GetTextureInfo(texGrid);
+		if (!bulgeTex) {
+			info.usage = TEXTURE_USAGE::CANVAS_TARGET;
+			bulgeTex = pGraphic->CreateTexture(info);
+		}
+
+		if (pGraphic->BeginRenderCanvas(bulgeTex)) {
+			ColorRGBA clr = {0, 0, 0, 1.f};
+			pGraphic->ClearBackground(&clr);
+			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
+
+			RECT left = rc;
+			left.right = rc.right / 2;
+			RenderTexture(std::vector<texture_handle>{texGrid}, SIZE(info.width, info.height),
+				      RECT(0, 0, info.width, info.height));
+
+			pGraphic->EndRender();
+		}
+
+		if (pGraphic->BeginRenderWindow(display)) {
+			pGraphic->ClearBackground(&clrGrey);
+			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::DISABLE);
+
+			RenderTexture(std::vector<texture_handle>{bulgeTex}, wndSize, rc);
 
 			pGraphic->EndRender();
 		}
@@ -495,7 +585,7 @@ bool InitGraphic(HWND hWnd)
 	//------------------------------------------------------------------
 	texGirlOrigin = pGraphic->OpenImageTexture(L"testGirl.jpg");
 
-	texGrid = pGraphic->OpenImageTexture(L"testGrid.png");
+	texGrid = pGraphic->OpenImageTexture(L"testWangge.jpg");
 
 	texAlpha = pGraphic->OpenImageTexture(L"testAlpha.png");
 

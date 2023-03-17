@@ -19,9 +19,11 @@ int g_rotatePeriod = 10 * 1000;
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 
 static const std::wstring TEST_MOSAIC_CMD = L"test_mosaic";
+static const std::wstring TEST_BULGE_CMD = L"test_bulge";
 enum class RUN_TEST_FOR {
 	RUN_NORMAL = 0,
 	RUN_SUB_MOSAIC,
+	RUN_SUB_BULGE,
 };
 RUN_TEST_FOR InitCmdParams()
 {
@@ -39,6 +41,10 @@ RUN_TEST_FOR InitCmdParams()
 			auto str = szArgList[i];
 			if (str == TEST_MOSAIC_CMD) {
 				ret = RUN_TEST_FOR::RUN_SUB_MOSAIC;
+				break;
+			}
+			if (str == TEST_BULGE_CMD) {
+				ret = RUN_TEST_FOR::RUN_SUB_BULGE;
 				break;
 			}
 		}
@@ -136,6 +142,7 @@ ON_WM_TIMER()
 ON_BN_CLICKED(IDC_BUTTON10, &CMFCDemoDlg::OnBnClickedButton10)
 ON_BN_CLICKED(IDC_BUTTON_TEST_MOSAIC, &CMFCDemoDlg::OnBnClickedButtonTestMosaic)
 ON_BN_CLICKED(IDC_BUTTON_RUN_NORMAL, &CMFCDemoDlg::OnBnClickedButtonRunNormal)
+ON_BN_CLICKED(IDC_BUTTON1_RUN_BULGE, &CMFCDemoDlg::OnBnClickedButton1RunBulge)
 END_MESSAGE_MAP()
 
 // CMFCDemoDlg 消息处理程序
@@ -184,6 +191,9 @@ BOOL CMFCDemoDlg::OnInitDialog()
 	switch (InitCmdParams()) {
 	case RUN_TEST_FOR::RUN_SUB_MOSAIC:
 		m_hThread = (HANDLE)_beginthreadex(0, 0, ThreadFuncForSubRegionMosic, this, 0, 0);
+		break;
+	case RUN_TEST_FOR::RUN_SUB_BULGE:
+		m_hThread = (HANDLE)_beginthreadex(0, 0, ThreadFuncForBulge, this, 0, 0);
 		break;
 	case RUN_TEST_FOR::RUN_NORMAL:
 	default:
@@ -355,14 +365,20 @@ void RunChildProcess(const wchar_t *param)
 	CloseHandle(pi.hProcess);
 }
 
+void CMFCDemoDlg::OnBnClickedButtonRunNormal()
+{
+	RunChildProcess(nullptr);
+	DestroyWindow(); // exit current process
+}
+
 void CMFCDemoDlg::OnBnClickedButtonTestMosaic()
 {
 	RunChildProcess(TEST_MOSAIC_CMD.c_str());
 	DestroyWindow(); // exit current process
 }
 
-void CMFCDemoDlg::OnBnClickedButtonRunNormal()
+void CMFCDemoDlg::OnBnClickedButton1RunBulge()
 {
-	RunChildProcess(nullptr);
+	RunChildProcess(TEST_BULGE_CMD.c_str());
 	DestroyWindow(); // exit current process
 }

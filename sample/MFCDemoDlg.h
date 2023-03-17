@@ -56,6 +56,7 @@ protected:
 	IGraphicSession *m_pGraphic = nullptr;
 	static unsigned __stdcall ThreadFuncNormalRender(void *pParam);
 	static unsigned __stdcall ThreadFuncForSubRegionMosic(void *pParam);
+	static unsigned __stdcall ThreadFuncForBulge(void *pParam);
 
 public:
 	// 生成的消息映射函数
@@ -91,4 +92,5 @@ public:
 	afx_msg void OnBnClickedButton10();
 	afx_msg void OnBnClickedButtonTestMosaic();
 	afx_msg void OnBnClickedButtonRunNormal();
+	afx_msg void OnBnClickedButton1RunBulge();
 };
