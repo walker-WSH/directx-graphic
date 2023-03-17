@@ -73,6 +73,18 @@ void InitShader()
 	}
 
 	{
+		shaderInfo.vsFile = dir + L"default-vs.cso";
+		shaderInfo.psFile = dir + L"reduce-ps.cso";
+		shaderInfo.vsBufferSize = sizeof(matrixWVP);
+		shaderInfo.psBufferSize = sizeof(BulgeParam);
+		shaderInfo.vertexCount = TEXTURE_VERTEX_COUNT;
+		shaderInfo.perVertexSize = sizeof(TextureVertexDesc);
+		shader_handle shader = pGraphic->CreateShader(shaderInfo);
+		assert(shader);
+		shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_REDUCE] = shader;
+	}
+
+	{
 		ShaderInformation shaderInfo;
 
 		VertexInputDesc desc;
@@ -279,12 +291,14 @@ void RenderTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest,
 	pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, texs);
 }
 
+extern bool g_bReduce;
 void RenderBulgeTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest, const BulgeParam *psParam)
 {
 	AUTO_GRAPHIC_CONTEXT(pGraphic);
 
 	TextureInformation texInfo = pGraphic->GetTextureInfo(texs.at(0));
-	shader_handle shader = shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_BULGE];
+	shader_handle shader =
+		shaders[g_bReduce ? VIDEO_SHADER_TYPE::SHADER_TEXTURE_REDUCE : VIDEO_SHADER_TYPE::SHADER_TEXTURE_BULGE];
 
 	RECT realDrawDest = drawDest;
 
