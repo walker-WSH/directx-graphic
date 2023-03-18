@@ -233,6 +233,16 @@ void FillColorVertex(float left, float top, float right, float bottom,
 
 extern bool bFullscreenCrop;
 extern float g_whitePercent;
+
+VIDEO_SHADER_TYPE getDefaultTextureShader()
+{
+	if (fabs(g_whitePercent - 100.f) <= 0.1f) {
+		return VIDEO_SHADER_TYPE::SHADER_TEXTURE;
+	} else {
+		return VIDEO_SHADER_TYPE::SHADER_TEXTURE_WHITE;
+	}
+}
+
 void RenderTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest, VIDEO_SHADER_TYPE shaderType,
 		   const MosaicParam *mosaic)
 {

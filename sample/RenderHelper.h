@@ -100,9 +100,9 @@ void TransposeMatrixWVP(const SIZE &canvas, bool convertCoord, WorldDesc wd, flo
 
 texture_handle getRotatedTexture(texture_handle tex, texture_handle &cv);
 
+VIDEO_SHADER_TYPE getDefaultTextureShader();
 void RenderTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest,
-		   VIDEO_SHADER_TYPE shader = VIDEO_SHADER_TYPE::SHADER_TEXTURE_WHITE,
-		   const MosaicParam *mosaic = nullptr);
+		   VIDEO_SHADER_TYPE shader = getDefaultTextureShader(), const MosaicParam *mosaic = nullptr);
 
 void RenderBulgeTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest, const BulgeParam *psParam);
 
