@@ -50,12 +50,6 @@ BOOL CDlgBulge::OnInitDialog()
 	m_sliderWeight.SetRange(0, 100);
 	m_sliderWeight.SetPos(20);
 
-	m_editOrgX.SetWindowText(L"65");
-	m_editOrgY.SetWindowText(L"410");
-
-	m_editTgtX.SetWindowText(L"170");
-	m_editTgtY.SetWindowText(L"350");
-
 	m_sliderMoveRadius.SetRange(0, 300);
 	m_sliderMoveRadius.SetPos(80);
 
@@ -73,10 +67,6 @@ int g_nCenterY = 100;
 int g_nRadius = 40;
 float g_fWeight = 30.f;
 
-int g_nOrigX = 0;
-int g_nOrigY = 0;
-int g_nTgtX = 0;
-int g_nTgtY = 0;
 float g_nMoveRadius = 0.f;
 float g_nMoveCurve = 1.f; // default 1
 
@@ -95,10 +85,6 @@ void CDlgBulge::OnTimer(UINT_PTR nIDEvent)
 	g_nRadius = m_sliderRadius.GetPos();
 	g_fWeight = (float)m_sliderWeight.GetPos();
 
-	g_nOrigX = getEditNum(m_editOrgX);
-	g_nOrigY = getEditNum(m_editOrgY);
-	g_nTgtX = getEditNum(m_editTgtX);
-	g_nTgtY = getEditNum(m_editTgtY);
 	g_nMoveRadius = (float)m_sliderMoveRadius.GetPos();
 	g_nMoveCurve = (float)m_sliderMoveWeight.GetPos();
 

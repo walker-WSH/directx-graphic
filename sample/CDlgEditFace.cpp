@@ -13,10 +13,6 @@
 extern IGraphicSession *pGraphic;
 extern texture_handle texGrid;
 
-extern int g_nOrigX;
-extern int g_nOrigY;
-extern int g_nTgtX;
-extern int g_nTgtY;
 extern float g_nMoveRadius;
 extern float g_nMoveCurve; // default 1
 
