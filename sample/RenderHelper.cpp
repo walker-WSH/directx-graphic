@@ -38,6 +38,18 @@ void InitShader()
 
 	{
 		shaderInfo.vsFile = dir + L"default-vs.cso";
+		shaderInfo.psFile = dir + L"white-ps.cso";
+		shaderInfo.vsBufferSize = sizeof(matrixWVP);
+		shaderInfo.psBufferSize = sizeof(WhiteParam);
+		shaderInfo.vertexCount = TEXTURE_VERTEX_COUNT;
+		shaderInfo.perVertexSize = sizeof(TextureVertexDesc);
+		shader_handle shader = pGraphic->CreateShader(shaderInfo);
+		assert(shader);
+		shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_WHITE] = shader;
+	}
+
+	{
+		shaderInfo.vsFile = dir + L"default-vs.cso";
 		shaderInfo.psFile = dir + L"mosaic-ps.cso";
 		shaderInfo.vsBufferSize = sizeof(matrixWVP);
 		shaderInfo.psBufferSize = sizeof(MosaicParam);
@@ -220,6 +232,7 @@ void FillColorVertex(float left, float top, float right, float bottom,
 }
 
 extern bool bFullscreenCrop;
+extern float g_whitePercent;
 void RenderTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest, VIDEO_SHADER_TYPE shaderType,
 		   const MosaicParam *mosaic)
 {
@@ -298,6 +311,10 @@ void RenderTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest,
 	pGraphic->SetVSConstBuffer(shader, &(matrixWVP[0][0]), sizeof(matrixWVP));
 	if (mosaic) {
 		pGraphic->SetPSConstBuffer(shader, mosaic, sizeof(MosaicParam));
+	} else if (shaderType == VIDEO_SHADER_TYPE::SHADER_TEXTURE_WHITE) {
+		WhiteParam prm;
+		prm.intensity = g_whitePercent / 100.f;
+		pGraphic->SetPSConstBuffer(shader, &prm, sizeof(WhiteParam));
 	}
 
 	pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, texs);

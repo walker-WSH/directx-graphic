@@ -10,6 +10,7 @@ using namespace graphic;
 enum class VIDEO_SHADER_TYPE {
 	SHADER_FILL_RECT = 0,
 	SHADER_TEXTURE,
+	SHADER_TEXTURE_WHITE,
 	SHADER_TEXTURE_MOSAIC,
 	SHADER_TEXTURE_MOSAIC_SUB,
 	SHADER_TEXTURE_BULGE,
@@ -78,6 +79,13 @@ struct ShiftParam {
 	float curve = 1.f; // default 1
 };
 
+struct WhiteParam {
+	float intensity = 1.f;
+	float r1;
+	float r2;
+	float r3;
+};
+
 extern IGraphicSession *pGraphic;
 extern std::map<VIDEO_SHADER_TYPE, shader_handle> shaders;
 void InitShader();
@@ -93,7 +101,8 @@ void TransposeMatrixWVP(const SIZE &canvas, bool convertCoord, WorldDesc wd, flo
 texture_handle getRotatedTexture(texture_handle tex, texture_handle &cv);
 
 void RenderTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest,
-		   VIDEO_SHADER_TYPE shader = VIDEO_SHADER_TYPE::SHADER_TEXTURE, const MosaicParam *mosaic = nullptr);
+		   VIDEO_SHADER_TYPE shader = VIDEO_SHADER_TYPE::SHADER_TEXTURE_WHITE,
+		   const MosaicParam *mosaic = nullptr);
 
 void RenderBulgeTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest, const BulgeParam *psParam);
 

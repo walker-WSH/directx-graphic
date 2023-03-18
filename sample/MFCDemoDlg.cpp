@@ -15,6 +15,7 @@
 
 float g_lineStride = 100.f;
 float g_blurValue = 50.f;
+float g_whitePercent = 100.f;
 int g_rotatePeriod = 10 * 1000;
 
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
@@ -68,7 +69,8 @@ public:
 #endif
 
 protected:
-	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV 支持
+	virtual void DoDataExchange(CDataExchange *pDX);
+	; // DDX/DDV 支持
 
 	// 实现
 protected:
@@ -109,6 +111,7 @@ void CMFCDemoDlg::DoDataExchange(CDataExchange *pDX)
 	DDX_Control(pDX, IDC_SLIDER1, m_lineSizeSlider);
 	DDX_Control(pDX, IDC_SLIDER2, m_gausBlurSlider);
 	DDX_Control(pDX, IDC_SLIDER3, m_rotateSlider);
+	DDX_Control(pDX, IDC_SLIDER4, m_sliderWhite);
 	DDX_Control(pDX, IDC_BUTTON2, m_btnExit);
 }
 
@@ -184,6 +187,9 @@ BOOL CMFCDemoDlg::OnInitDialog()
 
 	m_gausBlurSlider.SetRange(0, 100);
 	m_gausBlurSlider.SetPos((int)g_blurValue);
+
+	m_sliderWhite.SetRange(1, 200);
+	m_sliderWhite.SetPos((int)g_whitePercent);
 
 	m_rotateSlider.SetRange(1 * 1000, 20 * 1000);
 	m_rotateSlider.SetPos(g_rotatePeriod);
@@ -336,6 +342,7 @@ void CMFCDemoDlg::OnTimer(UINT_PTR nIDEvent)
 {
 	g_lineStride = (float)m_lineSizeSlider.GetPos();
 	g_blurValue = (float)m_gausBlurSlider.GetPos();
+	g_whitePercent = (float)m_sliderWhite.GetPos();
 	g_rotatePeriod = m_rotateSlider.GetPos();
 
 	CDialogEx::OnTimer(nIDEvent);

@@ -44,6 +44,7 @@ protected:
 	CSliderCtrl m_lineSizeSlider;
 	CSliderCtrl m_gausBlurSlider;
 	CSliderCtrl m_rotateSlider;
+	CSliderCtrl m_sliderWhite;
 
 	bool m_bToDrawCurve = false;
 	bool m_bIsDrawing = false;
