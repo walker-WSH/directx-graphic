@@ -497,7 +497,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForBulge(void *pParam)
 	canvasInfo.format = D2D_COMPATIBLE_FORMAT;
 
 	texture_handle bulgeTex = 0; // 窗口画面 先画到这上面 再present到窗口
-	texture_handle copyTex = 0;  // 窗口画面 先画到这上面 再present到窗口
+	texture_handle copyTex = 0;
 
 	int64_t frameInterval = 1000 / 30;
 	int64_t startCaptureTime = GetTickCount64();

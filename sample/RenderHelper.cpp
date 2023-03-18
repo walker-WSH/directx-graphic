@@ -333,8 +333,7 @@ void RenderShiftTexture(std::vector<texture_handle> texs, SIZE canvas, RECT draw
 	AUTO_GRAPHIC_CONTEXT(pGraphic);
 
 	TextureInformation texInfo = pGraphic->GetTextureInfo(texs.at(0));
-	shader_handle shader =
-		shaders[g_bReduce ? VIDEO_SHADER_TYPE::SHADER_TEXTURE_REDUCE : VIDEO_SHADER_TYPE::SHADER_TEXTURE_SHIFT];
+	shader_handle shader = shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_SHIFT];
 
 	RECT realDrawDest = drawDest;
 

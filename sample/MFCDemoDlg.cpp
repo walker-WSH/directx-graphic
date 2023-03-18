@@ -7,6 +7,7 @@
 #include "MFCDemo.h"
 #include "MFCDemoDlg.h"
 #include "afxdialogex.h"
+#include <assert.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -343,7 +344,6 @@ void CMFCDemoDlg::OnBnClickedButton10()
 	m_bSaveImage = true;
 }
 
-#include <assert.h>
 void RunChildProcess(const wchar_t *param)
 {
 	wchar_t path[MAX_PATH] = {};

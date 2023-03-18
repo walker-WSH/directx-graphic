@@ -48,6 +48,11 @@ float4 main(PixelInputType input) : SV_TARGET
 		float4 textureColor = float4(1, 0, 0, 1);
 		return textureColor;
 	}
+	dis = distance(textureCoord, targetPosition);
+	if (dis < 3) {
+		float4 textureColor = float4(0, 1, 0, 1);
+		return textureColor;
+	}
 
 	float4 textureColor = image0.Sample(sampleType, stretchFun(input.tex));
 	return textureColor;
