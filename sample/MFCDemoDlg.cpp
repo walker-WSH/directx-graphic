@@ -197,6 +197,8 @@ BOOL CMFCDemoDlg::OnInitDialog()
 		m_hThread = (HANDLE)_beginthreadex(0, 0, ThreadFuncForBulge, this, 0, 0);
 		m_dlgBulge.Create(IDD_DIALOG_BULGE);
 		m_dlgBulge.ShowWindow(SW_SHOW);
+		m_dlgEdit.Create(IDD_DIALOG1);
+		m_dlgEdit.ShowWindow(SW_SHOW);
 		break;
 	case RUN_TEST_FOR::RUN_NORMAL:
 	default:

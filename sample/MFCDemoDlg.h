@@ -11,6 +11,7 @@
 #include "IGraphicDefine.h"
 #include "IGraphicEngine.h"
 #include "CDlgBulge.h"
+#include "CDlgEditFace.h"
 
 using namespace graphic;
 
@@ -55,6 +56,7 @@ protected:
 	bool m_bSaveImage = false;
 	HANDLE m_hThread = 0;
 	CDlgBulge m_dlgBulge;
+	CDlgEditFace m_dlgEdit;
 	IGraphicSession *m_pGraphic = nullptr;
 
 	static unsigned __stdcall ThreadFuncNormalRender(void *pParam);
