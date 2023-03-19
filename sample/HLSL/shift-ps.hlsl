@@ -39,7 +39,7 @@ float2 stretchFun(float2 tex)
 
 float4 main(PixelInputType input) : SV_TARGET
 {
-	// // »­¸ö±ß¿ò
+	// »­¸ö±ß¿ò
 	float2 textureCoord = float2(input.tex.x * texWidth, input.tex.y * texHeight);
 	float2 originPosition = float2(originPositionX, originPositionY);
 	float2 targetPosition = float2(targetPositionX, targetPositionY);
