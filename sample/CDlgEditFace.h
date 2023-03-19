@@ -1,14 +1,13 @@
 ﻿#pragma once
-
+#include "RenderHelper.h"
 
 // CDlgEditFace 对话框
 
-class CDlgEditFace : public CDialogEx
-{
+class CDlgEditFace : public CDialogEx {
 	DECLARE_DYNAMIC(CDlgEditFace)
 
 public:
-	CDlgEditFace(CWnd* pParent = nullptr);   // 标准构造函数
+	CDlgEditFace(CWnd *pParent = nullptr); // 标准构造函数
 	virtual ~CDlgEditFace();
 
 // 对话框数据
@@ -18,8 +17,15 @@ public:
 
 protected:
 	bool m_bResized = false;
+	bool m_bEditing = false;
+	CButton m_btnPos;
+	CPoint m_ptOrigin;
+	CPoint m_ptTarget;
 
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+	texture_handle edit_bulgeTex = nullptr; // 窗口画面 先画到这上面 再present到窗口
+	display_handle edit_display = nullptr;
+
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV 支持
 	afx_msg LRESULT OnNcHitTest(CPoint point);
 
 	DECLARE_MESSAGE_MAP()

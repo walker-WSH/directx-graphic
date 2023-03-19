@@ -16,13 +16,6 @@ extern texture_handle texGrid;
 extern float g_nMoveRadius;
 extern float g_nMoveCurve; // default 1
 
-texture_handle edit_bulgeTex = nullptr; // 窗口画面 先画到这上面 再present到窗口
-display_handle edit_display = nullptr;
-
-bool m_bEditing = false;
-CPoint m_ptOrigin;
-CPoint m_ptTarget;
-
 IMPLEMENT_DYNAMIC(CDlgEditFace, CDialogEx)
 
 CDlgEditFace::CDlgEditFace(CWnd *pParent /*=nullptr*/) : CDialogEx(IDD_DIALOG1, pParent) {}
@@ -41,6 +34,7 @@ END_MESSAGE_MAP()
 void CDlgEditFace::DoDataExchange(CDataExchange *pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_BUTTON1, m_btnPos);
 }
 
 BOOL CDlgEditFace::OnInitDialog()
@@ -154,6 +148,10 @@ void CDlgEditFace::OnLButtonUp(UINT nFlags, CPoint point)
 
 void CDlgEditFace::OnMouseMove(UINT nFlags, CPoint point)
 {
+	CString text;
+	text.Format(L"%d,%d", point.x, point.y);
+	m_btnPos.SetWindowText(text);
+
 	if (m_bEditing) {
 		m_ptTarget = point;
 		Invalidate(FALSE);
