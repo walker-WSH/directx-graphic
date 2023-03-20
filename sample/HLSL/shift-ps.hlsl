@@ -40,6 +40,11 @@ float2 stretchFun(float2 tex)
 	infect = clamp(infect, 0.0, 1.0);
 
 	float2 direction = targetPosition - originPosition;
+
+	float temp = distance(targetPosition, originPosition);
+	if (temp > radius)
+		direction = direction * (radius / temp);
+
 	float2 offset = direction * infect;
 	float2 result = textureCoord - offset;
 
