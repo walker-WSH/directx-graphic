@@ -19,7 +19,7 @@ protected:
 	struct FinishedEditor {
 		CPoint m_ptOrigin;
 		CPoint m_ptTarget;
-		float g_nMoveRadius ;
+		float g_nMoveRadius;
 		float g_nMoveCurve;
 	};
 
@@ -31,7 +31,7 @@ protected:
 	CPoint m_ptTarget;
 
 	texture_handle edit_bulgeTex = nullptr; // 窗口画面 先画到这上面 再present到窗口
-	texture_handle edit_copyTex = nullptr; // 窗口画面 先画到这上面 再present到窗口
+	texture_handle edit_copyTex = nullptr;  // 窗口画面 先画到这上面 再present到窗口
 	display_handle edit_display = nullptr;
 
 	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV 支持
