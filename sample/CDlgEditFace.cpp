@@ -71,16 +71,14 @@ void CDlgEditFace::OnTimer(UINT_PTR nIDEvent)
 			auto info = pGraphic->GetTextureInfo(texGrid);
 			info.usage = TEXTURE_USAGE::CANVAS_TARGET;
 
+			MoveWindow(0, 0, info.width, info.height);
+
 			edit_bulgeTex = pGraphic->CreateTexture(info);
 			edit_copyTex = pGraphic->CreateTexture(info);
 
-			RECT rc;
-			::GetClientRect(m_hWnd, &rc);
-
 			edit_display = pGraphic->CreateDisplay(m_hWnd);
-			pGraphic->SetDisplaySize(edit_display, rc.right - rc.left, rc.bottom - rc.top);
+			pGraphic->SetDisplaySize(edit_display, info.width, info.height);
 
-			MoveWindow(0, 0, info.width, info.height);
 			m_bResized = true;
 		}
 
@@ -199,9 +197,25 @@ void CDlgEditFace::OnPaint()
 		}
 	}
 
-	if (pGraphic->BeginRenderWindow(edit_display)) {
+	IGeometryInterface *d2d = 0;
+	if (pGraphic->BeginRenderWindow(edit_display, &d2d)) {
 		auto tex = editorList.empty() ? texGrid : edit_bulgeTex;
 		RenderTexture(std::vector<texture_handle>{tex}, SIZE(rc.right, rc.bottom), rc);
-		pGraphic->EndRender();
+
+		if (d2d) {
+			POINT pt;
+			GetCursorPos(&pt);
+			ScreenToClient(&pt);
+
+			D2D1_ELLIPSE elp;
+			elp.point = {(float)pt.x, (float)pt.y};
+			elp.radiusX = elp.radiusY = g_nMoveRadius;
+
+			ColorRGBA red(1.f, 0, 0, 1.f);
+
+			d2d->DrawEllipse(elp, &red);
+		}
+
+		pGraphic->EndRender(d2d);
 	}
 }
