@@ -3,6 +3,7 @@
 #include "VideoConvertToRGB.h"
 #include "VideoConvertToYUV.h"
 #include "IGraphicSession.h"
+#include <math.h>
 
 IGraphicSession *pGraphic = nullptr;
 std::map<VIDEO_SHADER_TYPE, shader_handle> shaders;
@@ -386,8 +387,11 @@ texture_handle getRotatedTexture(texture_handle tex, texture_handle &canvasTex)
 	auto oldInfo = pGraphic->GetTextureInfo(tex);
 
 	if (!canvasTex) {
+		auto resolution = pow(oldInfo.width, 2) + pow(oldInfo.height, 2);
+		resolution = sqrt(resolution);
+
 		TextureInformation info;
-		info.width = info.height = max(oldInfo.width, oldInfo.height);
+		info.width = info.height = (uint32_t)resolution;
 		info.format = oldInfo.format;
 		info.usage = TEXTURE_USAGE::CANVAS_TARGET;
 
@@ -396,7 +400,7 @@ texture_handle getRotatedTexture(texture_handle tex, texture_handle &canvasTex)
 
 	auto canvasInfo = pGraphic->GetTextureInfo(canvasTex);
 	if (pGraphic->BeginRenderCanvas(canvasTex)) {
-		ColorRGBA clr{0, 0, 0, 1.0};
+		ColorRGBA clr{0, 0, 0, 0};
 		pGraphic->ClearBackground(&clr);
 
 		shader_handle shader = shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE];
