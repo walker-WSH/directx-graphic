@@ -53,8 +53,8 @@ BOOL CDlgBulge::OnInitDialog()
 	m_sliderMoveRadius.SetRange(0, 300);
 	m_sliderMoveRadius.SetPos(80);
 
-	m_sliderMoveWeight.SetRange(1, 100);
-	m_sliderMoveWeight.SetPos(1);
+	m_sliderMoveWeight.SetRange(1, 5);
+	m_sliderMoveWeight.SetPos(2);
 
 	SetTimer(20000, 100, nullptr);
 
