@@ -1,6 +1,8 @@
 SamplerState sampleType : register(s0);
 Texture2D image0 : register(t0);
 
+#define PI 3.1415926f
+
 cbuffer ConstBuffer
 {
 	int texWidth;  // ÎÆÀí¿í¶È
@@ -34,18 +36,17 @@ float2 stretchFun(float2 tex)
 
 	float dis = DistToLine(textureCoord, originPosition, targetPosition);
 	float infect = dis / radius;
-
-	infect = pow(infect, curve);
-	infect = 1.0 - infect;
+	infect = clamp(infect, 0.0, 1.0);
+	infect = (sin(infect * PI - PI / 2.f) + 1) / 2.f;
 	infect = clamp(infect, 0.0, 1.0);
 
 	float2 direction = targetPosition - originPosition;
+	float directRatio = radius / distance(targetPosition, originPosition);
+	directRatio = clamp(directRatio, 0.f, 1.f);
+	direction *= directRatio;
 
-	float temp = distance(targetPosition, originPosition);
-	if (temp > radius)
-		direction = direction * (radius / temp);
-
-	float2 offset = direction * infect;
+	float weight = 1.0 - infect;
+	float2 offset = direction * weight;
 	float2 result = textureCoord - offset;
 
 	return float2(result.x / texWidth, result.y / texHeight);
