@@ -68,15 +68,24 @@ struct BulgeParam {
 	float reserve;
 };
 
+struct ShiftInfo {
+	int originPositionX;
+	int originPositionY;
+	int targetPositionX;
+	int targetPositionY;
+	float radius;
+	float curve; // default 1
+	float reserve1;
+	float reserve2;
+};
+
+static const auto MAX_SHIFT_ITEM = 100;
 struct ShiftParam {
-	int texWidth = 0;  // 纹理宽度
-	int texHeight = 0; // 纹理高度
-	int originPositionX = 0;
-	int originPositionY = 0;
-	int targetPositionX = 0;
-	int targetPositionY = 0;
-	float radius = 0.f;
-	float curve = 1.f; // default 1
+	int texWidth;  // 纹理宽度
+	int texHeight; // 纹理高度
+	int count;
+	int reserve;
+	ShiftInfo items[MAX_SHIFT_ITEM];
 };
 
 struct WhiteParam {

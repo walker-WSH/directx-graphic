@@ -3,16 +3,23 @@ Texture2D image0 : register(t0);
 
 #define PI 3.1415926f
 
-cbuffer ConstBuffer
-{
-	int texWidth;  // 纹理宽度
-	int texHeight; // 纹理高度
+struct ShiftInfo {
 	int originPositionX;
 	int originPositionY;
 	int targetPositionX;
 	int targetPositionY;
 	float radius;
 	float curve; // default 1
+	float2 padding;
+};
+
+cbuffer ConstBuffer
+{
+	int texWidth;  // 纹理宽度
+	int texHeight; // 纹理高度
+	int count;
+	int padding;
+	ShiftInfo items[100];
 };
 
 struct PixelInputType {
@@ -28,8 +35,14 @@ float DistToLine(float2 p, float2 a, float2 b)
 	return length(pa - ba * t);
 }
 
-float2 stretchFun(float2 tex)
+float2 stretchFun(float2 tex, ShiftInfo info)
 {
+	int originPositionX = info.originPositionX;
+	int originPositionY = info.originPositionY;
+	int targetPositionX = info.targetPositionX;
+	int targetPositionY = info.targetPositionY;
+	float radius = info.radius;
+
 	float2 textureCoord = float2(tex.x * texWidth, tex.y * texHeight);
 	float2 originPosition = float2(originPositionX, originPositionY);
 	float2 targetPosition = float2(targetPositionX, targetPositionY);
@@ -54,6 +67,13 @@ float2 stretchFun(float2 tex)
 
 float4 main(PixelInputType input) : SV_TARGET
 {
-	float4 textureColor = image0.Sample(sampleType, stretchFun(input.tex));
+	float2 uv = input.tex;
+
+	// Note: Here we must apply all items from latest item to oldest one.
+	for (int i = count - 1; i >= 0; --i) {
+		uv = stretchFun(uv, items[i]);
+	}
+
+	float4 textureColor = image0.Sample(sampleType, uv);
 	return textureColor;
 }

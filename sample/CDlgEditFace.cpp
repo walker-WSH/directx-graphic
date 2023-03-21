@@ -74,7 +74,6 @@ void CDlgEditFace::OnTimer(UINT_PTR nIDEvent)
 			MoveWindow(0, 0, info.width, info.height);
 
 			edit_bulgeTex = pGraphic->CreateTexture(info);
-			edit_copyTex = pGraphic->CreateTexture(info);
 
 			edit_display = pGraphic->CreateDisplay(m_hWnd);
 			pGraphic->SetDisplaySize(edit_display, info.width, info.height);
@@ -171,30 +170,29 @@ void CDlgEditFace::OnPaint()
 		editorList.push_back(info);
 	}
 
+	assert(editorList.size() <= MAX_SHIFT_ITEM);
+
 	auto texInfo = pGraphic->GetTextureInfo(texGrid);
-	bool firstOne = true;
-	for (auto &item : editorList) {
-		if (pGraphic->BeginRenderCanvas(edit_bulgeTex)) {
-			ShiftParam moveParam;
-			moveParam.texWidth = texInfo.width;
-			moveParam.texHeight = texInfo.height;
-			moveParam.originPositionX = item.m_ptOrigin.x;
-			moveParam.originPositionY = item.m_ptOrigin.y;
-			moveParam.targetPositionX = item.m_ptTarget.x;
-			moveParam.targetPositionY = item.m_ptTarget.y;
-			moveParam.radius = item.g_nMoveRadius;
-			moveParam.curve = item.g_nMoveCurve;
 
-			auto tex = firstOne ? texGrid : edit_copyTex;
-			firstOne = false;
+	ShiftParam moveParam;
+	moveParam.texWidth = texInfo.width;
+	moveParam.texHeight = texInfo.height;
+	moveParam.count = (int)editorList.size();
+	for (int i = 0; i < moveParam.count; i++) {
+		const auto &item = editorList[i];
+		auto &dest = moveParam.items[i];
+		dest.originPositionX = item.m_ptOrigin.x;
+		dest.originPositionY = item.m_ptOrigin.y;
+		dest.targetPositionX = item.m_ptTarget.x;
+		dest.targetPositionY = item.m_ptTarget.y;
+		dest.radius = item.g_nMoveRadius;
+		dest.curve = item.g_nMoveCurve;
+	}
 
-			RenderShiftTexture(std::vector<texture_handle>{tex}, SIZE(texInfo.width, texInfo.height),
-					   RECT(0, 0, texInfo.width, texInfo.height), &moveParam);
-
-			pGraphic->EndRender();
-
-			pGraphic->CopyTexture(edit_copyTex, edit_bulgeTex);
-		}
+	if (pGraphic->BeginRenderCanvas(edit_bulgeTex)) {
+		RenderShiftTexture(std::vector<texture_handle>{texGrid}, SIZE(texInfo.width, texInfo.height),
+				   RECT(0, 0, texInfo.width, texInfo.height), &moveParam);
+		pGraphic->EndRender();
 	}
 
 	IGeometryInterface *d2d = 0;
