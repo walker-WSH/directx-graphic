@@ -234,10 +234,11 @@ void FillColorVertex(float left, float top, float right, float bottom,
 
 extern bool bFullscreenCrop;
 extern float g_whitePercent;
+extern bool g_bToGrey;
 
 VIDEO_SHADER_TYPE getDefaultTextureShader()
 {
-	if (fabs(g_whitePercent - 100.f) <= 0.1f) {
+	if (fabs(g_whitePercent - 100.f) <= 0.1f && !g_bToGrey) {
 		return VIDEO_SHADER_TYPE::SHADER_TEXTURE;
 	} else {
 		return VIDEO_SHADER_TYPE::SHADER_TEXTURE_WHITE;
@@ -325,6 +326,7 @@ void RenderTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest,
 	} else if (shaderType == VIDEO_SHADER_TYPE::SHADER_TEXTURE_WHITE) {
 		WhiteParam prm;
 		prm.intensity = g_whitePercent / 100.f;
+		prm.toGrey = g_bToGrey ? 1 : 0;
 		pGraphic->SetPSConstBuffer(shader, &prm, sizeof(WhiteParam));
 	}
 

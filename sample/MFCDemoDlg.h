@@ -99,4 +99,5 @@ public:
 	afx_msg void OnBnClickedButtonTestMosaic();
 	afx_msg void OnBnClickedButtonRunNormal();
 	afx_msg void OnBnClickedButton1RunBulge();
+	CButton m_checkToGrey;
 };

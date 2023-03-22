@@ -17,6 +17,7 @@ float g_lineStride = 100.f;
 float g_blurValue = 50.f;
 float g_whitePercent = 100.f;
 int g_rotatePeriod = 10 * 1000;
+bool g_bToGrey = false;
 
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 
@@ -113,6 +114,7 @@ void CMFCDemoDlg::DoDataExchange(CDataExchange *pDX)
 	DDX_Control(pDX, IDC_SLIDER3, m_rotateSlider);
 	DDX_Control(pDX, IDC_SLIDER4, m_sliderWhite);
 	DDX_Control(pDX, IDC_BUTTON2, m_btnExit);
+	DDX_Control(pDX, IDC_CHECK2, m_checkToGrey);
 }
 
 BEGIN_MESSAGE_MAP(CMFCDemoDlg, CDialogEx)
@@ -344,6 +346,7 @@ void CMFCDemoDlg::OnTimer(UINT_PTR nIDEvent)
 	g_blurValue = (float)m_gausBlurSlider.GetPos();
 	g_whitePercent = (float)m_sliderWhite.GetPos();
 	g_rotatePeriod = m_rotateSlider.GetPos();
+	g_bToGrey = !!m_checkToGrey.GetCheck();
 
 	CDialogEx::OnTimer(nIDEvent);
 }
