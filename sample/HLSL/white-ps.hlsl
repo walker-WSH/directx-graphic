@@ -1,6 +1,16 @@
 SamplerState sampleType : register(s0);
 Texture2D image0 : register(t0);
 
+// use matrix of 601
+static const float4 to_y = float4(0.256788194, 0.504129171, 0.0979057774, 0.0627449304);
+static const float4 to_u = float4(-0.148222953, -0.290992796, 0.439215750, 0.501961052);
+static const float4 to_v = float4(0.439215571, -0.367788255, -0.0714273080, 0.501960695);
+static const float4 to_r = float4(1.16438401, 0, 1.59602702, -0.874202013);
+static const float4 to_g = float4(1.16438401, -0.391761988, -0.812968016, 0.531668007);
+static const float4 to_b = float4(1.16438401, 2.01723194, 0, -1.08563101);
+static const float3 color_range_min = float3(0.0627451017, 0.0627451017, 0.0627451017);
+static const float3 color_range_max = float3(0.921568632, 0.941176474, 0.941176474);
+
 cbuffer ConstBuffer
 {
 	float intensity; // default 1.f
@@ -12,16 +22,6 @@ struct PixelInputType {
 	float4 position : SV_POSITION;
 	float2 tex : TEXCOORD0;
 };
-
-static const float4 to_y = float4(0.256788194, 0.504129171, 0.0979057774, 0.0627449304);
-static const float4 to_u = float4(-0.148222953, -0.290992796, 0.439215750, 0.501961052);
-static const float4 to_v = float4(0.439215571, -0.367788255, -0.0714273080, 0.501960695);
-
-static const float4 to_r = float4(1.16438401, 0, 1.59602702, -0.874202013);
-static const float4 to_g = float4(1.16438401, -0.391761988, -0.812968016, 0.531668007);
-static const float4 to_b = float4(1.16438401, 2.01723194, 0, -1.08563101);
-static const float3 color_range_min = float3(0.0627451017, 0.0627451017, 0.0627451017);
-static const float3 color_range_max = float3(0.921568632, 0.941176474, 0.941176474);
 
 float4 main(PixelInputType input) : SV_TARGET
 {
