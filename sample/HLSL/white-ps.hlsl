@@ -4,7 +4,8 @@ Texture2D image0 : register(t0);
 cbuffer ConstBuffer
 {
 	float intensity; // default 1.f
-	float3 reserve;
+	int toGrey;
+	float2 reserve;
 };
 
 struct PixelInputType {
@@ -12,28 +13,37 @@ struct PixelInputType {
 	float2 tex : TEXCOORD0;
 };
 
+static const float4 to_y = float4(0.256788194, 0.504129171, 0.0979057774, 0.0627449304);
+static const float4 to_u = float4(-0.148222953, -0.290992796, 0.439215750, 0.501961052);
+static const float4 to_v = float4(0.439215571, -0.367788255, -0.0714273080, 0.501960695);
+
+static const float4 to_r = float4(1.16438401, 0, 1.59602702, -0.874202013);
+static const float4 to_g = float4(1.16438401, -0.391761988, -0.812968016, 0.531668007);
+static const float4 to_b = float4(1.16438401, 2.01723194, 0, -1.08563101);
+static const float3 color_range_min = float3(0.0627451017, 0.0627451017, 0.0627451017);
+static const float3 color_range_max = float3(0.921568632, 0.941176474, 0.941176474);
+
 float4 main(PixelInputType input) : SV_TARGET
 {
-	float4 textureColor = image0.Sample(sampleType, input.tex);
+	float4 rgba = image0.Sample(sampleType, input.tex);
 
-	float R = textureColor.r;
-	float G = textureColor.g;
-	float B = textureColor.b;
+	float y = dot(to_y.xyz, rgba.xyz) + to_y.w;
+	y *= intensity;
+	y = clamp(y, 0.f, 1.f);
 
-	float Y = 0.256788 * R + 0.504129 * G + 0.097906 * B + 16.f / 255.f;
-	float U = -0.148223 * R - 0.290993 * G + 0.439216 * B + 128.f / 255.f;
-	float V = 0.439216 * R - 0.367788 * G - 0.071427 * B + 128.f / 255.f;
-	Y *= intensity; // ¡¡∂»«ø∂»
-	Y = clamp(Y, 0.f, 1.f);
-	U = clamp(U, 0.f, 1.f);
-	V = clamp(V, 0.f, 1.f);
+	if (toGrey != 0) {
+		return float4(y, y, y, rgba.a);
+	}
 
-	float r = 1.164383 * (Y - 16.f / 255.f) + 1.596027 * (V - 128.f / 255.f);
-	float g = 1.164383 * (Y - 16.f / 255.f) - 0.391762 * (U - 128.f / 255.f) - 0.812968 * (V - 128.f / 255.f);
-	float b = 1.164383 * (Y - 16.f / 255.f) + 2.017232 * (U - 128.f / 255.f);
-	r = clamp(r, 0.f, 1.f);
-	g = clamp(g, 0.f, 1.f);
-	b = clamp(b, 0.f, 1.f);
+	float u = dot(to_u.xyz, rgba.xyz) + to_u.w;
+	float v = dot(to_v.xyz, rgba.xyz) + to_v.w;
 
-	return float4(r, g, b, textureColor.a);
+	float3 yuv = float3(y, u, v);
+	yuv = clamp(yuv, color_range_min, color_range_max);
+
+	float r = dot(to_r.xyz, yuv) + to_r.w;
+	float g = dot(to_g.xyz, yuv) + to_g.w;
+	float b = dot(to_b.xyz, yuv) + to_b.w;
+
+	return float4(r, g, b, rgba.a);
 }

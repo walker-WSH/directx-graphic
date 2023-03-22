@@ -90,7 +90,7 @@ struct ShiftParam {
 
 struct WhiteParam {
 	float intensity = 1.f;
-	float r1;
+	int toGrey = 1;
 	float r2;
 	float r3;
 };

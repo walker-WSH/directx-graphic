@@ -188,7 +188,7 @@ BOOL CMFCDemoDlg::OnInitDialog()
 	m_gausBlurSlider.SetRange(0, 100);
 	m_gausBlurSlider.SetPos((int)g_blurValue);
 
-	m_sliderWhite.SetRange(1, 200);
+	m_sliderWhite.SetRange(50, 150);
 	m_sliderWhite.SetPos((int)g_whitePercent);
 
 	m_rotateSlider.SetRange(1 * 1000, 20 * 1000);
