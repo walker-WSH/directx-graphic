@@ -12,6 +12,7 @@
 #include "IGraphicEngine.h"
 #include "CDlgBulge.h"
 #include "CDlgEditFace.h"
+#include "CDlgHighlight.h"
 
 using namespace graphic;
 
@@ -58,6 +59,7 @@ protected:
 	HANDLE m_hThread = 0;
 	CDlgBulge m_dlgBulge;
 	CDlgEditFace m_dlgEdit;
+	CDlgHighlight m_dlgHighlight;
 	IGraphicSession *m_pGraphic = nullptr;
 
 	static unsigned __stdcall ThreadFuncNormalRender(void *pParam);

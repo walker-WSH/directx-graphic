@@ -9,6 +9,7 @@
 #define IDR_MAINFRAME                   128
 #define IDD_DIALOG_BULGE                129
 #define IDD_DIALOG1                     131
+#define IDD_DIALOG_HIGHLIGHT            133
 #define IDC_BUTTON1                     1000
 #define IDC_BUTTON_TEST_MOSAIC          1000
 #define IDC_BUTTON11                    1001
@@ -28,7 +29,9 @@
 #define IDC_SLIDER2                     1014
 #define IDC_SLIDER3                     1015
 #define IDC_BUTTON_RUN_NORMAL           1016
+#define IDC_SLIDER5                     1016
 #define IDC_BUTTON1_RUN_BULGE           1017
+#define IDC_SLIDER6                     1017
 #define IDC_EDIT1                       1018
 #define IDC_CHECK2                      1021
 #define IDC_EDIT2                       1022
@@ -44,7 +47,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        133
+#define _APS_NEXT_RESOURCE_VALUE        135
 #define _APS_NEXT_COMMAND_VALUE         32771
 #define _APS_NEXT_CONTROL_VALUE         1030
 #define _APS_NEXT_SYMED_VALUE           101

@@ -12,6 +12,7 @@
 #include <dwrite_2.h>
 #include <wincodec.h>
 #include <d2d1effects.h>
+#include <d2d1effects_2.h>
 #include <d2d1helper.h>
 #include <initguid.h>
 #include <source_location>
@@ -79,6 +80,8 @@ static const auto SWAPCHAIN_TEXTURE_FORMAT = DXGI_FORMAT_B8G8R8A8_UNORM;
 
 DEFINE_GUID(D2D_CLSID_D2D1GaussianBlur, 0x1feb6d69, 0x2fe6, 0x4ac9, 0x8c, 0x58, 0x1d, 0x7f, 0x93, 0xe7, 0xa6, 0xa5);
 DEFINE_GUID(D2D_CLSID_D2D1DirectionalBlur, 0x174319a6, 0x58e9, 0x49b2, 0xbb, 0x63, 0xca, 0xf2, 0xc8, 0x11, 0xa3, 0xdb);
+DEFINE_GUID(D2D_CLSID_D2D1HighlightsShadows, 0xCADC8384, 0x323F, 0x4C7E, 0xA3, 0x61, 0x2E, 0x2B, 0x24, 0xDF, 0x6E,
+	    0xE4);
 
 const static std::vector<D3D_FEATURE_LEVEL> featureLevels = {
 	D3D_FEATURE_LEVEL_11_0,
@@ -89,6 +92,7 @@ const static std::vector<D3D_FEATURE_LEVEL> featureLevels = {
 enum class D2D_EFFECT_TYPE {
 	D2D_EFFECT_GAUSSIAN_BLUR = 0,
 	D2D_EFFECT_DIRECT_BLUR,
+	D2D_EFFFECT_HIGHLIGHT,
 };
 
 class DX11GraphicSession;

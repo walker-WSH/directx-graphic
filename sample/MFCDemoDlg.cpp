@@ -213,6 +213,8 @@ BOOL CMFCDemoDlg::OnInitDialog()
 		break;
 	case RUN_TEST_FOR::RUN_NORMAL:
 	default:
+		m_dlgHighlight.Create(IDD_DIALOG_HIGHLIGHT);
+		m_dlgHighlight.ShowWindow(SW_SHOW);
 		m_hThread = (HANDLE)_beginthreadex(0, 0, ThreadFuncNormalRender, this, 0, 0);
 		break;
 	}

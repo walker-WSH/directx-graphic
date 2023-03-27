@@ -235,6 +235,7 @@
     <ClInclude Include="AsyncTask.h" />
     <ClInclude Include="CDlgBulge.h" />
     <ClInclude Include="CDlgEditFace.h" />
+    <ClInclude Include="CDlgHighlight.h" />
     <ClInclude Include="CustomVideoFrame.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MFCDemo.h" />
@@ -252,6 +253,7 @@
     <ClCompile Include="AsyncTask.cpp" />
     <ClCompile Include="CDlgBulge.cpp" />
     <ClCompile Include="CDlgEditFace.cpp" />
+    <ClCompile Include="CDlgHighlight.cpp" />
     <ClCompile Include="CustomVideoFrame.cpp" />
     <ClCompile Include="MFCDemo.cpp" />
     <ClCompile Include="MFCDemoDlg.cpp" />

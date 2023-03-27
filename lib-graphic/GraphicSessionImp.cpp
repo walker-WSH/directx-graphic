@@ -1161,6 +1161,7 @@ bool DX11GraphicSession::BuildD2D()
 	std::map<D2D_EFFECT_TYPE, IID> effectList = {
 		{D2D_EFFECT_TYPE::D2D_EFFECT_GAUSSIAN_BLUR, D2D_CLSID_D2D1GaussianBlur},
 		{D2D_EFFECT_TYPE::D2D_EFFECT_DIRECT_BLUR, D2D_CLSID_D2D1DirectionalBlur},
+		{D2D_EFFECT_TYPE::D2D_EFFFECT_HIGHLIGHT, D2D_CLSID_D2D1HighlightsShadows},
 	};
 
 	ComPtr<ID2D1Effect> pEffect = nullptr;

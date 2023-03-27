@@ -66,6 +66,9 @@
     <ClInclude Include="CDlgEditFace.h">
       <Filter>UI</Filter>
     </ClInclude>
+    <ClInclude Include="CDlgHighlight.h">
+      <Filter>UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RenderThread.cpp">
@@ -108,6 +111,9 @@
       <Filter>UI</Filter>
     </ClCompile>
     <ClCompile Include="CDlgEditFace.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="CDlgHighlight.cpp">
       <Filter>UI</Filter>
     </ClCompile>
   </ItemGroup>
