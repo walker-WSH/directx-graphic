@@ -19,6 +19,8 @@ float g_whitePercent = 100.f;
 int g_rotatePeriod = 10 * 1000;
 bool g_bToGrey = false;
 
+extern IGraphicSession *pGraphic;
+
 // 用于应用程序“关于”菜单项的 CAboutDlg 对话框
 
 static const std::wstring TEST_MOSAIC_CMD = L"test_mosaic";
@@ -197,6 +199,7 @@ BOOL CMFCDemoDlg::OnInitDialog()
 	m_rotateSlider.SetPos(g_rotatePeriod);
 
 	m_bExit = false;
+	pGraphic = m_pGraphic;
 	switch (InitCmdParams()) {
 	case RUN_TEST_FOR::RUN_SUB_MOSAIC:
 		m_hThread = (HANDLE)_beginthreadex(0, 0, ThreadFuncForSubRegionMosic, this, 0, 0);

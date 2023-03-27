@@ -78,7 +78,6 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncNormalRender(void *pParam)
 	HRESULT hr = CoInitialize(NULL);
 
 	CMFCDemoDlg *self = reinterpret_cast<CMFCDemoDlg *>(pParam);
-	pGraphic = self->m_pGraphic;
 
 	if (!InitGraphic(self->m_hWnd))
 		return 1;
@@ -169,7 +168,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncNormalRender(void *pParam)
 
 		auto api = pGraphic->OpenGeometryInterface(texCanvas2);
 		if (api) {
-			api->DrawImageWithGaussianBlur(texCanvas, g_blurValue);
+			api->DrawGaussianBlur(texCanvas, g_blurValue);
 			pGraphic->CloseGeometryInterface(texCanvas2);
 		}
 
@@ -326,7 +325,6 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForSubRegionMosic(void *pParam)
 	HRESULT hr = CoInitialize(NULL);
 
 	CMFCDemoDlg *self = reinterpret_cast<CMFCDemoDlg *>(pParam);
-	pGraphic = self->m_pGraphic;
 
 	if (!InitGraphic(self->m_hWnd))
 		return 1;
@@ -483,7 +481,6 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForBulge(void *pParam)
 	HRESULT hr = CoInitialize(NULL);
 
 	CMFCDemoDlg *self = reinterpret_cast<CMFCDemoDlg *>(pParam);
-	pGraphic = self->m_pGraphic;
 
 	if (!InitGraphic(self->m_hWnd))
 		return 1;

@@ -256,10 +256,9 @@ bool D2DRenderTarget::FlushGeometry(std::source_location location)
 	return false;
 }
 
-void D2DRenderTarget::DrawImageWithGaussianBlur(texture_handle srcCanvas, float value,
-						const D2D1_POINT_2F *targetOffset, const D2D1_RECT_F *imageRectangle,
-						D2D1_INTERPOLATION_MODE interpolationMode,
-						D2D1_COMPOSITE_MODE compositeMode)
+void D2DRenderTarget::DrawGaussianBlur(texture_handle srcCanvas, float value, const D2D1_POINT_2F *targetOffset,
+				       const D2D1_RECT_F *imageRectangle, D2D1_INTERPOLATION_MODE interpolationMode,
+				       D2D1_COMPOSITE_MODE compositeMode)
 {
 	CHECK_GRAPHIC_OBJECT_VALID(m_graphicSession, srcCanvas, DX11Texture2D, srcTex, return );
 
@@ -294,7 +293,7 @@ void D2DRenderTarget::DrawImageWithGaussianBlur(texture_handle srcCanvas, float 
 	}
 }
 
-void D2DRenderTarget::DrawImageWithDirectBlur(texture_handle srcCanvas, float value, float angle)
+void D2DRenderTarget::DrawDirectBlur(texture_handle srcCanvas, float value, float angle)
 {
 	CHECK_GRAPHIC_OBJECT_VALID(m_graphicSession, srcCanvas, DX11Texture2D, srcTex, return );
 

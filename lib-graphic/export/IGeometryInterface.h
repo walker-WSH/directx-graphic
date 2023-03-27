@@ -32,13 +32,12 @@ public:
 
 	virtual bool FlushGeometry(std::source_location caller = std::source_location::current()) = 0;
 
-	virtual void
-	DrawImageWithGaussianBlur(texture_handle srcCanvas, float value = 50.f,
-				  const D2D1_POINT_2F *destOffset = nullptr, const D2D1_RECT_F *srcRect = nullptr,
-				  D2D1_INTERPOLATION_MODE interpolationMode = D2D1_INTERPOLATION_MODE_LINEAR,
-				  D2D1_COMPOSITE_MODE compositeMode = D2D1_COMPOSITE_MODE_SOURCE_OVER) = 0;
+	virtual void DrawGaussianBlur(texture_handle srcCanvas, float value = 50.f,
+				      const D2D1_POINT_2F *destOffset = nullptr, const D2D1_RECT_F *srcRect = nullptr,
+				      D2D1_INTERPOLATION_MODE interpolationMode = D2D1_INTERPOLATION_MODE_LINEAR,
+				      D2D1_COMPOSITE_MODE compositeMode = D2D1_COMPOSITE_MODE_SOURCE_OVER) = 0;
 
-	virtual void DrawImageWithDirectBlur(texture_handle srcCanvas, float value = 50.f, float angle = 135.f) = 0;
+	virtual void DrawDirectBlur(texture_handle srcCanvas, float value = 50.f, float angle = 135.f) = 0;
 };
 
 } // namespace graphic
