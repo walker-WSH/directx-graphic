@@ -68,6 +68,9 @@ void CDlgHighlight::OnTimer(UINT_PTR nIDEvent)
 	CDialogEx::OnTimer(nIDEvent);
 }
 
+texture_handle edit_canvasEffect = nullptr;
+texture_handle test_chromakey = nullptr;
+
 void CDlgHighlight::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
@@ -81,24 +84,38 @@ void CDlgHighlight::OnPaint()
 		return;
 
 	if (!edit_canvasTex) {
-		auto info = pGraphic->GetTextureInfo(texHightlight);
+		test_chromakey = pGraphic->OpenImageTexture(L"testChromekey.png");
+
+		auto info = pGraphic->GetTextureInfo(test_chromakey);
 		info.usage = TEXTURE_USAGE::CANVAS_TARGET;
 		info.format = D2D_COMPATIBLE_FORMAT;
 		edit_canvasTex = pGraphic->CreateTexture(info);
+		edit_canvasEffect = pGraphic->CreateTexture(info);
 
 		edit_display = pGraphic->CreateDisplay(m_hWnd);
 		pGraphic->SetDisplaySize(edit_display, rc.right, rc.right);
 
 		if (pGraphic->BeginRenderCanvas(edit_canvasTex)) {
-			RenderTexture(std::vector<texture_handle>{texHightlight}, SIZE(info.width, info.height),
+			RenderTexture(std::vector<texture_handle>{test_chromakey}, SIZE(info.width, info.height),
 				      RECT(0, 0, info.width, info.height));
 			pGraphic->EndRender();
 		}
 	}
 
-	IGeometryInterface *d2d = 0;
+	IGeometryInterface *d2d = pGraphic->OpenGeometryInterface(edit_canvasEffect);
+	if (d2d) {
+		d2d->DrawChromakey(edit_canvasTex, ColorRGB(76 / 255.f, 121.f / 255.f, 3.f / 255.f), redius / 10.f);
+		pGraphic->CloseGeometryInterface(edit_canvasEffect);
+	}
+
 	if (pGraphic->BeginRenderWindow(edit_display, &d2d)) {
-		d2d->DrawHighlight(edit_canvasTex, highlight, shadow, clarity, redius);
+		pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
+
+		ColorRGBA bk(1, 1, 1, 1);
+		pGraphic->ClearBackground(&bk);
+		RenderTexture(std::vector<texture_handle>{edit_canvasEffect}, SIZE(rc.right, rc.bottom), rc);
+
+		//d2d->DrawHighlight(edit_canvasEffect, highlight, shadow, clarity, redius);
 		pGraphic->EndRender(d2d);
 	}
 }

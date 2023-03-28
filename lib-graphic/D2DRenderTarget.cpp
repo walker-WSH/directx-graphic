@@ -272,6 +272,9 @@ void D2DRenderTarget::DrawGaussianBlur(texture_handle srcCanvas, float value, co
 
 	assert(pD2DContext && pEffect);
 	if (pD2DContext && pEffect) {
+		D2D1_COLOR_F clrBk;
+		clrBk.r = clrBk.g = clrBk.b = clrBk.a = 0;
+
 		pEffect->SetInput(0, srcTex->m_pD2DBitmapOnDXGI);
 		pEffect->SetValue(D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION, value);
 		pEffect->SetValue(D2D1_GAUSSIANBLUR_PROP_OPTIMIZATION, D2D1_GAUSSIANBLUR_OPTIMIZATION_SPEED);
@@ -280,7 +283,7 @@ void D2DRenderTarget::DrawGaussianBlur(texture_handle srcCanvas, float value, co
 
 		pD2DContext->BeginDraw();
 		pD2DContext->SetTransform(D2D1::Matrix3x2F::Identity());
-		pD2DContext->Clear(D2D1::ColorF::ColorF(0x00000000));
+		pD2DContext->Clear(clrBk);
 		pD2DContext->DrawImage(pEffect, targetOffset, imageRectangle, interpolationMode, compositeMode);
 		auto hr = pD2DContext->EndDraw();
 
@@ -309,6 +312,9 @@ void D2DRenderTarget::DrawDirectBlur(texture_handle srcCanvas, float value, floa
 
 	assert(pD2DContext && pEffect);
 	if (pD2DContext && pEffect) {
+		D2D1_COLOR_F clrBk;
+		clrBk.r = clrBk.g = clrBk.b = clrBk.a = 0;
+
 		pEffect->SetInput(0, srcTex->m_pD2DBitmapOnDXGI);
 		pEffect->SetValue(D2D1_DIRECTIONALBLUR_PROP_STANDARD_DEVIATION, value);
 		pEffect->SetValue(D2D1_DIRECTIONALBLUR_PROP_ANGLE, angle);
@@ -318,7 +324,7 @@ void D2DRenderTarget::DrawDirectBlur(texture_handle srcCanvas, float value, floa
 
 		pD2DContext->BeginDraw();
 		pD2DContext->SetTransform(D2D1::Matrix3x2F::Identity());
-		pD2DContext->Clear(D2D1::ColorF::ColorF(0x00000000));
+		pD2DContext->Clear(clrBk);
 		pD2DContext->DrawImage(pEffect, targetOffset, imageRectangle, interpolationMode, compositeMode);
 		auto hr = pD2DContext->EndDraw();
 
@@ -347,6 +353,9 @@ void D2DRenderTarget::DrawHighlight(texture_handle srcCanvas, float highlight, f
 
 	assert(pD2DContext && pEffect);
 	if (pD2DContext && pEffect) {
+		D2D1_COLOR_F clrBk;
+		clrBk.r = clrBk.g = clrBk.b = clrBk.a = 0;
+
 		pEffect->SetInput(0, srcTex->m_pD2DBitmapOnDXGI);
 		pEffect->SetValue(D2D1_HIGHLIGHTSANDSHADOWS_PROP_HIGHLIGHTS, highlight);
 		pEffect->SetValue(D2D1_HIGHLIGHTSANDSHADOWS_PROP_SHADOWS, shadows);
@@ -357,8 +366,54 @@ void D2DRenderTarget::DrawHighlight(texture_handle srcCanvas, float highlight, f
 
 		pD2DContext->BeginDraw();
 		pD2DContext->SetTransform(D2D1::Matrix3x2F::Identity());
-		pD2DContext->Clear(D2D1::ColorF::ColorF(0x00000000));
+		pD2DContext->Clear(clrBk);
 		pD2DContext->DrawImage(pEffect, targetOffset, imageRectangle, interpolationMode, compositeMode);
+		auto hr = pD2DContext->EndDraw();
+
+		// Here we must reset its parameters, otherwise swapchain will fail to resize.
+		pD2DContext->SetTarget(nullptr);
+		pEffect->SetInput(0, nullptr, FALSE);
+
+		if (hr == D2DERR_RECREATE_TARGET && !m_bD2DRendering)
+			m_graphicSession.HandleDirectResult(hr);
+	}
+}
+
+void D2DRenderTarget::DrawChromakey(texture_handle srcCanvas, ColorRGB clrKey, float tolerance, bool invertAlpha,
+				    bool smooth)
+{
+	CHECK_GRAPHIC_OBJECT_VALID(m_graphicSession, srcCanvas, DX11Texture2D, srcTex, return );
+
+	if (!IsInterfaceValid() || !srcTex->IsInterfaceValid()) {
+		assert(false);
+		return;
+	}
+
+	ID2D1DeviceContext *pD2DContext = m_graphicSession.D2DDeviceContext();
+	auto pEffect = m_graphicSession.GetD2DEffect(D2D_EFFECT_TYPE::D2D_EFFFECT_CHROMAKEY);
+
+	assert(pD2DContext && pEffect);
+	if (pD2DContext && pEffect) {
+		D2D1_VECTOR_3F clr;
+		clr.x = clrKey.red;
+		clr.y = clrKey.green;
+		clr.z = clrKey.blue;
+
+		D2D1_COLOR_F clrBk;
+		clrBk.r = clrBk.g = clrBk.b = clrBk.a = 0;
+
+		pEffect->SetInput(0, srcTex->m_pD2DBitmapOnDXGI);
+		pEffect->SetValue(D2D1_CHROMAKEY_PROP_COLOR, (const BYTE *)&clr, sizeof(clr));
+		pEffect->SetValue(D2D1_CHROMAKEY_PROP_TOLERANCE, tolerance);
+		pEffect->SetValue(D2D1_CHROMAKEY_PROP_INVERT_ALPHA, invertAlpha);
+		pEffect->SetValue(D2D1_CHROMAKEY_PROP_FEATHER, smooth);
+
+		pD2DContext->SetTarget(m_pD2DBitmapOnDXGI);
+
+		pD2DContext->BeginDraw();
+		pD2DContext->SetTransform(D2D1::Matrix3x2F::Identity());
+		pD2DContext->Clear(clrBk);
+		pD2DContext->DrawImage(pEffect);
 		auto hr = pD2DContext->EndDraw();
 
 		// Here we must reset its parameters, otherwise swapchain will fail to resize.

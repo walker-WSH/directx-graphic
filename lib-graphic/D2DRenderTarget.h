@@ -56,6 +56,9 @@ public:
 				   D2D1_INTERPOLATION_MODE interpolationMode = D2D1_INTERPOLATION_MODE_LINEAR,
 				   D2D1_COMPOSITE_MODE compositeMode = D2D1_COMPOSITE_MODE_SOURCE_OVER);
 
+	virtual void DrawChromakey(texture_handle srcCanvas, ColorRGB clrKey, float tolerance = 0.1f,
+				   bool invertAlpha = false, bool smooth = true);
+
 protected:
 	bool BeginDrawD2D(std::source_location location = std::source_location::current());
 	HRESULT EndDrawD2D(std::source_location location = std::source_location::current());

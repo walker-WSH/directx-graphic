@@ -150,11 +150,17 @@ struct DisplayInformation {
 	enum DXGI_FORMAT format = DXGI_FORMAT_UNKNOWN;
 };
 
+struct ColorRGB {
+	float red = 0.0; // [0.0, 1.0]
+	float green = 0.0;
+	float blue = 0.0;
+};
+
 struct ColorRGBA {
 	float red = 0.0; // [0.0, 1.0]
 	float green = 0.0;
 	float blue = 0.0;
-	float alpha = 1.0;
+	float alpha = 1.0; // [0.0, 1.0]
 };
 
 struct VertexInputDesc {

@@ -49,6 +49,11 @@ public:
 				   const D2D1_RECT_F *srcRect = nullptr,
 				   D2D1_INTERPOLATION_MODE interpolationMode = D2D1_INTERPOLATION_MODE_LINEAR,
 				   D2D1_COMPOSITE_MODE compositeMode = D2D1_COMPOSITE_MODE_SOURCE_OVER) = 0;
+
+	// tolerance [0.f, 1.f]
+	// its smooth effect is worse than OBS
+	virtual void DrawChromakey(texture_handle srcCanvas, ColorRGB clrKey, float tolerance = 0.1f,
+				   bool invertAlpha = false, bool smooth = true) = 0;
 };
 
 } // namespace graphic
