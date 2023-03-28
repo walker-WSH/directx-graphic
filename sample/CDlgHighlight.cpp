@@ -41,13 +41,13 @@ BOOL CDlgHighlight::OnInitDialog()
 	ModifyStyle(0, WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
 
 	m_sliderHIGHLIGHTS.SetRange(-100, 100);
-	m_sliderHIGHLIGHTS.SetPos(0);
+	m_sliderHIGHLIGHTS.SetPos(1);
 
 	m_sliderSHADOWS.SetRange(-100, 100);
-	m_sliderSHADOWS.SetPos(0);
+	m_sliderSHADOWS.SetPos(1);
 
 	m_sliderCLARITY.SetRange(-100, 100);
-	m_sliderCLARITY.SetPos(0);
+	m_sliderCLARITY.SetPos(1);
 
 	m_sliderRADIUS.SetRange(0, 1000);
 	m_sliderRADIUS.SetPos(125);
