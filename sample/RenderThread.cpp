@@ -36,6 +36,7 @@ texture_handle texShared = nullptr;
 texture_handle texAlpha = nullptr;
 texture_handle texImg = nullptr;
 texture_handle texImg2 = nullptr;
+texture_handle texHightlight = nullptr;
 texture_handle texForWrite = nullptr;
 font_handle fontFormat = nullptr;
 font_handle fontFormat2 = nullptr;
@@ -600,6 +601,8 @@ bool InitGraphic(HWND hWnd)
 	texGirlOrigin = pGraphic->OpenImageTexture(L"testGirl.jpg");
 
 	texGrid = pGraphic->OpenImageTexture(L"testWangge.jpg");
+
+	texHightlight = pGraphic->OpenImageTexture(L"testHighlightShadow.jpg");
 
 	texAlpha = pGraphic->OpenImageTexture(L"testAlpha.png");
 

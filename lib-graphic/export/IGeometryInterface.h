@@ -37,7 +37,10 @@ public:
 				      D2D1_INTERPOLATION_MODE interpolationMode = D2D1_INTERPOLATION_MODE_LINEAR,
 				      D2D1_COMPOSITE_MODE compositeMode = D2D1_COMPOSITE_MODE_SOURCE_OVER) = 0;
 
-	virtual void DrawDirectBlur(texture_handle srcCanvas, float value = 50.f, float angle = 135.f) = 0;
+	virtual void DrawDirectBlur(texture_handle srcCanvas, float value = 50.f, float angle = 135.f,
+				    const D2D1_POINT_2F *destOffset = nullptr, const D2D1_RECT_F *srcRect = nullptr,
+				    D2D1_INTERPOLATION_MODE interpolationMode = D2D1_INTERPOLATION_MODE_LINEAR,
+				    D2D1_COMPOSITE_MODE compositeMode = D2D1_COMPOSITE_MODE_SOURCE_OVER) = 0;
 
 	// highlight/shadows/clarity [-1.f, 1.f]
 	// radius [0.f, 10.f]

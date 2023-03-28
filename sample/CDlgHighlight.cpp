@@ -7,7 +7,7 @@
 #include "resource.h"
 
 extern IGraphicSession *pGraphic;
-extern texture_handle texGrid;
+extern texture_handle texHightlight;
 
 // CDlgHighlight 对话框
 
@@ -77,11 +77,11 @@ void CDlgHighlight::OnPaint()
 
 	AUTO_GRAPHIC_CONTEXT(pGraphic);
 
-	if (!texGrid)
+	if (!texHightlight)
 		return;
 
 	if (!edit_canvasTex) {
-		auto info = pGraphic->GetTextureInfo(texGrid);
+		auto info = pGraphic->GetTextureInfo(texHightlight);
 		info.usage = TEXTURE_USAGE::CANVAS_TARGET;
 		info.format = D2D_COMPATIBLE_FORMAT;
 		edit_canvasTex = pGraphic->CreateTexture(info);
@@ -90,7 +90,7 @@ void CDlgHighlight::OnPaint()
 		pGraphic->SetDisplaySize(edit_display, rc.right, rc.right);
 
 		if (pGraphic->BeginRenderCanvas(edit_canvasTex)) {
-			RenderTexture(std::vector<texture_handle>{texGrid}, SIZE(info.width, info.height),
+			RenderTexture(std::vector<texture_handle>{texHightlight}, SIZE(info.width, info.height),
 				      RECT(0, 0, info.width, info.height));
 			pGraphic->EndRender();
 		}

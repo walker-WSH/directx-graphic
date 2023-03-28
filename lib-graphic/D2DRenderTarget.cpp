@@ -293,6 +293,44 @@ void D2DRenderTarget::DrawGaussianBlur(texture_handle srcCanvas, float value, co
 	}
 }
 
+void D2DRenderTarget::DrawDirectBlur(texture_handle srcCanvas, float value, float angle,
+				     const D2D1_POINT_2F *targetOffset, const D2D1_RECT_F *imageRectangle,
+				     D2D1_INTERPOLATION_MODE interpolationMode, D2D1_COMPOSITE_MODE compositeMode)
+{
+	CHECK_GRAPHIC_OBJECT_VALID(m_graphicSession, srcCanvas, DX11Texture2D, srcTex, return );
+
+	if (!IsInterfaceValid() || !srcTex->IsInterfaceValid()) {
+		assert(false);
+		return;
+	}
+
+	ID2D1DeviceContext *pD2DContext = m_graphicSession.D2DDeviceContext();
+	auto pEffect = m_graphicSession.GetD2DEffect(D2D_EFFECT_TYPE::D2D_EFFECT_DIRECT_BLUR);
+
+	assert(pD2DContext && pEffect);
+	if (pD2DContext && pEffect) {
+		pEffect->SetInput(0, srcTex->m_pD2DBitmapOnDXGI);
+		pEffect->SetValue(D2D1_DIRECTIONALBLUR_PROP_STANDARD_DEVIATION, value);
+		pEffect->SetValue(D2D1_DIRECTIONALBLUR_PROP_ANGLE, angle);
+		pEffect->SetValue(D2D1_DIRECTIONALBLUR_PROP_OPTIMIZATION, D2D1_DIRECTIONALBLUR_OPTIMIZATION_SPEED);
+
+		pD2DContext->SetTarget(m_pD2DBitmapOnDXGI);
+
+		pD2DContext->BeginDraw();
+		pD2DContext->SetTransform(D2D1::Matrix3x2F::Identity());
+		pD2DContext->Clear(D2D1::ColorF::ColorF(0x00000000));
+		pD2DContext->DrawImage(pEffect, targetOffset, imageRectangle, interpolationMode, compositeMode);
+		auto hr = pD2DContext->EndDraw();
+
+		// Here we must reset its parameters, otherwise swapchain will fail to resize.
+		pD2DContext->SetTarget(nullptr);
+		pEffect->SetInput(0, nullptr, FALSE);
+
+		if (hr == D2DERR_RECREATE_TARGET && !m_bD2DRendering)
+			m_graphicSession.HandleDirectResult(hr);
+	}
+}
+
 void D2DRenderTarget::DrawHighlight(texture_handle srcCanvas, float highlight, float shadows, float clarity,
 				    float radius, const D2D1_POINT_2F *targetOffset, const D2D1_RECT_F *imageRectangle,
 				    D2D1_INTERPOLATION_MODE interpolationMode, D2D1_COMPOSITE_MODE compositeMode)
@@ -321,42 +359,6 @@ void D2DRenderTarget::DrawHighlight(texture_handle srcCanvas, float highlight, f
 		pD2DContext->SetTransform(D2D1::Matrix3x2F::Identity());
 		pD2DContext->Clear(D2D1::ColorF::ColorF(0x00000000));
 		pD2DContext->DrawImage(pEffect, targetOffset, imageRectangle, interpolationMode, compositeMode);
-		auto hr = pD2DContext->EndDraw();
-
-		// Here we must reset its parameters, otherwise swapchain will fail to resize.
-		pD2DContext->SetTarget(nullptr);
-		pEffect->SetInput(0, nullptr, FALSE);
-
-		if (hr == D2DERR_RECREATE_TARGET && !m_bD2DRendering)
-			m_graphicSession.HandleDirectResult(hr);
-	}
-}
-
-void D2DRenderTarget::DrawDirectBlur(texture_handle srcCanvas, float value, float angle)
-{
-	CHECK_GRAPHIC_OBJECT_VALID(m_graphicSession, srcCanvas, DX11Texture2D, srcTex, return );
-
-	if (!IsInterfaceValid() || !srcTex->IsInterfaceValid()) {
-		assert(false);
-		return;
-	}
-
-	ID2D1DeviceContext *pD2DContext = m_graphicSession.D2DDeviceContext();
-	auto pEffect = m_graphicSession.GetD2DEffect(D2D_EFFECT_TYPE::D2D_EFFECT_DIRECT_BLUR);
-
-	assert(pD2DContext && pEffect);
-	if (pD2DContext && pEffect) {
-		pEffect->SetInput(0, srcTex->m_pD2DBitmapOnDXGI);
-		pEffect->SetValue(D2D1_DIRECTIONALBLUR_PROP_STANDARD_DEVIATION, value);
-		pEffect->SetValue(D2D1_DIRECTIONALBLUR_PROP_ANGLE, angle);
-		pEffect->SetValue(D2D1_DIRECTIONALBLUR_PROP_OPTIMIZATION, D2D1_DIRECTIONALBLUR_OPTIMIZATION_SPEED);
-
-		pD2DContext->SetTarget(m_pD2DBitmapOnDXGI);
-
-		pD2DContext->BeginDraw();
-		pD2DContext->SetTransform(D2D1::Matrix3x2F::Identity());
-		pD2DContext->Clear(D2D1::ColorF::ColorF(0x00000000));
-		pD2DContext->DrawImage(pEffect);
 		auto hr = pD2DContext->EndDraw();
 
 		// Here we must reset its parameters, otherwise swapchain will fail to resize.
