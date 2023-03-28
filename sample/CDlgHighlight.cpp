@@ -104,7 +104,7 @@ void CDlgHighlight::OnPaint()
 
 	IGeometryInterface *d2d = pGraphic->OpenGeometryInterface(edit_canvasEffect);
 	if (d2d) {
-		d2d->DrawChromakey(edit_canvasTex, ColorRGB(76 / 255.f, 121.f / 255.f, 3.f / 255.f), redius / 10.f);
+		d2d->DrawChromakey(edit_canvasTex, ColorRGB(77 / 255.f, 181.f / 255.f, 83.f / 255.f), redius / 10.f);
 		pGraphic->CloseGeometryInterface(edit_canvasEffect);
 	}
 
