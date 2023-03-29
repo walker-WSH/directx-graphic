@@ -785,6 +785,9 @@ void DX11GraphicSession::ApplyShader(DX11Shader *shader)
 
 bool DX11GraphicSession::BeginRenderCanvas(texture_handle hdl, IGeometryInterface **geometryInterface)
 {
+	if (geometryInterface)
+		*geometryInterface = nullptr;
+
 	CHECK_GRAPHIC_CONTEXT;
 	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Texture2D, obj, return false);
 
@@ -819,6 +822,9 @@ bool DX11GraphicSession::BeginRenderCanvas(texture_handle hdl, IGeometryInterfac
 
 bool DX11GraphicSession::BeginRenderWindow(display_handle hdl, IGeometryInterface **geometryInterface)
 {
+	if (geometryInterface)
+		*geometryInterface = nullptr;
+
 	CHECK_GRAPHIC_CONTEXT;
 	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11SwapChain, obj, return false);
 
