@@ -23,9 +23,6 @@
 #define AUTO_GRAPHIC_CONTEXT(graphic) \
 	IAutoGraphicContext COMBINE1(autoContext, __LINE__)(graphic, std::source_location::current())
 
-// Note: If you want to create D2D target based on DX11, the texutre of DX11 must be B8G8R8A8_UNORM
-static const auto D2D_COMPATIBLE_FORMAT = DXGI_FORMAT_B8G8R8A8_UNORM;
-
 namespace graphic {
 
 class IGraphicObject;

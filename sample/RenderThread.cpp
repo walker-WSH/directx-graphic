@@ -323,7 +323,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForSubRegionMosic(void *pParam)
 
 	TextureInformation canvasInfo;
 	canvasInfo.usage = TEXTURE_USAGE::CANVAS_TARGET;
-	canvasInfo.format = D2D_COMPATIBLE_FORMAT;
+	canvasInfo.format = DXGI_FORMAT_B8G8R8A8_UNORM;
 
 	texture_handle canvasTex = 0;  // 窗口画面 先画到这上面 再present到窗口
 	texture_handle canvasPath = 0; // path的mask

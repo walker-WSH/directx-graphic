@@ -95,7 +95,7 @@ void CDlgHighlight::OnPaint()
 
 		auto info = pGraphic->GetTextureInfo(test_chromakey);
 		info.usage = TEXTURE_USAGE::CANVAS_TARGET;
-		info.format = D2D_COMPATIBLE_FORMAT;
+		info.format = DXGI_FORMAT_B8G8R8A8_UNORM;
 		edit_canvasTex = pGraphic->CreateTexture(info);
 		edit_canvasEffect = pGraphic->CreateTexture(info);
 

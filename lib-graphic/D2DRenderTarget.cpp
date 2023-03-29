@@ -433,10 +433,17 @@ bool D2DRenderTarget::BuildD2DFromDXGI(ComPtr<IDXGISurface1> sfc, DXGI_FORMAT fo
 	* Create ID2D1Bitmap1 based on DXGI's swaipchain or texture
 	--------------------------------------------------------------------------------------------*/
 	switch (format) {
-	case DXGI_FORMAT_B8G8R8X8_UNORM:
-		return false; // unsupported
+	case DXGI_FORMAT_A8_UNORM:
+	case DXGI_FORMAT_R8G8B8A8_UNORM:
+	case DXGI_FORMAT_B8G8R8A8_UNORM:
+	case DXGI_FORMAT_R8G8B8A8_UNORM_SRGB:
+	case DXGI_FORMAT_B8G8R8A8_UNORM_SRGB:
+	case DXGI_FORMAT_R16G16B16A16_UNORM:
+	case DXGI_FORMAT_R32G32B32A32_FLOAT:
+	case DXGI_FORMAT_R16G16B16A16_FLOAT:
+		break; // they are supported
 	default:
-		break;
+		return false; // unsupported
 	}
 
 	D2D1_PIXEL_FORMAT pixelFormat = D2D1::PixelFormat(format, D2D1_ALPHA_MODE_PREMULTIPLIED);
