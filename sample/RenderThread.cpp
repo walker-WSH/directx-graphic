@@ -557,6 +557,61 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForBulge(void *pParam)
 	return 0;
 }
 
+unsigned __stdcall CMFCDemoDlg::ThreadFuncRender(void *pParam)
+{
+	HRESULT hr = CoInitialize(NULL);
+	CMFCDemoDlg *self = reinterpret_cast<CMFCDemoDlg *>(pParam);
+
+	int64_t frameInterval = 1000 / 30;
+	int64_t startCaptureTime = GetTickCount64();
+	int64_t capturedCount = 0;
+	while (!self->m_bExit) {
+		if (!self->m_asyncTask.RunAllTask()) {
+			int64_t nextCaptureTime = startCaptureTime + capturedCount * frameInterval;
+			int64_t currentTime = GetTickCount64();
+			int64_t sleepTime = 0;
+			if (currentTime < nextCaptureTime) {
+				sleepTime = nextCaptureTime - currentTime;
+				sleepTime = min(sleepTime, int64_t(100));
+			}
+
+			Sleep((DWORD)sleepTime);
+		}
+
+		if (self->m_nResizeState > 1)
+			continue;
+
+		++capturedCount;
+
+		RECT rc;
+		::GetClientRect(self->m_hWnd, &rc);
+
+		rc.right = (rc.right / 2) * 2;
+		rc.bottom = (rc.bottom / 2) * 2;
+
+		AUTO_GRAPHIC_CONTEXT(pGraphic);
+
+		SIZE wndSize(rc.right - rc.left, rc.bottom - rc.top);
+		pGraphic->SetDisplaySize(display, wndSize.cx, wndSize.cy);
+
+		if (!pGraphic->IsGraphicBuilt()) {
+			if (!pGraphic->ReBuildGraphic())
+				continue;
+		}
+
+		if (pGraphic->BeginRenderWindow(display)) {
+			pGraphic->ClearBackground(&clrBlack);
+			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::DISABLE);
+			pGraphic->EndRender();
+		}
+	}
+
+	if (SUCCEEDED(hr))
+		CoUninitialize();
+
+	return 0;
+}
+
 bool InitGraphic(HWND hWnd)
 {
 	auto listGraphic = graphic::EnumGraphicCard();

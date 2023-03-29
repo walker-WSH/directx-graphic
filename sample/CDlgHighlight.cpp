@@ -119,7 +119,7 @@ void CDlgHighlight::OnPaint()
 		pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
 
 		if (test_highlight) {
-			d2d->DrawHighlight(test_chromakey, highlight, shadow, clarity, redius);
+			d2d->DrawHighlight(edit_canvasTex, highlight, shadow, clarity, redius);
 		} else {
 			ColorRGBA bk(1, 1, 1, 1);
 			pGraphic->ClearBackground(&bk);

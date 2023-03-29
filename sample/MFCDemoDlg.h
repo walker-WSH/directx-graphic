@@ -17,7 +17,7 @@
 using namespace graphic;
 
 #define WINDOW_WIDTH 1280
-#define WINDOW_HEIGHT 720
+#define WINDOW_HEIGHT 800
 
 #define DRAGE_REGION_SIZE 40
 #define RESIZE_REGION_SIZE 10
@@ -69,6 +69,7 @@ protected:
 	static unsigned __stdcall ThreadFuncNormalRender(void *pParam);
 	static unsigned __stdcall ThreadFuncForSubRegionMosic(void *pParam);
 	static unsigned __stdcall ThreadFuncForBulge(void *pParam);
+	static unsigned __stdcall ThreadFuncRender(void *pParam);
 
 public:
 	// 生成的消息映射函数

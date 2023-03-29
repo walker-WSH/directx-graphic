@@ -230,12 +230,14 @@ BOOL CMFCDemoDlg::OnInitDialog()
 		m_dlgEdit.ShowWindow(SW_SHOW);
 		break;
 	case RUN_TEST_FOR::RUN_SUB_HIGHLIGHT:
+		m_hThread = (HANDLE)_beginthreadex(0, 0, ThreadFuncRender, this, 0, 0);
 		m_dlgHighlight.test_highlight = true;
 		m_dlgHighlight.Create(IDD_DIALOG_HIGHLIGHT);
 		m_dlgHighlight.ShowWindow(SW_SHOW);
 		break;
 
 	case RUN_TEST_FOR::RUN_SUB_CHROMAKEY:
+		m_hThread = (HANDLE)_beginthreadex(0, 0, ThreadFuncRender, this, 0, 0);
 		m_dlgHighlight.test_highlight = false;
 		m_dlgHighlight.Create(IDD_DIALOG_HIGHLIGHT);
 		m_dlgHighlight.ShowWindow(SW_SHOW);
