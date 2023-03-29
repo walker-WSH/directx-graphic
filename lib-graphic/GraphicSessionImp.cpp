@@ -523,7 +523,8 @@ void DX11GraphicSession::ReleaseAllDX(bool isForRebuild)
 	m_pDX11Device = nullptr;
 	m_pDeviceContext = nullptr;
 
-	m_pBlendState = nullptr;
+	m_pBlendStateNormal = nullptr;
+	m_pBlendStatePreMultAlpha = nullptr;
 	m_pSampleStateAnisotropic = m_pSampleStatePoint = m_pSampleStateLinear = nullptr;
 }
 
@@ -643,9 +644,20 @@ bool DX11GraphicSession::InitBlendState()
 	blendStateDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	blendStateDescription.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
-	HRESULT hr = m_pDX11Device->CreateBlendState(&blendStateDescription, m_pBlendState.Assign());
+	HRESULT hr = m_pDX11Device->CreateBlendState(&blendStateDescription, m_pBlendStateNormal.Assign());
 	if (FAILED(hr)) {
-		CHECK_DX_ERROR(hr, "CreateBlendState");
+		CHECK_DX_ERROR(hr, "CreateBlendState failed for normal blend");
+		assert(false);
+		return false;
+	}
+
+	blendStateDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+	blendStateDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	blendStateDescription.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	blendStateDescription.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+	hr = m_pDX11Device->CreateBlendState(&blendStateDescription, m_pBlendStatePreMultAlpha.Assign());
+	if (FAILED(hr)) {
+		CHECK_DX_ERROR(hr, "CreateBlendState failed for preMultAlpha");
 		assert(false);
 		return false;
 	}
@@ -875,11 +887,18 @@ void DX11GraphicSession::SetBlendState(VIDEO_BLEND_TYPE type)
 
 	switch (type) {
 	case VIDEO_BLEND_TYPE::NORMAL:
-		if (m_pBlendState) {
+		if (m_pBlendStateNormal) {
 			float blendFactor[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-			m_pDeviceContext->OMSetBlendState(m_pBlendState, blendFactor, 0xffffffff);
+			m_pDeviceContext->OMSetBlendState(m_pBlendStateNormal, blendFactor, 0xffffffff);
 		}
 		break;
+
+	case VIDEO_BLEND_TYPE::PREMULT_ALPHA: {
+		if (m_pBlendStatePreMultAlpha) {
+			float blendFactor[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+			m_pDeviceContext->OMSetBlendState(m_pBlendStatePreMultAlpha, blendFactor, 0xffffffff);
+		}
+	} break;
 
 	case VIDEO_BLEND_TYPE::DISABLE:
 	default:

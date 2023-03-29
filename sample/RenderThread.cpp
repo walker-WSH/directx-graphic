@@ -253,6 +253,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncNormalRender(void *pParam)
 			}
 
 			if (fullTex) {
+				pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
 				RenderTexture(std::vector<texture_handle>{fullTex}, canvasSize, rc);
 			}
 

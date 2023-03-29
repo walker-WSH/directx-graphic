@@ -145,7 +145,8 @@ private:
 	ComPtr<IDXGIFactory1> m_pDX11Factory = nullptr;
 	ComPtr<ID3D11Device> m_pDX11Device = nullptr;
 	ComPtr<ID3D11DeviceContext> m_pDeviceContext = nullptr;
-	ComPtr<ID3D11BlendState> m_pBlendState = nullptr;
+	ComPtr<ID3D11BlendState> m_pBlendStateNormal = nullptr;
+	ComPtr<ID3D11BlendState> m_pBlendStatePreMultAlpha = nullptr;
 	ComPtr<ID3D11SamplerState> m_pSampleStateAnisotropic = nullptr;
 	ComPtr<ID3D11SamplerState> m_pSampleStateLinear = nullptr;
 	ComPtr<ID3D11SamplerState> m_pSampleStatePoint = nullptr;

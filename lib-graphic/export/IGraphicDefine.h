@@ -83,6 +83,7 @@ enum class VERTEX_INPUT_TYPE {
 enum class VIDEO_BLEND_TYPE {
 	DISABLE = 0,
 	NORMAL,
+	PREMULT_ALPHA,
 };
 
 enum class TEXT_ALIGNMENT_TYPE {
