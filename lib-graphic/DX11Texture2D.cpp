@@ -47,10 +47,6 @@ bool DX11Texture2D::BuildGraphic()
 		bSuccessed = InitTargetTexture();
 		break;
 
-	case TEXTURE_USAGE::READ_TEXTURE:
-		bSuccessed = InitReadTexture();
-		break;
-
 	case TEXTURE_USAGE::WRITE_TEXTURE:
 		bSuccessed = InitWriteTexture();
 		break;
@@ -61,6 +57,10 @@ bool DX11Texture2D::BuildGraphic()
 
 	case TEXTURE_USAGE::STATIC_IMAGE_FILE:
 		bSuccessed = InitImageTexture();
+		break;
+
+	case TEXTURE_USAGE::READ_TEXTURE:
+		bSuccessed = InitReadTexture();
 		break;
 
 	default:

@@ -115,5 +115,8 @@
     <ClInclude Include="GraphicBase.h">
       <Filter>source</Filter>
     </ClInclude>
+    <ClInclude Include="GraphicFormat.hpp">
+      <Filter>source</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

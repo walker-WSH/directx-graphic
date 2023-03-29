@@ -210,6 +210,7 @@
     <ClInclude Include="export\IGraphicEngine.h" />
     <ClInclude Include="export\IGraphicSession.h" />
     <ClInclude Include="GraphicBase.h" />
+    <ClInclude Include="GraphicFormat.hpp" />
     <ClInclude Include="GraphicSessionImp.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
