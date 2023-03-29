@@ -63,7 +63,7 @@ protected:
 	bool BeginDrawD2D(std::source_location location = std::source_location::current());
 	HRESULT EndDrawD2D(std::source_location location = std::source_location::current());
 
-	bool BuildD2D(ComPtr<IDXGISurface1> sfc);
+	bool BuildD2DFromDXGI(ComPtr<IDXGISurface1> sfc, DXGI_FORMAT format);
 	void ReleaseD2D();
 
 	ComPtr<ID2D1SolidColorBrush> GetSolidBrush(const ColorRGBA *clr);

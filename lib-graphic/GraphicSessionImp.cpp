@@ -357,11 +357,8 @@ IGeometryInterface *DX11GraphicSession::OpenGeometryInterface(shader_handle hdl)
 	CHECK_GRAPHIC_CONTEXT;
 	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Texture2D, obj, return nullptr);
 
-	auto usageOK = (TEXTURE_USAGE::CANVAS_TARGET == obj->m_textureInfo.usage);
-	auto formatOK = (D2D_COMPATIBLE_FORMAT == obj->m_textureInfo.format);
-	if (!usageOK || !formatOK) {
-		LOG_WARN("request d2d interface from invalid texture %X, %s, %s", hdl,
-			 usageOK ? "validUsage" : "invalidUsage", formatOK ? "validFormat" : "invalidFormat");
+	if (TEXTURE_USAGE::CANVAS_TARGET != obj->m_textureInfo.usage) {
+		LOG_WARN("request d2d interface from invalid texture %X, usage is not canvas", hdl);
 		assert(false && "unsupported interface");
 		return nullptr;
 	}
@@ -380,11 +377,8 @@ void DX11GraphicSession::CloseGeometryInterface(shader_handle hdl)
 	CHECK_GRAPHIC_CONTEXT;
 	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Texture2D, obj, return );
 
-	auto usageOK = (TEXTURE_USAGE::CANVAS_TARGET == obj->m_textureInfo.usage);
-	auto formatOK = (D2D_COMPATIBLE_FORMAT == obj->m_textureInfo.format);
-	if (!usageOK || !formatOK) {
-		LOG_WARN("request d2d interface from invalid texture %X, %s, %s", hdl,
-			 usageOK ? "validUsage" : "invalidUsage", formatOK ? "validFormat" : "invalidFormat");
+	if (TEXTURE_USAGE::CANVAS_TARGET != obj->m_textureInfo.usage) {
+		LOG_WARN("request d2d interface from invalid texture %X, usage is not canvas", hdl);
 		assert(false && "unsupported interface");
 		return;
 	}
@@ -398,11 +392,11 @@ void DX11GraphicSession::CloseGeometryInterface(shader_handle hdl)
 	HandleDirectResult(hr);
 }
 
-display_handle DX11GraphicSession::CreateDisplay(HWND hWnd)
+display_handle DX11GraphicSession::CreateDisplay(HWND hWnd, bool srgb)
 {
 	CHECK_GRAPHIC_CONTEXT;
 
-	auto ret = new DX11SwapChain(*this, hWnd);
+	auto ret = new DX11SwapChain(*this, hWnd, srgb);
 	if (!ret->IsBuilt()) {
 		LOG_WARN("failed to init display handle %X for HWND %X", ret, (void *)hWnd);
 		delete ret;

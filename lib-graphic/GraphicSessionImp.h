@@ -55,7 +55,7 @@ public:
 	virtual void CloseGeometryInterface(shader_handle targetTex);
 
 	// display
-	virtual display_handle CreateDisplay(HWND hWnd);
+	virtual display_handle CreateDisplay(HWND hWnd, bool srgb = false);
 	virtual void SetDisplaySize(display_handle hdl, uint32_t width, uint32_t height);
 	virtual DisplayInformation GetDisplayInfo(display_handle hdl);
 

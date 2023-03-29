@@ -425,15 +425,42 @@ void D2DRenderTarget::DrawChromakey(texture_handle srcCanvas, ColorRGB clrKey, f
 	}
 }
 
-bool D2DRenderTarget::BuildD2D(ComPtr<IDXGISurface1> sfc)
+bool D2DRenderTarget::BuildD2DFromDXGI(ComPtr<IDXGISurface1> sfc, DXGI_FORMAT format)
 {
 	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 
+	/* --------------------------------------------------------------------------------------------
+	* Create ID2D1Bitmap1 based on DXGI's swaipchain or texture
+	--------------------------------------------------------------------------------------------*/
+	switch (format) {
+	case DXGI_FORMAT_B8G8R8X8_UNORM:
+		return false; // unsupported
+	default:
+		break;
+	}
+
+	D2D1_PIXEL_FORMAT pixelFormat = D2D1::PixelFormat(format, D2D1_ALPHA_MODE_PREMULTIPLIED);
+	D2D1_BITMAP_OPTIONS options = D2D1_BITMAP_OPTIONS_TARGET;
+	if (m_bIsForSwapchain) {
+		// D2D::bitmap based on D3D::swaipchain can not be d2d texture for d2d::DrawImage
+		options |= D2D1_BITMAP_OPTIONS_CANNOT_DRAW;
+	}
+
+	D2D1_BITMAP_PROPERTIES1 prt = D2D1::BitmapProperties1(options, pixelFormat);
+	auto hr = m_graphicSession.D2DDeviceContext()->CreateBitmapFromDxgiSurface(sfc, &prt, &m_pD2DBitmapOnDXGI);
+	if (FAILED(hr)) {
+		LOG_WARN("CreateBitmapFromDxgiSurface failed with 0x%x, format:%d, %X", hr, format, this);
+		assert(false);
+		return false;
+	}
+
+	/* --------------------------------------------------------------------------------------------
+	* Create D2D render target
+	--------------------------------------------------------------------------------------------*/
 	auto dsProps = D2D1::RenderTargetProperties(
 		D2D1_RENDER_TARGET_TYPE_DEFAULT, D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED));
-
-	auto hr = m_graphicSession.D2DFactory()->CreateDxgiSurfaceRenderTarget(sfc.Get(), &dsProps,
-									       m_pRenderTarget.Assign());
+	hr = m_graphicSession.D2DFactory()->CreateDxgiSurfaceRenderTarget(sfc.Get(), &dsProps,
+									  m_pRenderTarget.Assign());
 	if (FAILED(hr)) {
 		LOG_WARN("CreateDxgiSurfaceRenderTarget failed with 0x%x, D2DRenderTarget: %X", hr, this);
 		assert(false);
@@ -443,25 +470,13 @@ bool D2DRenderTarget::BuildD2D(ComPtr<IDXGISurface1> sfc)
 	m_pRenderTarget->SetAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE);
 	m_pRenderTarget->SetTextAntialiasMode(D2D1_TEXT_ANTIALIAS_MODE_CLEARTYPE);
 
+	/* --------------------------------------------------------------------------------------------
+	* Create other D2D objects
+	--------------------------------------------------------------------------------------------*/
 	D2D1::ColorF d2dColor(0.f, 0.f, 0.f, 1.f);
 	hr = m_pRenderTarget->CreateSolidColorBrush(d2dColor, m_pSolidBrush.Assign());
 	if (FAILED(hr)) {
 		LOG_WARN("CreateSolidColorBrush failed with 0x%x, D2DRenderTarget: %X", hr, this);
-		assert(false);
-		return false;
-	}
-
-	D2D1_PIXEL_FORMAT pixelFormat = D2D1::PixelFormat(D2D_COMPATIBLE_FORMAT, D2D1_ALPHA_MODE_PREMULTIPLIED);
-	D2D1_BITMAP_OPTIONS options = D2D1_BITMAP_OPTIONS_TARGET;
-	if (m_bIsForSwapchain) {
-		// D2D::bitmap based on D3D::swaipchain can not be d2d texture for d2d::DrawImage
-		options |= D2D1_BITMAP_OPTIONS_CANNOT_DRAW;
-	}
-
-	D2D1_BITMAP_PROPERTIES1 prt = D2D1::BitmapProperties1(options, pixelFormat);
-	hr = m_graphicSession.D2DDeviceContext()->CreateBitmapFromDxgiSurface(sfc, &prt, &m_pD2DBitmapOnDXGI);
-	if (FAILED(hr)) {
-		LOG_WARN("CreateBitmapFromDxgiSurface failed with 0x%x, D2DRenderTarget: %X", hr, this);
 		assert(false);
 		return false;
 	}

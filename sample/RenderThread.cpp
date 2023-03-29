@@ -707,6 +707,24 @@ bool InitGraphic(HWND hWnd)
 	desc.wordWrap = TEXT_WORD_WRAP::WORD_WRAPPING_WHOLE_WORD;
 	fontFormat2 = pGraphic->CreateTextFont(desc);
 
+	{ // test build D2D based on kinds of format of canvas
+		info.width = 1280;
+		info.height = 720;
+		info.usage = TEXTURE_USAGE::CANVAS_TARGET;
+
+		info.format = DXGI_FORMAT_B8G8R8A8_UNORM;
+		pGraphic->CreateTexture(info);
+
+		info.format = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
+		pGraphic->CreateTexture(info);
+
+		info.format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		pGraphic->CreateTexture(info);
+
+		info.format = DXGI_FORMAT_B8G8R8X8_UNORM;
+		pGraphic->CreateTexture(info);
+	}
+
 	CreateTextFrame();
 	return true;
 }

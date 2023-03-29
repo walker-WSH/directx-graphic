@@ -213,13 +213,11 @@ bool DX11Texture2D::InitTargetTexture()
 		return false;
 	}
 
-	if (m_textureInfo.format == D2D_COMPATIBLE_FORMAT) {
-		ComPtr<IDXGISurface1> sfc;
-		hr = DX11GraphicBase::m_graphicSession.D3DDevice()->OpenSharedResource(
-			m_hSharedHandle, __uuidof(IDXGISurface1), (LPVOID *)(sfc.Assign()));
-		if (SUCCEEDED(hr))
-			D2DRenderTarget::BuildD2D(sfc);
-	}
+	ComPtr<IDXGISurface1> sfc;
+	hr = DX11GraphicBase::m_graphicSession.D3DDevice()->OpenSharedResource(m_hSharedHandle, __uuidof(IDXGISurface1),
+									       (LPVOID *)(sfc.Assign()));
+	if (SUCCEEDED(hr))
+		D2DRenderTarget::BuildD2DFromDXGI(sfc, m_textureInfo.format);
 
 	return true;
 }

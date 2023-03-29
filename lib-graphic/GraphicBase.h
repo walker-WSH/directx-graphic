@@ -49,8 +49,6 @@ static void TestLogFunc(bool warn, const char *fmt, ...)
 #define LOG_WARN(fmt, ...) TestLogFunc(true, fmt, __VA_ARGS__)
 
 //----------------------------------------------------------------------------------
-static const auto SWAPCHAIN_TEXTURE_FORMAT = DXGI_FORMAT_B8G8R8A8_UNORM;
-
 #define CHECK_DX_ERROR(hr, format, ...) DO_DX_LOG(hr, format, ##__VA_ARGS__)
 #define DO_DX_LOG(hr, format, ...) \
 	LOG_WARN("DX ERROR : 0X%X, called in %s:%u. " format, hr, __FUNCTION__, __LINE__, ##__VA_ARGS__)

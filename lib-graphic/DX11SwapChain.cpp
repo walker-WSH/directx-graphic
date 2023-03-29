@@ -3,8 +3,8 @@
 
 namespace graphic {
 
-DX11SwapChain::DX11SwapChain(DX11GraphicSession &graphic, HWND hWnd)
-	: DX11GraphicBase(graphic, "swapchain"), D2DRenderTarget(graphic, true), m_hWnd(hWnd)
+DX11SwapChain::DX11SwapChain(DX11GraphicSession &graphic, HWND hWnd, bool srgb)
+	: DX11GraphicBase(graphic, "swapchain"), D2DRenderTarget(graphic, true), m_hWnd(hWnd), m_bSRGB(srgb)
 {
 	RECT rc;
 	GetClientRect(hWnd, &rc);
@@ -73,7 +73,7 @@ HRESULT DX11SwapChain::TestResizeSwapChain()
 		m_pSwapBackTexture2D = nullptr;
 		ZeroMemory(&m_descTexture, sizeof(D3D11_TEXTURE2D_DESC));
 
-		HRESULT hr = m_pSwapChain->ResizeBuffers(1, m_dwWidth, m_dwHeight, SWAPCHAIN_TEXTURE_FORMAT, 0);
+		HRESULT hr = m_pSwapChain->ResizeBuffers(1, m_dwWidth, m_dwHeight, SwaipChainFormat(), 0);
 		if (FAILED(hr)) {
 			CHECK_DX_ERROR(hr, "ResizeBuffers %ux%u %X", m_dwWidth, m_dwHeight, this);
 			assert(false && "m_pSwapChain->ResizeBuffers failed");
@@ -96,7 +96,7 @@ HRESULT DX11SwapChain::InitSwapChain()
 	ZeroMemory(&sd, sizeof(sd));
 	sd.BufferDesc.Width = m_dwWidth;
 	sd.BufferDesc.Height = m_dwHeight;
-	sd.BufferDesc.Format = SWAPCHAIN_TEXTURE_FORMAT;
+	sd.BufferDesc.Format = SwaipChainFormat();
 	sd.SampleDesc.Count = 1;
 	sd.BufferCount = 1;
 	sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -104,6 +104,9 @@ HRESULT DX11SwapChain::InitSwapChain()
 	sd.Windowed = TRUE;
 	sd.BufferDesc.RefreshRate.Numerator = 60;
 	sd.BufferDesc.RefreshRate.Denominator = 1;
+
+	if (m_bSRGB)
+		sd.SampleDesc.Quality = D3D11_STANDARD_MULTISAMPLE_PATTERN;
 
 	HRESULT hr = DX11GraphicBase::m_graphicSession.D3DFactory()->CreateSwapChain(
 		DX11GraphicBase::m_graphicSession.D3DDevice(), &sd, m_pSwapChain.Assign());
@@ -135,15 +138,22 @@ HRESULT DX11SwapChain::CreateTargetView()
 	}
 
 	m_pSwapBackTexture2D->GetDesc(&m_descTexture);
-	if (m_descTexture.Format == D2D_COMPATIBLE_FORMAT) {
-		ComPtr<IDXGISurface1> sfc;
-		hr = m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface1), reinterpret_cast<void **>(sfc.Assign()));
-		assert(SUCCEEDED(hr));
-		if (SUCCEEDED(hr))
-			D2DRenderTarget::BuildD2D(sfc);
-	}
+
+	ComPtr<IDXGISurface1> sfc;
+	hr = m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface1), reinterpret_cast<void **>(sfc.Assign()));
+	assert(SUCCEEDED(hr));
+	if (SUCCEEDED(hr))
+		D2DRenderTarget::BuildD2DFromDXGI(sfc, m_descTexture.Format);
 
 	return S_OK;
+}
+
+DXGI_FORMAT DX11SwapChain::SwaipChainFormat()
+{
+	if (m_bSRGB)
+		return SWAPCHAIN_TEXTURE_FORMAT_SRGB;
+	else
+		return SWAPCHAIN_TEXTURE_FORMAT;
 }
 
 } // namespace graphic
