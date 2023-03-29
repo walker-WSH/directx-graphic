@@ -40,14 +40,21 @@ BOOL CDlgHighlight::OnInitDialog()
 	MoveWindow(0, 0, 800, 600);
 	ModifyStyle(0, WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
 
-	m_sliderHIGHLIGHTS.SetRange(-100, 100);
-	m_sliderHIGHLIGHTS.SetPos(1);
+	if (test_highlight) {
+		m_sliderHIGHLIGHTS.SetRange(-100, 100);
+		m_sliderHIGHLIGHTS.SetPos(1);
 
-	m_sliderSHADOWS.SetRange(-100, 100);
-	m_sliderSHADOWS.SetPos(1);
+		m_sliderSHADOWS.SetRange(-100, 100);
+		m_sliderSHADOWS.SetPos(1);
 
-	m_sliderCLARITY.SetRange(-100, 100);
-	m_sliderCLARITY.SetPos(1);
+		m_sliderCLARITY.SetRange(-100, 100);
+		m_sliderCLARITY.SetPos(1);
+
+	} else {
+		m_sliderHIGHLIGHTS.ShowWindow(SW_HIDE);
+		m_sliderSHADOWS.ShowWindow(SW_HIDE);
+		m_sliderCLARITY.ShowWindow(SW_HIDE);
+	}
 
 	m_sliderRADIUS.SetRange(0, 1000);
 	m_sliderRADIUS.SetPos(125);
@@ -111,11 +118,14 @@ void CDlgHighlight::OnPaint()
 	if (pGraphic->BeginRenderWindow(edit_display, &d2d)) {
 		pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
 
-		ColorRGBA bk(1, 1, 1, 1);
-		pGraphic->ClearBackground(&bk);
-		RenderTexture(std::vector<texture_handle>{edit_canvasEffect}, SIZE(rc.right, rc.bottom), rc);
+		if (test_highlight) {
+			d2d->DrawHighlight(test_chromakey, highlight, shadow, clarity, redius);
+		} else {
+			ColorRGBA bk(1, 1, 1, 1);
+			pGraphic->ClearBackground(&bk);
+			RenderTexture(std::vector<texture_handle>{edit_canvasEffect}, SIZE(rc.right, rc.bottom), rc);
+		}
 
-		//d2d->DrawHighlight(edit_canvasEffect, highlight, shadow, clarity, redius);
 		pGraphic->EndRender(d2d);
 	}
 }

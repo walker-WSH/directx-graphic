@@ -22,6 +22,9 @@ using namespace graphic;
 #define DRAGE_REGION_SIZE 40
 #define RESIZE_REGION_SIZE 10
 
+bool InitGraphic(HWND hWnd);
+void UnInitGraphic();
+
 // CMFCDemoDlg 对话框
 class CMFCDemoDlg : public CDialogEx {
 	// 构造
@@ -46,6 +49,7 @@ protected:
 	CSliderCtrl m_gausBlurSlider;
 	CSliderCtrl m_rotateSlider;
 	CSliderCtrl m_sliderWhite;
+	CButton m_checkToGrey;
 
 	bool m_bToDrawCurve = false;
 	bool m_bIsDrawing = false;
@@ -101,5 +105,7 @@ public:
 	afx_msg void OnBnClickedButtonTestMosaic();
 	afx_msg void OnBnClickedButtonRunNormal();
 	afx_msg void OnBnClickedButton1RunBulge();
-	CButton m_checkToGrey;
+	afx_msg void OnDestroy();
+	afx_msg void OnBnClickedButton11();
+	afx_msg void OnBnClickedButton12();
 };

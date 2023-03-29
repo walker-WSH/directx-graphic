@@ -25,10 +25,14 @@ extern IGraphicSession *pGraphic;
 
 static const std::wstring TEST_MOSAIC_CMD = L"test_mosaic";
 static const std::wstring TEST_BULGE_CMD = L"test_bulge";
+static const std::wstring TEST_HIGHLIGHT_CMD = L"test_highlight";
+static const std::wstring TEST_CHROMEKEY_CMD = L"test_chromakey";
 enum class RUN_TEST_FOR {
 	RUN_NORMAL = 0,
 	RUN_SUB_MOSAIC,
 	RUN_SUB_BULGE,
+	RUN_SUB_HIGHLIGHT,
+	RUN_SUB_CHROMAKEY,
 };
 RUN_TEST_FOR InitCmdParams()
 {
@@ -50,6 +54,14 @@ RUN_TEST_FOR InitCmdParams()
 			}
 			if (str == TEST_BULGE_CMD) {
 				ret = RUN_TEST_FOR::RUN_SUB_BULGE;
+				break;
+			}
+			if (str == TEST_HIGHLIGHT_CMD) {
+				ret = RUN_TEST_FOR::RUN_SUB_HIGHLIGHT;
+				break;
+			}
+			if (str == TEST_CHROMEKEY_CMD) {
+				ret = RUN_TEST_FOR::RUN_SUB_CHROMAKEY;
 				break;
 			}
 		}
@@ -96,15 +108,14 @@ CMFCDemoDlg::CMFCDemoDlg(CWnd *pParent /*=nullptr*/) : CDialogEx(IDD_MFCDEMO_DIA
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
+	CoInitialize(NULL);
 	m_pGraphic = graphic::CreateGraphicSession();
 }
 
 CMFCDemoDlg::~CMFCDemoDlg()
 {
-	m_bExit = true;
-	WaitForSingleObject(m_hThread, INFINITE);
-	CloseHandle(m_hThread);
 	graphic::DestroyGraphicSession(m_pGraphic);
+	CoUninitialize();
 }
 
 void CMFCDemoDlg::DoDataExchange(CDataExchange *pDX)
@@ -140,6 +151,8 @@ ON_BN_CLICKED(IDC_BUTTON3, &CMFCDemoDlg::OnBnClickedButton3)
 ON_BN_CLICKED(IDC_BUTTON4, &CMFCDemoDlg::OnBnClickedButton4)
 ON_BN_CLICKED(IDC_BUTTON5, &CMFCDemoDlg::OnBnClickedButton5)
 ON_BN_CLICKED(IDC_BUTTON6, &CMFCDemoDlg::OnBnClickedButton6)
+ON_BN_CLICKED(IDC_BUTTON12, &CMFCDemoDlg::OnBnClickedButton12)
+ON_BN_CLICKED(IDC_BUTTON11, &CMFCDemoDlg::OnBnClickedButton11)
 ON_BN_CLICKED(IDC_BUTTON7, &CMFCDemoDlg::OnBnClickedDrawCurve)
 ON_WM_LBUTTONUP()
 ON_WM_MOUSEMOVE()
@@ -151,6 +164,7 @@ ON_BN_CLICKED(IDC_BUTTON10, &CMFCDemoDlg::OnBnClickedButton10)
 ON_BN_CLICKED(IDC_BUTTON_TEST_MOSAIC, &CMFCDemoDlg::OnBnClickedButtonTestMosaic)
 ON_BN_CLICKED(IDC_BUTTON_RUN_NORMAL, &CMFCDemoDlg::OnBnClickedButtonRunNormal)
 ON_BN_CLICKED(IDC_BUTTON1_RUN_BULGE, &CMFCDemoDlg::OnBnClickedButton1RunBulge)
+ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
 // CMFCDemoDlg 消息处理程序
@@ -200,6 +214,10 @@ BOOL CMFCDemoDlg::OnInitDialog()
 
 	m_bExit = false;
 	pGraphic = m_pGraphic;
+	if (!InitGraphic(m_hWnd)) {
+		assert(false);
+	}
+
 	switch (InitCmdParams()) {
 	case RUN_TEST_FOR::RUN_SUB_MOSAIC:
 		m_hThread = (HANDLE)_beginthreadex(0, 0, ThreadFuncForSubRegionMosic, this, 0, 0);
@@ -211,10 +229,20 @@ BOOL CMFCDemoDlg::OnInitDialog()
 		m_dlgEdit.Create(IDD_DIALOG1);
 		m_dlgEdit.ShowWindow(SW_SHOW);
 		break;
-	case RUN_TEST_FOR::RUN_NORMAL:
-	default:
+	case RUN_TEST_FOR::RUN_SUB_HIGHLIGHT:
+		m_dlgHighlight.test_highlight = true;
 		m_dlgHighlight.Create(IDD_DIALOG_HIGHLIGHT);
 		m_dlgHighlight.ShowWindow(SW_SHOW);
+		break;
+
+	case RUN_TEST_FOR::RUN_SUB_CHROMAKEY:
+		m_dlgHighlight.test_highlight = false;
+		m_dlgHighlight.Create(IDD_DIALOG_HIGHLIGHT);
+		m_dlgHighlight.ShowWindow(SW_SHOW);
+		break;
+
+	case RUN_TEST_FOR::RUN_NORMAL:
+	default:
 		m_hThread = (HANDLE)_beginthreadex(0, 0, ThreadFuncNormalRender, this, 0, 0);
 		break;
 	}
@@ -401,4 +429,27 @@ void CMFCDemoDlg::OnBnClickedButton1RunBulge()
 {
 	RunChildProcess(TEST_BULGE_CMD.c_str());
 	DestroyWindow(); // exit current process
+}
+
+void CMFCDemoDlg::OnBnClickedButton11()
+{
+	RunChildProcess(TEST_HIGHLIGHT_CMD.c_str());
+	DestroyWindow(); // exit current process
+}
+
+void CMFCDemoDlg::OnBnClickedButton12()
+{
+	RunChildProcess(TEST_CHROMEKEY_CMD.c_str());
+	DestroyWindow(); // exit current process
+}
+
+void CMFCDemoDlg::OnDestroy()
+{
+	m_bExit = true;
+	WaitForSingleObject(m_hThread, INFINITE);
+	CloseHandle(m_hThread);
+
+	UnInitGraphic();
+
+	CDialogEx::OnDestroy();
 }

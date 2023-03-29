@@ -61,9 +61,6 @@ bool g_clearBk = false;
 extern float g_lineStride;
 extern float g_blurValue;
 
-bool InitGraphic(HWND hWnd);
-void UnInitGraphic();
-
 void InitRenderRect(RECT rc, int numH, int numV);
 
 bool RenderCustomYUV(SIZE canvasSize, RECT rc);
@@ -79,9 +76,6 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncNormalRender(void *pParam)
 	HRESULT hr = CoInitialize(NULL);
 
 	CMFCDemoDlg *self = reinterpret_cast<CMFCDemoDlg *>(pParam);
-
-	if (!InitGraphic(self->m_hWnd))
-		return 1;
 
 	auto ret = open_file();
 	assert(ret == 0);
@@ -313,8 +307,6 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncNormalRender(void *pParam)
 		}
 	}
 
-	UnInitGraphic();
-
 	if (SUCCEEDED(hr))
 		CoUninitialize();
 
@@ -326,9 +318,6 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForSubRegionMosic(void *pParam)
 	HRESULT hr = CoInitialize(NULL);
 
 	CMFCDemoDlg *self = reinterpret_cast<CMFCDemoDlg *>(pParam);
-
-	if (!InitGraphic(self->m_hWnd))
-		return 1;
 
 	TextureInformation canvasInfo;
 	canvasInfo.usage = TEXTURE_USAGE::CANVAS_TARGET;
@@ -461,8 +450,6 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForSubRegionMosic(void *pParam)
 		}
 	}
 
-	UnInitGraphic();
-
 	if (SUCCEEDED(hr))
 		CoUninitialize();
 
@@ -482,9 +469,6 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForBulge(void *pParam)
 	HRESULT hr = CoInitialize(NULL);
 
 	CMFCDemoDlg *self = reinterpret_cast<CMFCDemoDlg *>(pParam);
-
-	if (!InitGraphic(self->m_hWnd))
-		return 1;
 
 	texture_handle bulgeTex = 0; // 窗口画面 先画到这上面 再present到窗口
 
@@ -566,8 +550,6 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForBulge(void *pParam)
 			pGraphic->EndRender();
 		}
 	}
-
-	UnInitGraphic();
 
 	if (SUCCEEDED(hr))
 		CoUninitialize();

@@ -17,6 +17,8 @@ public:
 	enum { IDD = IDD_DIALOG_HIGHLIGHT };
 #endif
 
+	bool test_highlight = false;
+
 protected:
 	texture_handle edit_canvasTex = nullptr; // 窗口画面 先画到这上面 再present到窗口
 	display_handle edit_display = nullptr;
