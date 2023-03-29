@@ -60,6 +60,7 @@ bool bFullscreenCrop = false;
 bool g_clearBk = false;
 extern float g_lineStride;
 extern float g_blurValue;
+extern bool g_checkboxPreMultAlpha;
 
 void InitRenderRect(RECT rc, int numH, int numV);
 
@@ -563,6 +564,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncRender(void *pParam)
 	HRESULT hr = CoInitialize(NULL);
 	CMFCDemoDlg *self = reinterpret_cast<CMFCDemoDlg *>(pParam);
 
+	bool testAlpha = g_checkboxPreMultAlpha;
 	int64_t frameInterval = 1000 / 30;
 	int64_t startCaptureTime = GetTickCount64();
 	int64_t capturedCount = 0;
@@ -592,6 +594,11 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncRender(void *pParam)
 
 		AUTO_GRAPHIC_CONTEXT(pGraphic);
 
+		if (testAlpha != g_checkboxPreMultAlpha) {
+			testAlpha = g_checkboxPreMultAlpha;
+			CreateTextFrame();
+		}
+
 		SIZE wndSize(rc.right - rc.left, rc.bottom - rc.top);
 		pGraphic->SetDisplaySize(display, wndSize.cx, wndSize.cy);
 
@@ -603,8 +610,13 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncRender(void *pParam)
 		if (pGraphic->BeginRenderWindow(display)) {
 			pGraphic->ClearBackground(&clrWhite);
 
-			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::PREMULT_ALPHA);
-			RenderTexture(std::vector<texture_handle>{texAlpha}, SIZE(rc.right, rc.bottom),
+			if (testAlpha) {
+				pGraphic->SetBlendState(VIDEO_BLEND_TYPE::PREMULT_ALPHA);
+			} else {
+				pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
+			}
+
+			RenderTexture(std::vector<texture_handle>{texForWrite}, SIZE(rc.right, rc.bottom),
 				      RECT(0, 0, rc.right, rc.bottom));
 
 			pGraphic->EndRender();
@@ -673,25 +685,6 @@ bool InitGraphic(HWND hWnd)
 	texCanvas = pGraphic->CreateTexture(info);
 	texCanvas2 = pGraphic->CreateTexture(info);
 
-	info.usage = TEXTURE_USAGE::WRITE_TEXTURE;
-	texForWrite = pGraphic->CreateTexture(info);
-	D3D11_MAPPED_SUBRESOURCE mapdata;
-	if (pGraphic->MapTexture(texForWrite, MAP_TEXTURE_FEATURE::FOR_WRITE_TEXTURE, &mapdata)) {
-		memset(mapdata.pData, 0XFF, (size_t)mapdata.RowPitch * info.height);
-		pGraphic->UnmapTexture(texForWrite);
-	}
-
-	texForWrite->RegisterCallback(
-		[](IGraphicObject *self) {
-			auto info = pGraphic->GetTextureInfo(self);
-			D3D11_MAPPED_SUBRESOURCE mapdata;
-			if (pGraphic->MapTexture(self, MAP_TEXTURE_FEATURE::FOR_WRITE_TEXTURE, &mapdata)) {
-				memset(mapdata.pData, 0XFF, (size_t)mapdata.RowPitch * info.height);
-				pGraphic->UnmapTexture(self);
-			}
-		},
-		[](IGraphicObject *self) {});
-
 	info.usage = TEXTURE_USAGE::READ_TEXTURE;
 	auto texForRead = pGraphic->CreateTexture(info);
 	pGraphic->CopyTexture(texForRead, texCanvas);
@@ -711,6 +704,7 @@ bool InitGraphic(HWND hWnd)
 	desc.wordWrap = TEXT_WORD_WRAP::WORD_WRAPPING_WHOLE_WORD;
 	fontFormat2 = pGraphic->CreateTextFont(desc);
 
+	CreateTextFrame();
 	return true;
 }
 

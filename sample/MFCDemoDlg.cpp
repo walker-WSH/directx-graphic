@@ -128,6 +128,7 @@ void CMFCDemoDlg::DoDataExchange(CDataExchange *pDX)
 	DDX_Control(pDX, IDC_SLIDER4, m_sliderWhite);
 	DDX_Control(pDX, IDC_BUTTON2, m_btnExit);
 	DDX_Control(pDX, IDC_CHECK2, m_checkToGrey);
+	DDX_Control(pDX, IDC_CHECK7, m_checkboxAlpha);
 }
 
 BEGIN_MESSAGE_MAP(CMFCDemoDlg, CDialogEx)
@@ -151,6 +152,7 @@ ON_BN_CLICKED(IDC_BUTTON3, &CMFCDemoDlg::OnBnClickedButton3)
 ON_BN_CLICKED(IDC_BUTTON4, &CMFCDemoDlg::OnBnClickedButton4)
 ON_BN_CLICKED(IDC_BUTTON5, &CMFCDemoDlg::OnBnClickedButton5)
 ON_BN_CLICKED(IDC_BUTTON6, &CMFCDemoDlg::OnBnClickedButton6)
+ON_BN_CLICKED(IDC_CHECK7, &CMFCDemoDlg::OnBnClickedCheck7)
 ON_BN_CLICKED(IDC_BUTTON12, &CMFCDemoDlg::OnBnClickedButton12)
 ON_BN_CLICKED(IDC_BUTTON11, &CMFCDemoDlg::OnBnClickedButton11)
 ON_BN_CLICKED(IDC_BUTTON7, &CMFCDemoDlg::OnBnClickedDrawCurve)
@@ -217,7 +219,6 @@ BOOL CMFCDemoDlg::OnInitDialog()
 	if (!InitGraphic(m_hWnd)) {
 		assert(false);
 	}
-
 	switch (InitCmdParams()) {
 	case RUN_TEST_FOR::RUN_SUB_MOSAIC:
 		m_hThread = (HANDLE)_beginthreadex(0, 0, ThreadFuncForSubRegionMosic, this, 0, 0);
@@ -454,4 +455,10 @@ void CMFCDemoDlg::OnDestroy()
 	UnInitGraphic();
 
 	CDialogEx::OnDestroy();
+}
+
+bool g_checkboxPreMultAlpha = false;
+void CMFCDemoDlg::OnBnClickedCheck7()
+{
+	g_checkboxPreMultAlpha = !!m_checkboxAlpha.GetCheck();
 }

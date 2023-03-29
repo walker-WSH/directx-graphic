@@ -13,6 +13,7 @@
 #include "CDlgBulge.h"
 #include "CDlgEditFace.h"
 #include "CDlgHighlight.h"
+#include "CGenText.h"
 
 using namespace graphic;
 
@@ -50,6 +51,7 @@ protected:
 	CSliderCtrl m_rotateSlider;
 	CSliderCtrl m_sliderWhite;
 	CButton m_checkToGrey;
+	CButton m_checkboxAlpha;
 
 	bool m_bToDrawCurve = false;
 	bool m_bIsDrawing = false;
@@ -109,4 +111,5 @@ public:
 	afx_msg void OnDestroy();
 	afx_msg void OnBnClickedButton11();
 	afx_msg void OnBnClickedButton12();
+	afx_msg void OnBnClickedCheck7();
 };
