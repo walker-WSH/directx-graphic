@@ -652,9 +652,6 @@ bool DX11GraphicSession::InitBlendState()
 	}
 
 	blendStateDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
-	blendStateDescription.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-	blendStateDescription.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-	blendStateDescription.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
 	hr = m_pDX11Device->CreateBlendState(&blendStateDescription, m_pBlendStatePreMultAlpha.Assign());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateBlendState failed for preMultAlpha");

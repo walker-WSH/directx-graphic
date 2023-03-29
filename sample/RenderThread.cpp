@@ -603,7 +603,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncRender(void *pParam)
 		if (pGraphic->BeginRenderWindow(display)) {
 			pGraphic->ClearBackground(&clrWhite);
 
-			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
+			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::PREMULT_ALPHA);
 			RenderTexture(std::vector<texture_handle>{texAlpha}, SIZE(rc.right, rc.bottom),
 				      RECT(0, 0, rc.right, rc.bottom));
 
