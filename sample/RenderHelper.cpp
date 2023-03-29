@@ -39,6 +39,18 @@ void InitShader()
 
 	{
 		shaderInfo.vsFile = dir + L"default-vs.cso";
+		shaderInfo.psFile = dir + L"srgb-ps.cso";
+		shaderInfo.vsBufferSize = sizeof(matrixWVP);
+		shaderInfo.psBufferSize = 0;
+		shaderInfo.vertexCount = TEXTURE_VERTEX_COUNT;
+		shaderInfo.perVertexSize = sizeof(TextureVertexDesc);
+		shader_handle shader = pGraphic->CreateShader(shaderInfo);
+		assert(shader);
+		shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_SRGB] = shader;
+	}
+
+	{
+		shaderInfo.vsFile = dir + L"default-vs.cso";
 		shaderInfo.psFile = dir + L"output-ps.cso";
 		shaderInfo.vsBufferSize = sizeof(matrixWVP);
 		shaderInfo.psBufferSize = 0;

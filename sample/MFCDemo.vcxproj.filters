@@ -193,5 +193,8 @@
     <FxCompile Include="HLSL\output-ps.hlsl">
       <Filter>render\HLSL</Filter>
     </FxCompile>
+    <FxCompile Include="HLSL\srgb-ps.hlsl">
+      <Filter>render\HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

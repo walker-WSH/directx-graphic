@@ -594,33 +594,37 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncRender(void *pParam)
 
 		AUTO_GRAPHIC_CONTEXT(pGraphic);
 
-		if (testAlpha != g_checkboxPreMultAlpha) {
-			testAlpha = g_checkboxPreMultAlpha;
-			CreateTextFrame();
-		}
-
-		SIZE wndSize(rc.right - rc.left, rc.bottom - rc.top);
-		pGraphic->SetDisplaySize(display, wndSize.cx, wndSize.cy);
-
 		if (!pGraphic->IsGraphicBuilt()) {
 			if (!pGraphic->ReBuildGraphic())
 				continue;
 		}
 
+		if (testAlpha != g_checkboxPreMultAlpha) {
+			testAlpha = g_checkboxPreMultAlpha;
+			pGraphic->DestroyGraphicObject(display);
+			display = pGraphic->CreateDisplay(self->m_hWnd, g_checkboxPreMultAlpha ? true : false);
+			assert(display);
+		}
+
+		pGraphic->SetDisplaySize(display, rc.right, rc.bottom);
+
 		if (pGraphic->BeginRenderWindow(display)) {
 			pGraphic->ClearBackground(&clrWhite);
 
+			VIDEO_SHADER_TYPE shader;
+			if (testAlpha) {
+				shader = VIDEO_SHADER_TYPE::SHADER_TEXTURE_SRGB;
+			} else {
+				shader = VIDEO_SHADER_TYPE::SHADER_TEXTURE;
+			}
+
 			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
 			RenderTexture(std::vector<texture_handle>{texAlpha}, SIZE(rc.right, rc.bottom),
-				      RECT(0, 0, rc.right, rc.bottom));
+				      RECT(0, 0, rc.right, rc.bottom), shader);
 
-			if (testAlpha) {
-				pGraphic->SetBlendState(VIDEO_BLEND_TYPE::PREMULT_ALPHA);
-			} else {
-				pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
-			}
+			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
 			RenderTexture(std::vector<texture_handle>{texForWrite}, SIZE(rc.right, rc.bottom),
-				      RECT(0, 0, rc.right, rc.bottom));
+				      RECT(0, 0, rc.right, rc.bottom), shader);
 
 			pGraphic->EndRender();
 		}
