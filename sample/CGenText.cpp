@@ -8,11 +8,11 @@
 
 extern texture_handle texForWrite;
 
-Gdiplus::REAL fontsize = 100.f;
+Gdiplus::REAL fontsize = 140.f;
 auto width = 1280;
 auto height = 720;
 
-std::wstring m_strText = L"123456 WSH \n什么?他们可接受";
+std::wstring m_strText = L"123WSH \n?他们接受";
 
 typedef std::shared_ptr<Gdiplus::Font> GDIP_FONT_PTR;
 typedef std::shared_ptr<Gdiplus::FontFamily> FontFamily_PTR;
@@ -128,6 +128,7 @@ void *CreateTextFrame()
 	Gdiplus::Graphics graphics(bmp);
 	graphics.SetSmoothingMode(Gdiplus::SmoothingModeHighQuality);
 	graphics.SetTextRenderingHint(Gdiplus::TextRenderingHintClearTypeGridFit);
+	graphics.SetInterpolationMode(Gdiplus::InterpolationModeHighQualityBicubic);
 
 	float emSize = graphics.GetDpiX() * font.GetSize() / 72.f;
 	Gdiplus::GraphicsPath path(Gdiplus::FillModeWinding);
