@@ -6,8 +6,13 @@ struct PixelInputType {
 	float2 tex : TEXCOORD0;
 };
 
+float4 SRGB_Gamma(float4 color)
+{
+	return pow(color, 2.2f);
+}
+
 float4 main(PixelInputType input) : SV_TARGET
 {
 	float4 textureColor = image0.Sample(sampleType, input.tex);
-	return textureColor;
+	return SRGB_Gamma(textureColor);
 }
