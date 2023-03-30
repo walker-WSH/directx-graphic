@@ -564,7 +564,6 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncRender(void *pParam)
 	HRESULT hr = CoInitialize(NULL);
 	CMFCDemoDlg *self = reinterpret_cast<CMFCDemoDlg *>(pParam);
 
-	bool testAlpha = g_checkboxPreMultAlpha;
 	int64_t frameInterval = 1000 / 30;
 	int64_t startCaptureTime = GetTickCount64();
 	int64_t capturedCount = 0;
@@ -599,27 +598,25 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncRender(void *pParam)
 				continue;
 		}
 
-		if (testAlpha != g_checkboxPreMultAlpha) {
-			testAlpha = g_checkboxPreMultAlpha;
-			pGraphic->DestroyGraphicObject(display);
-			display = pGraphic->CreateDisplay(self->m_hWnd);
-			assert(display);
-		}
-
 		pGraphic->SetDisplaySize(display, rc.right, rc.bottom);
 
 		if (pGraphic->BeginRenderWindow(display)) {
 			pGraphic->ClearBackground(&clrWhite);
-
-			VIDEO_SHADER_TYPE shader = VIDEO_SHADER_TYPE::SHADER_TEXTURE;
-
 			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
+
+			pGraphic->SwitchRenderTarget(false);
 			RenderTexture(std::vector<texture_handle>{texAlpha}, SIZE(rc.right, rc.bottom),
-				      RECT(0, 0, rc.right, rc.bottom), shader);
+				      RECT(0, 0, rc.right, rc.bottom), VIDEO_SHADER_TYPE::SHADER_TEXTURE);
 
-			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
-			RenderTexture(std::vector<texture_handle>{texForWrite}, SIZE(rc.right, rc.bottom),
-				      RECT(0, 0, rc.right, rc.bottom), shader);
+			if (g_checkboxPreMultAlpha) {
+				pGraphic->SwitchRenderTarget(true);
+				RenderTexture(std::vector<texture_handle>{texForWrite}, SIZE(rc.right, rc.bottom),
+					      RECT(0, 0, rc.right, rc.bottom), VIDEO_SHADER_TYPE::SHADER_TEXTURE_SRGB);
+			} else {
+				pGraphic->SwitchRenderTarget(false);
+				RenderTexture(std::vector<texture_handle>{texForWrite}, SIZE(rc.right, rc.bottom),
+					      RECT(0, 0, rc.right, rc.bottom), VIDEO_SHADER_TYPE::SHADER_TEXTURE);
+			}
 
 			pGraphic->EndRender();
 		}

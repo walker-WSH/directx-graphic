@@ -96,6 +96,12 @@ enum class D2D_EFFECT_TYPE {
 	D2D_EFFFECT_CHROMAKEY,
 };
 
+class ID3DRenderTarget {
+public:
+	virtual ~ID3DRenderTarget() = default;
+	virtual ID3D11RenderTargetView *D3DTarget(bool srgb) = 0;
+};
+
 class DX11GraphicSession;
 class DX11GraphicBase : public IGraphicObject {
 public:

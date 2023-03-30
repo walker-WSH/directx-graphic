@@ -15,9 +15,15 @@ DX11SwapChain::DX11SwapChain(DX11GraphicSession &graphic, HWND hWnd)
 	BuildGraphic();
 }
 
+ID3D11RenderTargetView *DX11SwapChain::D3DTarget(bool srgb)
+{
+	CHECK_GRAPHIC_CONTEXT_EX(DX11GraphicBase::m_graphicSession);
+	return srgb ? m_pRenderTargetViewLinear : m_pRenderTargetView;
+}
+
 bool DX11SwapChain::BuildGraphic()
 {
-	CHECK_GRAPHIC_CONTEXT_EX(DX11GraphicBase::DX11GraphicBase::m_graphicSession);
+	CHECK_GRAPHIC_CONTEXT_EX(DX11GraphicBase::m_graphicSession);
 
 	HRESULT hr = InitSwapChain();
 	if (FAILED(hr)) {
@@ -32,7 +38,7 @@ bool DX11SwapChain::BuildGraphic()
 
 void DX11SwapChain::ReleaseGraphic(bool isForRebuild)
 {
-	CHECK_GRAPHIC_CONTEXT_EX(DX11GraphicBase::DX11GraphicBase::m_graphicSession);
+	CHECK_GRAPHIC_CONTEXT_EX(DX11GraphicBase::m_graphicSession);
 
 	ZeroMemory(&m_descTexture, sizeof(D3D11_TEXTURE2D_DESC));
 	m_pSwapChain = nullptr;

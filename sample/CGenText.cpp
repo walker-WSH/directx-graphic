@@ -32,17 +32,9 @@ public:
 	virtual ~CAutoLoadGDIPlus() { Gdiplus::GdiplusShutdown(m_GdiplusToken); }
 } g_gdip;
 
-extern bool g_checkboxPreMultAlpha;
 Gdiplus::PixelFormat getTextFormat()
 {
 	return PixelFormat32bppARGB;
-
-	/*
-	if (g_checkboxPreMultAlpha)
-		return PixelFormat32bppPARGB;
-	else
-		return PixelFormat32bppARGB;
-	*/
 }
 
 int _GetFontStyle()

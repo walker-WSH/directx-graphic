@@ -8,7 +8,7 @@ static const auto SWAPCHAIN_TEXTURE_FORMAT = GRAPHIC_FORMAT::GF_BGRA;
 
 class DX11GraphicSession;
 
-struct DX11SwapChain : public DX11GraphicBase, public D2DRenderTarget {
+struct DX11SwapChain : public DX11GraphicBase, public D2DRenderTarget, public ID3DRenderTarget {
 	friend class DX11GraphicSession;
 
 public:
@@ -16,6 +16,8 @@ public:
 
 	void SetDisplaySize(uint32_t width, uint32_t height);
 	HRESULT TestResizeSwapChain();
+
+	virtual ID3D11RenderTargetView *D3DTarget(bool srgb);
 
 	virtual bool BuildGraphic();
 	virtual void ReleaseGraphic(bool isForRebuild);

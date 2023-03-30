@@ -499,6 +499,7 @@ void DX11GraphicSession::ReleaseAllDX(bool isForRebuild)
 			 (void *)m_pCurrentRenderTarget, (void *)m_pCurrentSwapChain);
 
 		m_bDuringRendering = false;
+		m_pD3DTarget = nullptr;
 		m_pCurrentRenderTarget = nullptr;
 		m_pCurrentSwapChain = nullptr;
 		LeaveContext(std::source_location::current());
@@ -698,13 +699,26 @@ bool DX11GraphicSession::InitSamplerState()
 	return true;
 }
 
-void DX11GraphicSession::SetRenderContext(ComPtr<ID3D11RenderTargetView> target, uint32_t width, uint32_t height,
+void DX11GraphicSession::SwitchRenderTarget(bool enableSRGB)
+{
+	CHECK_GRAPHIC_CONTEXT;
+
+	if (m_pD3DTarget) {
+		auto target = m_pD3DTarget->D3DTarget(enableSRGB);
+		if (target != m_pCurrentRenderTarget) {
+			m_pCurrentRenderTarget = target;
+			m_pDeviceContext->OMSetRenderTargets(1, &m_pCurrentRenderTarget, NULL);
+		}
+	}
+}
+
+void DX11GraphicSession::SetRenderContext(ID3DRenderTarget *target, uint32_t width, uint32_t height,
 					  ComPtr<IDXGISwapChain> swapChain)
 {
 	CHECK_GRAPHIC_CONTEXT;
 
-	ID3D11RenderTargetView *view = target.Get();
-	m_pDeviceContext->OMSetRenderTargets(1, &view, NULL);
+	m_pD3DTarget = target;
+	SwitchRenderTarget(false);
 
 	D3D11_VIEWPORT vp;
 	memset(&vp, 0, sizeof(vp));
@@ -718,7 +732,6 @@ void DX11GraphicSession::SetRenderContext(ComPtr<ID3D11RenderTargetView> target,
 
 	assert(!m_bDuringRendering);
 	m_bDuringRendering = true;
-	m_pCurrentRenderTarget = target;
 	m_pCurrentSwapChain = swapChain;
 	EnterContext(std::source_location::current());
 }
@@ -812,7 +825,7 @@ bool DX11GraphicSession::BeginRenderCanvas(texture_handle hdl, IGeometryInterfac
 	if (!obj->IsBuilt())
 		return false;
 
-	SetRenderContext(obj->m_pRenderTargetView, obj->m_descTexture.Width, obj->m_descTexture.Height, nullptr);
+	SetRenderContext(obj, obj->m_descTexture.Width, obj->m_descTexture.Height, nullptr);
 
 	if (geometryInterface && obj->IsInterfaceValid() && obj->BeginDrawD2D())
 		*geometryInterface = obj;
@@ -850,7 +863,7 @@ bool DX11GraphicSession::BeginRenderWindow(display_handle hdl, IGeometryInterfac
 		return false;
 	}
 
-	SetRenderContext(obj->m_pRenderTargetViewLinear, obj->m_dwWidth, obj->m_dwHeight, obj->m_pSwapChain);
+	SetRenderContext(obj, obj->m_dwWidth, obj->m_dwHeight, obj->m_pSwapChain);
 
 	if (geometryInterface && obj->IsInterfaceValid() && obj->BeginDrawD2D())
 		*geometryInterface = obj;
@@ -1019,6 +1032,7 @@ void DX11GraphicSession::EndRender(IGeometryInterface *geometryInterface)
 		hr = m_pCurrentSwapChain->Present(0, 0);
 	}
 
+	m_pD3DTarget = nullptr;
 	m_pCurrentRenderTarget = nullptr;
 	m_pCurrentSwapChain = nullptr;
 	m_bDuringRendering = false;

@@ -37,6 +37,13 @@ DX11Texture2D::DX11Texture2D(DX11GraphicSession &graphic, const WCHAR *fullPath)
 	BuildGraphic();
 }
 
+ID3D11RenderTargetView *DX11Texture2D::D3DTarget(bool srgb)
+{
+	CHECK_GRAPHIC_CONTEXT_EX(DX11GraphicBase::m_graphicSession);
+	assert(m_textureInfo.usage == TEXTURE_USAGE::CANVAS_TARGET);
+	return m_pRenderTargetView;
+}
+
 bool DX11Texture2D::BuildGraphic()
 {
 	CHECK_GRAPHIC_CONTEXT_EX(DX11GraphicBase::m_graphicSession);

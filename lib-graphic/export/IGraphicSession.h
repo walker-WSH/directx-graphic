@@ -56,6 +56,7 @@ public:
 	virtual bool BeginRenderCanvas(texture_handle hdl, IGeometryInterface **geometryInterface = nullptr) = 0;
 	virtual bool BeginRenderWindow(display_handle hdl, IGeometryInterface **geometryInterface = nullptr) = 0;
 
+	virtual void SwitchRenderTarget(bool enableSRGB) = 0;
 	virtual void ClearBackground(const ColorRGBA *bkClr) = 0;
 	virtual void SetBlendState(VIDEO_BLEND_TYPE type) = 0;
 	virtual void DrawTopplogy(shader_handle hdl, D3D11_PRIMITIVE_TOPOLOGY type) = 0;
