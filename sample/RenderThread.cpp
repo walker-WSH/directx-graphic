@@ -604,19 +604,20 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncRender(void *pParam)
 			pGraphic->ClearBackground(&clrWhite);
 			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_NORMAL);
 
-			pGraphic->SwitchRenderTarget(false);
-			RenderTexture(std::vector<texture_handle>{texAlpha}, SIZE(rc.right, rc.bottom),
-				      RECT(0, 0, rc.right, rc.bottom), VIDEO_SHADER_TYPE::SHADER_TEXTURE);
-
+			VIDEO_SHADER_TYPE shader;
 			if (g_checkboxPreMultAlpha) {
-				pGraphic->SwitchRenderTarget(true);
-				RenderTexture(std::vector<texture_handle>{texForWrite}, SIZE(rc.right, rc.bottom),
-					      RECT(0, 0, rc.right, rc.bottom), VIDEO_SHADER_TYPE::SHADER_TEXTURE_SRGB);
+				shader = VIDEO_SHADER_TYPE::SHADER_TEXTURE_SRGB;
 			} else {
-				pGraphic->SwitchRenderTarget(false);
-				RenderTexture(std::vector<texture_handle>{texForWrite}, SIZE(rc.right, rc.bottom),
-					      RECT(0, 0, rc.right, rc.bottom), VIDEO_SHADER_TYPE::SHADER_TEXTURE);
+				shader = VIDEO_SHADER_TYPE::SHADER_TEXTURE;
 			}
+
+			pGraphic->SwitchRenderTarget(g_checkboxPreMultAlpha);
+
+			RenderTexture(std::vector<texture_handle>{texAlpha}, SIZE(rc.right, rc.bottom),
+				      RECT(0, 0, rc.right, rc.bottom), shader);
+
+			RenderTexture(std::vector<texture_handle>{texForWrite}, SIZE(rc.right, rc.bottom),
+				      RECT(0, 0, rc.right, rc.bottom), shader);
 
 			pGraphic->EndRender();
 		}
