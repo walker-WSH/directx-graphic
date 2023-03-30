@@ -6,13 +6,19 @@ struct PixelInputType {
 	float2 tex : TEXCOORD0;
 };
 
-float4 SRGB_Gamma(float4 color)
+float3 SRGB_to_linearRGB(float3 srgbColor)
 {
-	return pow(color, 2.2f);
+	return pow(srgbColor, 2.2f);
+}
+
+float3 linearRGB_to_SRGB(float3 rgb)
+{
+	return pow(rgb, 1.0 / 2.2);
 }
 
 float4 main(PixelInputType input) : SV_TARGET
 {
-	float4 textureColor = image0.Sample(sampleType, input.tex);
-	return SRGB_Gamma(textureColor);
+	// Note: Here the image0 is based on RGB while renderTarget is sRGB
+	float4 clr = image0.Sample(sampleType, input.tex);
+	return float4(SRGB_to_linearRGB(clr.rgb), clr.a);
 }

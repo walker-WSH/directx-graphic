@@ -171,7 +171,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncNormalRender(void *pParam)
 		IGeometryInterface *d2dDisplay = nullptr;
 		if (pGraphic->BeginRenderWindow(display, &d2dDisplay)) {
 			pGraphic->ClearBackground(&clrGrey);
-			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
+			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_NORMAL);
 
 			if (texShared) {
 				RenderTexture(std::vector<texture_handle>{texShared}, canvasSize,
@@ -254,8 +254,15 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncNormalRender(void *pParam)
 			}
 
 			if (fullTex) {
-				pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
-				RenderTexture(std::vector<texture_handle>{fullTex}, canvasSize, rc);
+				pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_NORMAL);
+				pGraphic->SwitchRenderTarget(g_checkboxPreMultAlpha);
+				if (g_checkboxPreMultAlpha) {
+					RenderTexture(std::vector<texture_handle>{fullTex}, canvasSize, rc,
+						      VIDEO_SHADER_TYPE::SHADER_TEXTURE_SRGB);
+				} else {
+					RenderTexture(std::vector<texture_handle>{fullTex}, canvasSize, rc,
+						      VIDEO_SHADER_TYPE::SHADER_TEXTURE);
+				}
 			}
 
 			if (g_clearBk)
@@ -404,7 +411,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForSubRegionMosic(void *pParam)
 				ColorRGBA clrSubRegion = {1.f, 0, 0, 1.f};
 
 				pGraphic->ClearBackground(&clrBk);
-				pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
+				pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_NORMAL);
 
 				for (const auto &item : finishedPathList) {
 					d2d->DrawGeometry(item, &clrSubRegion, g_lineStride,
@@ -419,7 +426,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForSubRegionMosic(void *pParam)
 		if (pGraphic->BeginRenderCanvas(canvasTex, &d2d)) {
 			ColorRGBA clr = {0, 0, 0, 1.f};
 			pGraphic->ClearBackground(&clr);
-			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
+			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_NORMAL);
 
 			RECT left = rc;
 			left.right = rc.right / 2;
@@ -438,7 +445,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForSubRegionMosic(void *pParam)
 
 		if (pGraphic->BeginRenderWindow(display)) {
 			pGraphic->ClearBackground(&clrGrey);
-			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::DISABLE);
+			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_DISABLED);
 
 			MosaicParam mosaic;
 			mosaic.texWidth = rc.right;
@@ -529,7 +536,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForBulge(void *pParam)
 		if (pGraphic->BeginRenderCanvas(bulgeTex)) {
 			ColorRGBA clr = {0, 0, 0, 1.f};
 			pGraphic->ClearBackground(&clr);
-			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
+			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_NORMAL);
 
 			RenderBulgeTexture(std::vector<texture_handle>{texGrid}, SIZE(info.width, info.height),
 					   RECT(0, 0, info.width, info.height), &psParam);
@@ -539,7 +546,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForBulge(void *pParam)
 
 		if (pGraphic->BeginRenderWindow(display)) {
 			pGraphic->ClearBackground(&clrGrey);
-			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::DISABLE);
+			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_DISABLED);
 
 			RECT left = rc;
 			left.right = rc.right / 2;
@@ -564,7 +571,6 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncRender(void *pParam)
 	HRESULT hr = CoInitialize(NULL);
 	CMFCDemoDlg *self = reinterpret_cast<CMFCDemoDlg *>(pParam);
 
-	bool testAlpha = g_checkboxPreMultAlpha;
 	int64_t frameInterval = 1000 / 30;
 	int64_t startCaptureTime = GetTickCount64();
 	int64_t capturedCount = 0;
@@ -599,30 +605,24 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncRender(void *pParam)
 				continue;
 		}
 
-		if (testAlpha != g_checkboxPreMultAlpha) {
-			testAlpha = g_checkboxPreMultAlpha;
-			pGraphic->DestroyGraphicObject(display);
-			display = pGraphic->CreateDisplay(self->m_hWnd, g_checkboxPreMultAlpha ? true : false);
-			assert(display);
-		}
-
 		pGraphic->SetDisplaySize(display, rc.right, rc.bottom);
 
 		if (pGraphic->BeginRenderWindow(display)) {
 			pGraphic->ClearBackground(&clrWhite);
+			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_NORMAL);
 
 			VIDEO_SHADER_TYPE shader;
-			if (testAlpha) {
+			if (g_checkboxPreMultAlpha) {
 				shader = VIDEO_SHADER_TYPE::SHADER_TEXTURE_SRGB;
 			} else {
 				shader = VIDEO_SHADER_TYPE::SHADER_TEXTURE;
 			}
 
-			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
+			pGraphic->SwitchRenderTarget(g_checkboxPreMultAlpha);
+
 			RenderTexture(std::vector<texture_handle>{texAlpha}, SIZE(rc.right, rc.bottom),
 				      RECT(0, 0, rc.right, rc.bottom), shader);
 
-			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
 			RenderTexture(std::vector<texture_handle>{texForWrite}, SIZE(rc.right, rc.bottom),
 				      RECT(0, 0, rc.right, rc.bottom), shader);
 

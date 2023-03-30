@@ -7,7 +7,7 @@ namespace graphic {
 
 class DX11GraphicSession;
 
-class DX11Texture2D : public DX11GraphicBase, public D2DRenderTarget {
+class DX11Texture2D : public DX11GraphicBase, public D2DRenderTarget, public ID3DRenderTarget {
 	friend class DX11GraphicSession;
 
 public:
@@ -16,6 +16,8 @@ public:
 	DX11Texture2D(DX11GraphicSession &graphic, const TextureInformation &info);
 	DX11Texture2D(DX11GraphicSession &graphic, HANDLE handle);
 	DX11Texture2D(DX11GraphicSession &graphic, const WCHAR *fullPath);
+
+	virtual ID3D11RenderTargetView *D3DTarget(bool srgb);
 
 	virtual bool BuildGraphic();
 	virtual void ReleaseGraphic(bool isForRebuild);

@@ -22,6 +22,7 @@
 #include "StringConvert.h"
 #include "WindowsPlatformHelper.h"
 #include "IGraphicDefine.h"
+#include "GraphicFormat.hpp"
 
 namespace graphic {
 
@@ -93,6 +94,12 @@ enum class D2D_EFFECT_TYPE {
 	D2D_EFFECT_DIRECT_BLUR,
 	D2D_EFFFECT_HIGHLIGHT,
 	D2D_EFFFECT_CHROMAKEY,
+};
+
+class ID3DRenderTarget {
+public:
+	virtual ~ID3DRenderTarget() = default;
+	virtual ID3D11RenderTargetView *D3DTarget(bool srgb) = 0;
 };
 
 class DX11GraphicSession;

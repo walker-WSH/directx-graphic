@@ -116,7 +116,7 @@ void CDlgHighlight::OnPaint()
 	}
 
 	if (pGraphic->BeginRenderWindow(edit_display, &d2d)) {
-		pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
+		pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_NORMAL);
 
 		if (test_highlight) {
 			d2d->DrawHighlight(edit_canvasTex, highlight, shadow, clarity, redius);

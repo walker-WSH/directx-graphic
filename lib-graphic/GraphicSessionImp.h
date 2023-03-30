@@ -55,7 +55,7 @@ public:
 	virtual void CloseGeometryInterface(shader_handle targetTex);
 
 	// display
-	virtual display_handle CreateDisplay(HWND hWnd, bool srgb = false);
+	virtual display_handle CreateDisplay(HWND hWnd);
 	virtual void SetDisplaySize(display_handle hdl, uint32_t width, uint32_t height);
 	virtual DisplayInformation GetDisplayInfo(display_handle hdl);
 
@@ -79,6 +79,7 @@ public:
 	// render
 	virtual bool BeginRenderCanvas(texture_handle hdl, IGeometryInterface **geometryInterface = nullptr);
 	virtual bool BeginRenderWindow(display_handle hdl, IGeometryInterface **geometryInterface = nullptr);
+	virtual void SwitchRenderTarget(bool enableSRGB);
 	virtual void ClearBackground(const ColorRGBA *bkClr);
 	virtual void SetBlendState(VIDEO_BLEND_TYPE type);
 	virtual void DrawTopplogy(shader_handle hdl, D3D11_PRIMITIVE_TOPOLOGY type);
@@ -112,7 +113,7 @@ protected:
 	bool InitBlendState();
 	bool InitSamplerState();
 
-	void SetRenderContext(ComPtr<ID3D11RenderTargetView> target, uint32_t width, uint32_t height,
+	void SetRenderContext(ID3DRenderTarget *target, uint32_t width, uint32_t height,
 			      ComPtr<IDXGISwapChain> swapChain);
 	void UpdateShaderBuffer(ComPtr<ID3D11Buffer> buffer, const void *data, size_t size);
 	bool GetResource(const std::vector<texture_handle> &textures,
@@ -152,6 +153,7 @@ private:
 	ComPtr<ID3D11SamplerState> m_pSampleStatePoint = nullptr;
 	std::map<DX11GraphicBase *, bool> m_listObject;
 
+	ID3DRenderTarget *m_pD3DTarget = nullptr;
 	ID3D11RenderTargetView *m_pCurrentRenderTarget = nullptr;
 	IDXGISwapChain *m_pCurrentSwapChain = nullptr;
 	volatile bool m_bDuringRendering = false;
