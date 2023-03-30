@@ -31,7 +31,7 @@ public:
 	virtual void CloseGeometryInterface(shader_handle targetTex) = 0;
 
 	// display
-	virtual display_handle CreateDisplay(HWND hWnd, bool srgb = false) = 0;
+	virtual display_handle CreateDisplay(HWND hWnd) = 0;
 	virtual void SetDisplaySize(display_handle hdl, uint32_t width, uint32_t height) = 0;
 	virtual DisplayInformation GetDisplayInfo(display_handle hdl) = 0;
 

@@ -392,11 +392,11 @@ void DX11GraphicSession::CloseGeometryInterface(shader_handle hdl)
 	HandleDirectResult(hr);
 }
 
-display_handle DX11GraphicSession::CreateDisplay(HWND hWnd, bool srgb)
+display_handle DX11GraphicSession::CreateDisplay(HWND hWnd)
 {
 	CHECK_GRAPHIC_CONTEXT;
 
-	auto ret = new DX11SwapChain(*this, hWnd, srgb);
+	auto ret = new DX11SwapChain(*this, hWnd);
 	if (!ret->IsBuilt()) {
 		LOG_WARN("failed to init display handle %X for HWND %X", ret, (void *)hWnd);
 		delete ret;
@@ -850,7 +850,7 @@ bool DX11GraphicSession::BeginRenderWindow(display_handle hdl, IGeometryInterfac
 		return false;
 	}
 
-	SetRenderContext(obj->m_pRenderTargetView, obj->m_dwWidth, obj->m_dwHeight, obj->m_pSwapChain);
+	SetRenderContext(obj->m_pRenderTargetViewLinear, obj->m_dwWidth, obj->m_dwHeight, obj->m_pSwapChain);
 
 	if (geometryInterface && obj->IsInterfaceValid() && obj->BeginDrawD2D())
 		*geometryInterface = obj;

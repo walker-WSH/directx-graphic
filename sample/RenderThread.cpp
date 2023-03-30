@@ -602,7 +602,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncRender(void *pParam)
 		if (testAlpha != g_checkboxPreMultAlpha) {
 			testAlpha = g_checkboxPreMultAlpha;
 			pGraphic->DestroyGraphicObject(display);
-			display = pGraphic->CreateDisplay(self->m_hWnd, g_checkboxPreMultAlpha ? true : false);
+			display = pGraphic->CreateDisplay(self->m_hWnd);
 			assert(display);
 		}
 
@@ -611,12 +611,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncRender(void *pParam)
 		if (pGraphic->BeginRenderWindow(display)) {
 			pGraphic->ClearBackground(&clrWhite);
 
-			VIDEO_SHADER_TYPE shader;
-			if (testAlpha) {
-				shader = VIDEO_SHADER_TYPE::SHADER_TEXTURE_SRGB;
-			} else {
-				shader = VIDEO_SHADER_TYPE::SHADER_TEXTURE;
-			}
+			VIDEO_SHADER_TYPE shader = VIDEO_SHADER_TYPE::SHADER_TEXTURE;
 
 			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
 			RenderTexture(std::vector<texture_handle>{texAlpha}, SIZE(rc.right, rc.bottom),

@@ -22,6 +22,7 @@
 #include "StringConvert.h"
 #include "WindowsPlatformHelper.h"
 #include "IGraphicDefine.h"
+#include "GraphicFormat.hpp"
 
 namespace graphic {
 
