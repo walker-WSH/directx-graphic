@@ -255,7 +255,14 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncNormalRender(void *pParam)
 
 			if (fullTex) {
 				pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_NORMAL);
-				RenderTexture(std::vector<texture_handle>{fullTex}, canvasSize, rc);
+				pGraphic->SwitchRenderTarget(g_checkboxPreMultAlpha);
+				if (g_checkboxPreMultAlpha) {
+					RenderTexture(std::vector<texture_handle>{fullTex}, canvasSize, rc,
+						      VIDEO_SHADER_TYPE::SHADER_TEXTURE_SRGB);
+				} else {
+					RenderTexture(std::vector<texture_handle>{fullTex}, canvasSize, rc,
+						      VIDEO_SHADER_TYPE::SHADER_TEXTURE);
+				}
 			}
 
 			if (g_clearBk)
