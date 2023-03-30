@@ -8,11 +8,11 @@
 
 extern texture_handle texForWrite;
 
-Gdiplus::REAL fontsize = 140.f;
+Gdiplus::REAL fontsize = 200.f;
 auto width = 1280;
 auto height = 720;
 
-std::wstring m_strText = L"123WSH \n?他们接受";
+std::wstring m_strText = L"123WSH \n?他接受";
 
 typedef std::shared_ptr<Gdiplus::Font> GDIP_FONT_PTR;
 typedef std::shared_ptr<Gdiplus::FontFamily> FontFamily_PTR;
