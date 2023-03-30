@@ -260,8 +260,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncNormalRender(void *pParam)
 					RenderTexture(std::vector<texture_handle>{fullTex}, canvasSize, rc,
 						      VIDEO_SHADER_TYPE::SHADER_TEXTURE_SRGB);
 				} else {
-					RenderTexture(std::vector<texture_handle>{fullTex}, canvasSize, rc,
-						      VIDEO_SHADER_TYPE::SHADER_TEXTURE);
+					RenderTexture(std::vector<texture_handle>{fullTex}, canvasSize, rc);
 				}
 			}
 
