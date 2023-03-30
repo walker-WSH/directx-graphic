@@ -889,6 +889,12 @@ void DX11GraphicSession::SetBlendState(VIDEO_BLEND_TYPE type)
 {
 	CHECK_GRAPHIC_CONTEXT;
 
+#define SET_BLEND(x)                                                           \
+	if (x) {                                                               \
+		float blendFactor[4] = {1.0f, 1.0f, 1.0f, 1.0f};               \
+		m_pDeviceContext->OMSetBlendState(x, blendFactor, 0xffffffff); \
+	}
+
 	if (!m_pDeviceContext || !m_pCurrentRenderTarget) {
 		LOG_WARN("there is no target set");
 		assert(false);
@@ -896,21 +902,15 @@ void DX11GraphicSession::SetBlendState(VIDEO_BLEND_TYPE type)
 	}
 
 	switch (type) {
-	case VIDEO_BLEND_TYPE::NORMAL:
-		if (m_pBlendStateNormal) {
-			float blendFactor[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-			m_pDeviceContext->OMSetBlendState(m_pBlendStateNormal, blendFactor, 0xffffffff);
-		}
+	case VIDEO_BLEND_TYPE::BLEND_NORMAL:
+		SET_BLEND(m_pBlendStateNormal);
 		break;
 
-	case VIDEO_BLEND_TYPE::PREMULT_ALPHA: {
-		if (m_pBlendStatePreMultAlpha) {
-			float blendFactor[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-			m_pDeviceContext->OMSetBlendState(m_pBlendStatePreMultAlpha, blendFactor, 0xffffffff);
-		}
+	case VIDEO_BLEND_TYPE::BLEND_PREMULTIPLIED: {
+		SET_BLEND(m_pBlendStatePreMultAlpha);
 	} break;
 
-	case VIDEO_BLEND_TYPE::DISABLE:
+	case VIDEO_BLEND_TYPE::BLEND_DISABLED:
 	default:
 		m_pDeviceContext->OMSetBlendState(nullptr, nullptr, 0xffffffff);
 		break;

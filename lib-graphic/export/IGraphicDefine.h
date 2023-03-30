@@ -78,9 +78,9 @@ enum class VERTEX_INPUT_TYPE {
 };
 
 enum class VIDEO_BLEND_TYPE {
-	DISABLE = 0,
-	NORMAL,
-	PREMULT_ALPHA,
+	BLEND_DISABLED = 0,
+	BLEND_NORMAL,        // Src_rgb * Src_a + Canvas_rgb * (1 - Src_a)
+	BLEND_PREMULTIPLIED, // Src_rgb + Canvas_rgb * (1 - Src_a)
 };
 
 enum class TEXT_ALIGNMENT_TYPE {

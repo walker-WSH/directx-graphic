@@ -171,7 +171,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncNormalRender(void *pParam)
 		IGeometryInterface *d2dDisplay = nullptr;
 		if (pGraphic->BeginRenderWindow(display, &d2dDisplay)) {
 			pGraphic->ClearBackground(&clrGrey);
-			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
+			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_NORMAL);
 
 			if (texShared) {
 				RenderTexture(std::vector<texture_handle>{texShared}, canvasSize,
@@ -254,7 +254,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncNormalRender(void *pParam)
 			}
 
 			if (fullTex) {
-				pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
+				pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_NORMAL);
 				RenderTexture(std::vector<texture_handle>{fullTex}, canvasSize, rc);
 			}
 
@@ -404,7 +404,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForSubRegionMosic(void *pParam)
 				ColorRGBA clrSubRegion = {1.f, 0, 0, 1.f};
 
 				pGraphic->ClearBackground(&clrBk);
-				pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
+				pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_NORMAL);
 
 				for (const auto &item : finishedPathList) {
 					d2d->DrawGeometry(item, &clrSubRegion, g_lineStride,
@@ -419,7 +419,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForSubRegionMosic(void *pParam)
 		if (pGraphic->BeginRenderCanvas(canvasTex, &d2d)) {
 			ColorRGBA clr = {0, 0, 0, 1.f};
 			pGraphic->ClearBackground(&clr);
-			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
+			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_NORMAL);
 
 			RECT left = rc;
 			left.right = rc.right / 2;
@@ -438,7 +438,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForSubRegionMosic(void *pParam)
 
 		if (pGraphic->BeginRenderWindow(display)) {
 			pGraphic->ClearBackground(&clrGrey);
-			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::DISABLE);
+			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_DISABLED);
 
 			MosaicParam mosaic;
 			mosaic.texWidth = rc.right;
@@ -529,7 +529,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForBulge(void *pParam)
 		if (pGraphic->BeginRenderCanvas(bulgeTex)) {
 			ColorRGBA clr = {0, 0, 0, 1.f};
 			pGraphic->ClearBackground(&clr);
-			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
+			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_NORMAL);
 
 			RenderBulgeTexture(std::vector<texture_handle>{texGrid}, SIZE(info.width, info.height),
 					   RECT(0, 0, info.width, info.height), &psParam);
@@ -539,7 +539,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForBulge(void *pParam)
 
 		if (pGraphic->BeginRenderWindow(display)) {
 			pGraphic->ClearBackground(&clrGrey);
-			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::DISABLE);
+			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_DISABLED);
 
 			RECT left = rc;
 			left.right = rc.right / 2;
@@ -602,7 +602,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncRender(void *pParam)
 
 		if (pGraphic->BeginRenderWindow(display)) {
 			pGraphic->ClearBackground(&clrWhite);
-			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::NORMAL);
+			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_NORMAL);
 
 			pGraphic->SwitchRenderTarget(false);
 			RenderTexture(std::vector<texture_handle>{texAlpha}, SIZE(rc.right, rc.bottom),
