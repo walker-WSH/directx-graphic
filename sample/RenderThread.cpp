@@ -816,15 +816,15 @@ bool RenderCustomYUV(SIZE canvasSize, RECT rc)
 		FILE *fp = 0;
 		fopen_s(&fp, "yuv", "wb+");
 		if (fp) {
-			for (size_t i = 0; i < preFrame->height; i++) {
+			for (auto i = 0; i < preFrame->height; i++) {
 				fwrite(preFrame->data[0] + i * preFrame->linesize[0], preFrame->width, 1, fp);
 			}
 
-			for (size_t i = 0; i < preFrame->height / 2; i++) {
+			for (auto i = 0; i < preFrame->height / 2; i++) {
 				fwrite(preFrame->data[1] + i * preFrame->linesize[1], preFrame->width / 2, 1, fp);
 			}
 
-			for (size_t i = 0; i < preFrame->height / 2; i++) {
+			for (auto i = 0; i < preFrame->height / 2; i++) {
 				fwrite(preFrame->data[2] + i * preFrame->linesize[2], preFrame->width / 2, 1, fp);
 			}
 
