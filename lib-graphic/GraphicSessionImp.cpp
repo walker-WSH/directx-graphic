@@ -7,6 +7,8 @@ DX11GraphicSession::DX11GraphicSession()
 {
 	InitializeCriticalSection(&m_lockOperation);
 
+	AUTO_GRAPHIC_CONTEXT(this);
+
 	std::vector<LINE_DASH_STYLE> temp = {
 		LINE_DASH_STYLE::LINE_SOLID,    LINE_DASH_STYLE::LINE_DASH,         LINE_DASH_STYLE::LINE_DOT,
 		LINE_DASH_STYLE::LINE_DASH_DOT, LINE_DASH_STYLE::LINE_DASH_DOT_DOT,

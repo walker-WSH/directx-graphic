@@ -60,8 +60,10 @@ void DX11GraphicSession::LeaveContext(const std::source_location &location)
 bool DX11GraphicSession::CheckContext(const std::source_location &location)
 {
 	bool ret = (!g_stackContexts.empty() && this == g_stackContexts.top());
-	if (!ret)
+	if (!ret) {
 		LOG_WARN("currently in invalid context from %s", location.function_name());
+		assert(false && "invalid graphic context");
+	}
 
 	return ret;
 }
