@@ -45,8 +45,8 @@ std::string ExtractExtension(const char *full_path)
 
 bool IsFloatEqual(const float &num1, const float &num2)
 {
-	static const float equal = 0.000001f;
-	return (fabs(num1 - num2) < equal);
+	static const double EPSINON = 0.000001;
+	return (fabs((double)num1 - (double)num2) < EPSINON);
 }
 
 }; // namespace winHelper
