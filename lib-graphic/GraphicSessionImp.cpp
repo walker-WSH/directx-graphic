@@ -40,7 +40,7 @@ bool DX11GraphicSession::InitializeGraphic(const GraphicCardDesc *graphic)
 
 	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
 	if (FAILED(hr))
-		LOG_WARN("CoInitializeEx failed with %X", hr);
+		LOG_INFO("CoInitializeEx failed with %X", hr);
 
 	if (graphic)
 		m_destGraphic = *graphic;
