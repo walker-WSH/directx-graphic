@@ -173,12 +173,6 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncNormalRender(void *pParam)
 			pGraphic->ClearBackground(&clrGrey);
 			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_NORMAL);
 
-			if (texShared) {
-				RenderTexture(std::vector<texture_handle>{texShared}, canvasSize,
-					      RECT(20, 50, rc.right - 20,
-						   rc.bottom - 20)); // 渲染共享纹理
-			}
-
 			texture_handle fullTex = 0;
 			RECT rcSelected = {0, 0, 0, 0};
 			for (auto &item : texRegions) {
@@ -207,6 +201,11 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncNormalRender(void *pParam)
 				} else {
 					RenderTexture(std::vector<texture_handle>{item.tex}, canvasSize, item.region);
 				}
+			}
+
+			if (texShared) {
+				RenderTexture(std::vector<texture_handle>{texShared}, canvasSize,
+					      RECT(0, 0, rc.right, rc.bottom)); // 渲染共享纹理
 			}
 
 			// draw grid
@@ -670,7 +669,7 @@ bool InitGraphic(HWND hWnd)
 
 	texImg2 = pGraphic->OpenImageTexture(L"test.png");
 
-	texShared = pGraphic->OpenSharedTexture((HANDLE)0X0000000040003282);
+	texShared = pGraphic->OpenSharedTexture((HANDLE)0x00000000800034c2);
 
 	//------------------------------- test texutres --------------------
 	TextureInformation info;
