@@ -27,25 +27,17 @@ DX11GraphicSession::~DX11GraphicSession()
 	DeleteCriticalSection(&m_lockOperation);
 }
 
-bool DX11GraphicSession::InitializeGraphic(const GraphicCardDesc *graphic)
+bool DX11GraphicSession::InitializeGraphic(uint32_t adapterIdx)
 {
 	LOG_TRACE();
 	CHECK_GRAPHIC_CONTEXT;
 
-	if (graphic) {
-		LOG_INFO("init graphic module with device: %s", str::w2u(graphic->graphicName.c_str()).c_str());
-	} else {
-		LOG_INFO("init graphic module with default device");
-	}
+	m_uAdapterIdx = adapterIdx;
+	LOG_INFO("init graphic module with adapterIdx: %u", adapterIdx);
 
 	HRESULT hr = CoInitializeEx(0, COINIT_MULTITHREADED);
 	if (FAILED(hr))
 		LOG_INFO("CoInitializeEx failed with %X", hr);
-
-	if (graphic)
-		m_destGraphic = *graphic;
-	else
-		m_destGraphic = GraphicCardDesc();
 
 	return BuildAllDX();
 }
@@ -530,31 +522,15 @@ bool DX11GraphicSession::BuildAllDX()
 	LOG_TRACE();
 	CHECK_GRAPHIC_CONTEXT;
 
-	std::optional<GraphicCardType> currentType;
-	DXGraphic::EnumD3DAdapters(nullptr, [this, &currentType](void *userdata, ComPtr<IDXGIFactory1> factory,
-								 ComPtr<IDXGIAdapter1> adapter,
-								 const DXGI_ADAPTER_DESC &desc, const char *version) {
-		if (m_destGraphic.vendorId || m_destGraphic.deviceId) {
-			if (desc.VendorId == m_destGraphic.vendorId && desc.DeviceId == m_destGraphic.deviceId) {
-				m_pDX11Factory = factory;
-				m_pAdapter = adapter;
-				return false;
-			}
-		} else {
-			GraphicCardType newType = DXGraphic::CheckAdapterType(desc);
-			if (!currentType.has_value() ||
-			    g_mapGraphicOrder[newType] < g_mapGraphicOrder[currentType.value()]) {
-				currentType = newType;
-				m_pDX11Factory = factory;
-				m_pAdapter = adapter;
-			}
-		}
+	HRESULT hr = CreateDXGIFactory1(IID_PPV_ARGS(&m_pDX11Factory));
+	if (FAILED(hr)) {
+		LOG_WARN("CreateDXGIFactory1 failed with %x", hr);
+		return false;
+	}
 
-		return true;
-	});
-
-	if (!m_pAdapter) {
-		LOG_WARN("failed to create adapter");
+	hr = m_pDX11Factory->EnumAdapters1(m_uAdapterIdx, &m_pAdapter);
+	if (FAILED(hr)) {
+		LOG_WARN("EnumAdapters1 failed with %x for adapter: %u", hr, m_uAdapterIdx);
 		return false;
 	}
 
@@ -562,7 +538,7 @@ bool DX11GraphicSession::BuildAllDX()
 	m_pAdapter->GetDesc(&descAdapter);
 
 	D3D_FEATURE_LEVEL levelUsed = D3D_FEATURE_LEVEL_10_0;
-	HRESULT hr = D3D11CreateDevice(m_pAdapter, D3D_DRIVER_TYPE_UNKNOWN, nullptr, D3D11_CREATE_DEVICE_BGRA_SUPPORT,
+	hr = D3D11CreateDevice(m_pAdapter, D3D_DRIVER_TYPE_UNKNOWN, nullptr, D3D11_CREATE_DEVICE_BGRA_SUPPORT,
 				       featureLevels.data(), (uint32_t)featureLevels.size(), D3D11_SDK_VERSION,
 				       m_pDX11Device.Assign(), &levelUsed, m_pDeviceContext.Assign());
 

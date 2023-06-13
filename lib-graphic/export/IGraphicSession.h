@@ -12,7 +12,7 @@ public:
 	virtual void UnRegisterCallback(IGraphicCallback *cb) = 0;
 
 	// graphic : Select graphic automatically if it's null. NVIDIA > AMD > INTEL > BAISC > ANY
-	virtual bool InitializeGraphic(const GraphicCardDesc *graphic = nullptr) = 0;
+	virtual bool InitializeGraphic(uint32_t adapterIdx = 0) = 0;
 	virtual void UnInitializeGraphic() = 0;
 
 	virtual uint32_t MaxVideoSize() = 0;

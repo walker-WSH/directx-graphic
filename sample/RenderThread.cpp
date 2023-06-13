@@ -644,7 +644,7 @@ bool InitGraphic(HWND hWnd)
 
 	AUTO_GRAPHIC_CONTEXT(pGraphic);
 
-	bool bOK = pGraphic->InitializeGraphic(nullptr);
+	bool bOK = pGraphic->InitializeGraphic();
 	assert(bOK);
 
 	//------------------------------------------------------------------

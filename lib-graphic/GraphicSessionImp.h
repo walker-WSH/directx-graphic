@@ -36,7 +36,7 @@ public:
 	virtual void RegisterCallback(std::weak_ptr<IGraphicCallback> cb);
 	virtual void UnRegisterCallback(IGraphicCallback *cb);
 
-	virtual bool InitializeGraphic(const GraphicCardDesc *graphic = nullptr);
+	virtual bool InitializeGraphic(uint32_t adapterIdx = 0);
 	virtual void UnInitializeGraphic();
 
 	virtual uint32_t MaxVideoSize();
@@ -132,7 +132,7 @@ private:
 
 	std::vector<std::weak_ptr<IGraphicCallback>> m_pGraphicCallbacks;
 
-	GraphicCardDesc m_destGraphic;
+	uint32_t m_uAdapterIdx = 0;
 	bool m_bBuildSuccessed = false;
 	std::atomic<uint32_t> m_uMaxTextureSize = D3D10_REQ_TEXTURE2D_U_OR_V_DIMENSION;
 
