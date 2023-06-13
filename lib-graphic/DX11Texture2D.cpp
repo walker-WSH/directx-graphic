@@ -278,8 +278,24 @@ bool DX11Texture2D::InitResourceView()
 	D3D11_TEXTURE2D_DESC desc = {};
 	m_pTexture2D->GetDesc(&desc);
 
+	DXGI_FORMAT resourceFormat;
+	switch (desc.Format) {
+	case DXGI_FORMAT_R8G8B8A8_TYPELESS:
+		resourceFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+		break;
+	case DXGI_FORMAT_B8G8R8A8_TYPELESS:
+		resourceFormat = DXGI_FORMAT_B8G8R8A8_UNORM;
+		break;
+	case DXGI_FORMAT_B8G8R8X8_TYPELESS:
+		resourceFormat = DXGI_FORMAT_B8G8R8X8_UNORM;
+		break;
+	default:
+		resourceFormat = desc.Format;
+		break;
+	}
+
 	D3D11_SHADER_RESOURCE_VIEW_DESC viewDesc{};
-	viewDesc.Format = desc.Format;
+	viewDesc.Format = resourceFormat;
 	viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	viewDesc.Texture2D.MipLevels = 1;
 
