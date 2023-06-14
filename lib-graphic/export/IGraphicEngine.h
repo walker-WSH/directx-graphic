@@ -15,4 +15,6 @@ GRAPHIC_API IGraphicSession *CreateGraphicSession();
 // before calling it, you should destroy all object created by IGraphicSession
 GRAPHIC_API void DestroyGraphicSession(IGraphicSession *&graphic);
 
+GRAPHIC_API void TransposeMatrixWVP(const SIZE &canvas, bool convertCoord, WorldDesc wd, float outputMatrix[4][4]);
+
 } // namespace graphic

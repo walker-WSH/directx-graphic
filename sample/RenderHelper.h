@@ -3,6 +3,7 @@
 #include <optional>
 #include <map>
 #include "IGraphicDefine.h"
+#include "IGraphicEngine.h"
 #include "IGraphicSession.h"
 
 using namespace graphic;
@@ -28,18 +29,6 @@ enum class VIDEO_SHADER_TYPE {
 	// rgb to yuv
 	SHADER_TO_Y_PLANE,
 	SHADER_TO_UV_PLANE,
-};
-
-struct WorldVector {
-	float x = 0.f;
-	float y = 0.f;
-	float z = 0.f;
-};
-
-struct WorldDesc {
-	std::optional<WorldVector> rotate; // angle, [0, 360]
-	std::optional<WorldVector> move;
-	std::optional<WorldVector> scale;
 };
 
 static const auto TEXTURE_VERTEX_COUNT = 4;
@@ -106,8 +95,6 @@ void FillTextureVertex(float left, float top, float right, float bottom, bool fl
 		       TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT]);
 void FillColorVertex(float left, float top, float right, float bottom,
 		     ColorVertexDesc outputVertex[TEXTURE_VERTEX_COUNT]);
-
-void TransposeMatrixWVP(const SIZE &canvas, bool convertCoord, WorldDesc wd, float outputMatrix[4][4]);
 
 texture_handle getRotatedTexture(texture_handle tex, texture_handle &cv);
 

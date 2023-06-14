@@ -1,9 +1,11 @@
-#include "pch.h"
-#include "RenderHelper.h"
+#include "IGraphicEngine.h"
+#include "IGraphicDefine.h"
 #include <dxsdk/include/d3dx10math.h>
 
 // dxsdk
 #pragma comment(lib, "D3DX10.lib")
+
+namespace graphic {
 
 float ConvertAngleToRadian(float angle)
 {
@@ -93,3 +95,5 @@ void TransposeMatrixWVP(const SIZE &canvas, bool convertCoord, WorldDesc wd, flo
 	void *src = &(wvpMatrix.m[0][0]);
 	memmove(&(outputMatrix[0][0]), src, sizeof(float) * 16);
 }
+
+} // namespace graphic

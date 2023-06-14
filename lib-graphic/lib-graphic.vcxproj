@@ -191,6 +191,7 @@
     <ClCompile Include="GraphicEngineImpl.cpp" />
     <ClCompile Include="GraphicSessionImp.cpp" />
     <ClCompile Include="SessionContext.cpp" />
+    <ClCompile Include="WVPMatrix.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common\ComPtr.hpp" />

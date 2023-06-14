@@ -101,9 +101,6 @@
     <ClCompile Include="RenderHelper.cpp">
       <Filter>render\dx</Filter>
     </ClCompile>
-    <ClCompile Include="RenderHelperMatrix.cpp">
-      <Filter>render\dx</Filter>
-    </ClCompile>
     <ClCompile Include="AsyncTask.cpp">
       <Filter>render</Filter>
     </ClCompile>

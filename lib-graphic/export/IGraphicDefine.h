@@ -11,6 +11,7 @@
 #include <dwrite.h>
 #include <source_location>
 #include <functional>
+#include <optional>
 
 #ifdef GRAPHIC_API_EXPORTS
 #define GRAPHIC_API __declspec(dllexport)
@@ -226,6 +227,18 @@ struct TextFormatDesc {
 	TEXT_ALIGNMENT_TYPE alignH = TEXT_ALIGNMENT_TYPE::ALIGNMENT_NEAR;
 	TEXT_ALIGNMENT_TYPE alignV = TEXT_ALIGNMENT_TYPE::ALIGNMENT_NEAR;
 	TEXT_WORD_WRAP wordWrap = TEXT_WORD_WRAP::WORD_WRAPPING_WHOLE_WORD;
+};
+
+struct WorldVector {
+	float x = 0.f;
+	float y = 0.f;
+	float z = 0.f;
+};
+
+struct WorldDesc {
+	std::optional<WorldVector> rotate; // angle, [0, 360]
+	std::optional<WorldVector> move;
+	std::optional<WorldVector> scale;
 };
 
 class IGraphicObject {
