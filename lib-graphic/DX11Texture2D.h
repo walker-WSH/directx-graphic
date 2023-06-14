@@ -23,6 +23,9 @@ public:
 	virtual void ReleaseGraphic(bool isForRebuild);
 	virtual bool IsBuilt() { return m_pTexture2D; }
 
+	void LockTexture();
+	void UnlockTexture();
+
 protected:
 	bool InitWriteTexture();
 	bool InitReadTexture();
@@ -36,6 +39,7 @@ protected:
 	ComPtr<ID3D11Texture2D> m_pTexture2D = nullptr;
 	ComPtr<ID3D11RenderTargetView> m_pRenderTargetView = nullptr;
 	ComPtr<ID3D11ShaderResourceView> m_pTextureResView = nullptr;
+	ComPtr<IDXGIKeyedMutex> m_pKeyedMutex = nullptr;
 
 	HANDLE m_hSharedHandle = 0;
 	std::wstring m_strImagePath = L"";

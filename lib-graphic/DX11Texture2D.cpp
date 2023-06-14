@@ -99,6 +99,18 @@ void DX11Texture2D::ReleaseGraphic(bool isForRebuild)
 	NotifyReleaseEvent(isForRebuild);
 }
 
+void DX11Texture2D::LockTexture()
+{
+	if (m_pKeyedMutex)
+		m_pKeyedMutex->AcquireSync(0, INFINITE);
+}
+
+void DX11Texture2D::UnlockTexture()
+{
+	if (m_pKeyedMutex)
+		m_pKeyedMutex->ReleaseSync(0);
+}
+
 bool DX11Texture2D::InitWriteTexture()
 {
 	D3D11_TEXTURE2D_DESC desc = {};
@@ -305,6 +317,15 @@ bool DX11Texture2D::InitResourceView()
 		CHECK_DX_ERROR(hr, "CreateShaderResourceView %X", this);
 		assert(false);
 		return false;
+	}
+
+	if (desc.MiscFlags & D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX) {
+		hr = m_pTexture2D->QueryInterface(__uuidof(IDXGIKeyedMutex), (void **)m_pKeyedMutex.Assign());
+		if (FAILED(hr)) {
+			CHECK_DX_ERROR(hr, "IDXGIKeyedMutex failed %X", this);
+			assert(false);
+			return false;
+		}
 	}
 
 	return true;

@@ -669,7 +669,7 @@ bool InitGraphic(HWND hWnd)
 
 	texImg2 = pGraphic->OpenImageTexture(L"test.png");
 
-	texShared = pGraphic->OpenSharedTexture((HANDLE)0x0000000080003a82);
+	texShared = pGraphic->OpenSharedTexture((HANDLE)0x40001d42);
 
 	//------------------------------- test texutres --------------------
 	TextureInformation info;

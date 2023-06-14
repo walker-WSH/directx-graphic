@@ -952,7 +952,8 @@ void DX11GraphicSession::DrawTexture(shader_handle hdl, VIDEO_FILTER_TYPE flt,
 				     const std::vector<texture_handle> &textures)
 {
 	CHECK_GRAPHIC_CONTEXT;
-	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Shader, shader, return );
+	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Shader, shader, return);
+	CHECK_GRAPHIC_OBJECT_VALID((*this), textures[0], DX11Texture2D, resourceTex, return);
 
 	std::vector<ID3D11ShaderResourceView *> resources;
 	if (!GetResource(textures, resources)) {
@@ -982,9 +983,15 @@ void DX11GraphicSession::DrawTexture(shader_handle hdl, VIDEO_FILTER_TYPE flt,
 	if (sampleState)
 		m_pDeviceContext->PSSetSamplers(0, 1, &sampleState);
 
+	if (resourceTex)
+		resourceTex->LockTexture();
+
 	m_pDeviceContext->PSSetShaderResources(0, (uint32_t)resources.size(), resources.data());
 	m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	m_pDeviceContext->Draw(shader->m_shaderInfo.vertexCount, 0);
+
+	if (resourceTex)
+		resourceTex->UnlockTexture();
 }
 
 void DX11GraphicSession::EndRender(IGeometryInterface *geometryInterface)
