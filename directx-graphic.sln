@@ -10,6 +10,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sample", "sample\MFCDemo.vc
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lib-graphic", "lib-graphic\lib-graphic.vcxproj", "{5CC7C82D-26F3-4F27-81C0-868BC61B9962}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sample-1", "sample-1\sample-1.vcxproj", "{BE0CAFB9-0093-44F8-9B7C-A3527A730F2D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5CC7C82D-26F3-4F27-81C0-868BC61B9962} = {5CC7C82D-26F3-4F27-81C0-868BC61B9962}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -34,6 +39,14 @@ Global
 		{5CC7C82D-26F3-4F27-81C0-868BC61B9962}.Release|x64.Build.0 = Release|x64
 		{5CC7C82D-26F3-4F27-81C0-868BC61B9962}.Release|x86.ActiveCfg = Release|Win32
 		{5CC7C82D-26F3-4F27-81C0-868BC61B9962}.Release|x86.Build.0 = Release|Win32
+		{BE0CAFB9-0093-44F8-9B7C-A3527A730F2D}.Debug|x64.ActiveCfg = Debug|x64
+		{BE0CAFB9-0093-44F8-9B7C-A3527A730F2D}.Debug|x64.Build.0 = Debug|x64
+		{BE0CAFB9-0093-44F8-9B7C-A3527A730F2D}.Debug|x86.ActiveCfg = Debug|Win32
+		{BE0CAFB9-0093-44F8-9B7C-A3527A730F2D}.Debug|x86.Build.0 = Debug|Win32
+		{BE0CAFB9-0093-44F8-9B7C-A3527A730F2D}.Release|x64.ActiveCfg = Release|x64
+		{BE0CAFB9-0093-44F8-9B7C-A3527A730F2D}.Release|x64.Build.0 = Release|x64
+		{BE0CAFB9-0093-44F8-9B7C-A3527A730F2D}.Release|x86.ActiveCfg = Release|Win32
+		{BE0CAFB9-0093-44F8-9B7C-A3527A730F2D}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

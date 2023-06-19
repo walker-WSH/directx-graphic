@@ -337,7 +337,7 @@ void RenderTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest,
 	}
 
 	float matrixWVP[4][4];
-	TransposeMatrixWVP(canvas, true, WorldDesc(), matrixWVP);
+	TransposedOrthoMatrixWVP(canvas, true, nullptr, matrixWVP);
 
 	TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT];
 	FillTextureVertex((float)realDrawDest.left, (float)realDrawDest.top, (float)realDrawDest.right,
@@ -369,7 +369,7 @@ void RenderBulgeTexture(std::vector<texture_handle> texs, SIZE canvas, RECT draw
 	RECT realDrawDest = drawDest;
 
 	float matrixWVP[4][4];
-	TransposeMatrixWVP(canvas, true, WorldDesc(), matrixWVP);
+	TransposedOrthoMatrixWVP(canvas, true, nullptr, matrixWVP);
 
 	TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT];
 	FillTextureVertex((float)realDrawDest.left, (float)realDrawDest.top, (float)realDrawDest.right,
@@ -392,7 +392,7 @@ void RenderShiftTexture(std::vector<texture_handle> texs, SIZE canvas, RECT draw
 	RECT realDrawDest = drawDest;
 
 	float matrixWVP[4][4];
-	TransposeMatrixWVP(canvas, true, WorldDesc(), matrixWVP);
+	TransposedOrthoMatrixWVP(canvas, true, nullptr, matrixWVP);
 
 	TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT];
 	FillTextureVertex((float)realDrawDest.left, (float)realDrawDest.top, (float)realDrawDest.right,
@@ -439,13 +439,14 @@ texture_handle getRotatedTexture(texture_handle tex, texture_handle &canvasTex)
 		const auto temp = (float)(GetTickCount64() % g_rotatePeriod);
 
 		WorldVector rt;
+		rt.type = WORLD_TYPE::VECTOR_ROTATE;
 		rt.z = (temp / g_rotatePeriod) * 360;
 
-		WorldDesc wd;
-		wd.rotate = rt;
+		std::vector<WorldVector> worldList;
+		worldList.push_back(rt);
 
 		float matrixWVP[4][4];
-		TransposeMatrixWVP(canvas, false, wd, matrixWVP);
+		TransposedOrthoMatrixWVP(canvas, false, &worldList, matrixWVP);
 
 		pGraphic->SetVertexBuffer(shader, outputVertex, sizeof(outputVertex));
 		pGraphic->SetVSConstBuffer(shader, &(matrixWVP[0][0]), sizeof(matrixWVP));
@@ -463,7 +464,7 @@ void FillRectangleByDX11(SIZE canvas, RECT drawDest, ColorRGBA clr)
 
 	VIDEO_SHADER_TYPE type = VIDEO_SHADER_TYPE::SHADER_FILL_RECT;
 	float matrixWVP[4][4];
-	TransposeMatrixWVP(canvas, true, WorldDesc(), matrixWVP);
+	TransposedOrthoMatrixWVP(canvas, true, nullptr, matrixWVP);
 
 	ColorVertexDesc outputVertex[TEXTURE_VERTEX_COUNT];
 	FillColorVertex((float)drawDest.left, (float)drawDest.top, (float)drawDest.right, (float)drawDest.bottom,

@@ -63,7 +63,7 @@ bool VideoConvertToYUV::ConvertVideo(texture_handle src_tex)
 		SIZE texSize(texInfo.width, texInfo.height);
 		RECT drawDest(0, 0, item.width, item.height);
 		float matrixWVP[4][4];
-		TransposeMatrixWVP(canvas, true, WorldDesc(), matrixWVP);
+		TransposedOrthoMatrixWVP(canvas, true, nullptr, matrixWVP);
 
 		TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT];
 		FillTextureVertex(0.f, 0.f, (float)item.width, (float)item.height, false, false, 0, 0, 0, 0,

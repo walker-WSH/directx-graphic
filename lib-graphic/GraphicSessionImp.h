@@ -83,7 +83,8 @@ public:
 	virtual void ClearBackground(const ColorRGBA *bkClr);
 	virtual void SetBlendState(VIDEO_BLEND_TYPE type);
 	virtual void DrawTopplogy(shader_handle hdl, D3D11_PRIMITIVE_TOPOLOGY type);
-	virtual void DrawTexture(shader_handle hdl, VIDEO_FILTER_TYPE flt, const std::vector<texture_handle> &textures);
+	virtual void DrawTexture(shader_handle hdl, VIDEO_FILTER_TYPE flt, const std::vector<texture_handle> &textures,
+				 D3D11_PRIMITIVE_TOPOLOGY type = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	virtual void EndRender(IGeometryInterface *geometryInterface = nullptr);
 
 	//---------------------------------------------------------------------------
