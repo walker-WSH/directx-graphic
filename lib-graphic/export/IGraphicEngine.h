@@ -15,6 +15,12 @@ GRAPHIC_API IGraphicSession *CreateGraphicSession();
 // before calling it, you should destroy all object created by IGraphicSession
 GRAPHIC_API void DestroyGraphicSession(IGraphicSession *&graphic);
 
-GRAPHIC_API void TransposeMatrixWVP(const SIZE &canvas, bool convertCoord, WorldDesc wd, float outputMatrix[4][4]);
+// orthogonal matrix
+GRAPHIC_API void TransposedOrthoMatrixWVP(const SIZE &canvas, bool convertCoord,
+					  const std::vector<WorldVector> *worldList, float outputMatrix[4][4]);
+
+// perspective matrix
+GRAPHIC_API void TransposedPerspectiveMatrixWVP(const SIZE &canvas, const std::vector<WorldVector> *worldList,
+						float outputMatrix[4][4]);
 
 } // namespace graphic

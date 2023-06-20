@@ -1,5 +1,6 @@
 #include "IGraphicEngine.h"
 #include "IGraphicDefine.h"
+#include <assert.h>
 #include <dxsdk/include/d3dx10math.h>
 
 // dxsdk
@@ -13,49 +14,52 @@ float ConvertAngleToRadian(float angle)
 	return (float)radian;
 }
 
-D3DXMATRIX GetWorldMatrix(const WorldDesc &wd)
+D3DXMATRIX GetWorldMatrix(const std::vector<WorldVector> *worldList)
 {
 	D3DXMATRIX outputWorldMatrix;
 	D3DXMatrixIdentity(&outputWorldMatrix);
 
-	if (wd.rotate.has_value()) {
-		D3DXMATRIX rotate;
-		D3DXMatrixIdentity(&rotate);
+	if (worldList) {
+		for (const auto &item : (*worldList)) {
+			switch (item.type) {
+			case WORLD_TYPE::VECTOR_MOVE: {
+				D3DXMATRIX temp;
+				D3DXMatrixIdentity(&temp);
+				D3DXMatrixTranslation(&temp, item.x.value_or(0.f), item.y.value_or(0.f),
+						      item.z.value_or(0.f));
+				outputWorldMatrix *= temp;
+			} break;
 
-		const auto &value = wd.rotate.value();
-		if (value.x > 0) {
-			D3DXMATRIX temp;
-			D3DXMatrixRotationX(&temp, ConvertAngleToRadian(value.x));
-			rotate *= temp;
+			case WORLD_TYPE::VECTOR_SCALE: {
+				D3DXMATRIX temp;
+				D3DXMatrixIdentity(&temp);
+				D3DXMatrixScaling(&temp, item.x.value_or(1.f), item.y.value_or(1.f),
+						  item.z.value_or(1.f));
+				outputWorldMatrix *= temp;
+			} break;
+
+			case WORLD_TYPE::VECTOR_ROTATE: {
+				D3DXMATRIX temp;
+				D3DXMATRIX rotate;
+				D3DXMatrixIdentity(&rotate);
+
+				D3DXMatrixRotationX(&temp, ConvertAngleToRadian(item.x.value_or(0.f)));
+				rotate *= temp;
+
+				D3DXMatrixRotationY(&temp, ConvertAngleToRadian(item.y.value_or(0.f)));
+				rotate *= temp;
+
+				D3DXMatrixRotationZ(&temp, ConvertAngleToRadian(item.z.value_or(0.f)));
+				rotate *= temp;
+
+				outputWorldMatrix *= rotate;
+			} break;
+
+			default:
+				assert(false);
+				break;
+			}
 		}
-
-		if (value.y > 0) {
-			D3DXMATRIX temp;
-			D3DXMatrixRotationY(&temp, ConvertAngleToRadian(value.y));
-			rotate *= temp;
-		}
-
-		if (value.z > 0) {
-			D3DXMATRIX temp;
-			D3DXMatrixRotationZ(&temp, ConvertAngleToRadian(value.z));
-			rotate *= temp;
-		}
-
-		outputWorldMatrix *= rotate;
-	}
-
-	if (wd.move.has_value()) {
-		D3DXMATRIX temp;
-		D3DXMatrixIdentity(&temp);
-		D3DXMatrixTranslation(&temp, wd.move.value().x, wd.move.value().y, wd.move.value().z);
-		outputWorldMatrix *= temp;
-	}
-
-	if (wd.scale.has_value()) {
-		D3DXMATRIX temp;
-		D3DXMatrixIdentity(&temp);
-		D3DXMatrixScaling(&temp, wd.scale.value().x, wd.scale.value().y, wd.scale.value().z);
-		outputWorldMatrix *= temp;
 	}
 
 	outputWorldMatrix.m[0][2] = -outputWorldMatrix.m[0][2];
@@ -84,12 +88,38 @@ D3DXMATRIX GetOrthoMatrix(SIZE canvas, bool convertCoord)
 	return orthoMatrix;
 }
 
-void TransposeMatrixWVP(const SIZE &canvas, bool convertCoord, WorldDesc wd, float outputMatrix[4][4])
+void TransposedOrthoMatrixWVP(const SIZE &canvas, bool convertCoord, const std::vector<WorldVector> *worldList,
+			float outputMatrix[4][4])
 {
-	D3DXMATRIX worldMatrix = GetWorldMatrix(wd);
+	D3DXMATRIX worldMatrix = GetWorldMatrix(worldList);
 	D3DXMATRIX orthoMatrix = GetOrthoMatrix(canvas, convertCoord);
 
 	D3DXMATRIX wvpMatrix = worldMatrix * orthoMatrix;
+	D3DXMatrixTranspose(&wvpMatrix, &wvpMatrix);
+
+	void *src = &(wvpMatrix.m[0][0]);
+	memmove(&(outputMatrix[0][0]), src, sizeof(float) * 16);
+}
+
+void TransposedPerspectiveMatrixWVP(const SIZE &canvas, const std::vector<WorldVector> *worldList,
+				   float outputMatrix[4][4])
+{
+	D3DXMATRIX worldMatrix = GetWorldMatrix(worldList);
+
+	D3DXVECTOR3 eyePos(0.0f, 0.0f, -1.0f);
+	D3DXVECTOR3 eyeUpDir(0.0f, 1.0f, 0.0f);
+	D3DXVECTOR3 lookAt(0.0f, 0.0f, 0.0f);
+	D3DXMATRIX viewMatrix;
+	D3DXMatrixLookAtLH(&viewMatrix, &eyePos, &lookAt, &eyeUpDir);
+
+	D3DXMATRIX projMatrix;
+	D3DXMatrixPerspectiveFovLH(&projMatrix,
+				   float(D3DX_PI * 0.5f), // 90 - degree
+				   (float)canvas.cx / (float)canvas.cy, 0.1f, 2000.0f);
+
+	D3DXMATRIX wvpMatrix;
+	wvpMatrix = worldMatrix * viewMatrix;
+	wvpMatrix = wvpMatrix * projMatrix;
 	D3DXMatrixTranspose(&wvpMatrix, &wvpMatrix);
 
 	void *src = &(wvpMatrix.m[0][0]);

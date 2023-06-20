@@ -45,7 +45,7 @@ void VideoConvertToRGB::ConvertVideo(const AVFrame *src_frame, SIZE canvas, RECT
 	SIZE resolution((LONG)ps_const_buffer.width, (LONG)ps_const_buffer.height);
 
 	float matrixWVP[4][4];
-	TransposeMatrixWVP(canvas, true, WorldDesc(), matrixWVP);
+	TransposedOrthoMatrixWVP(canvas, true, nullptr, matrixWVP);
 
 	TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT];
 	FillTextureVertex(0.f, 0.f, ps_const_buffer.width, ps_const_buffer.height, false, false, 0, 0, 0, 0,

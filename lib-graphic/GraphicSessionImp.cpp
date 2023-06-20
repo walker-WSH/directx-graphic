@@ -100,7 +100,7 @@ bool DX11GraphicSession::ReBuildGraphic()
 void DX11GraphicSession::DestroyGraphicObject(IGraphicObject *&hdl)
 {
 	CHECK_GRAPHIC_CONTEXT;
-	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11GraphicBase, obj, return );
+	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11GraphicBase, obj, return);
 
 	obj->ReleaseGraphic(false);
 	delete hdl;
@@ -263,7 +263,7 @@ bool DX11GraphicSession::MapTexture(texture_handle hdl, MAP_TEXTURE_FEATURE type
 void DX11GraphicSession::UnmapTexture(texture_handle hdl)
 {
 	CHECK_GRAPHIC_CONTEXT;
-	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Texture2D, obj, return );
+	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Texture2D, obj, return);
 
 	m_pDeviceContext->Unmap(obj->m_pTexture2D, 0);
 	LeaveContext(std::source_location::current());
@@ -369,7 +369,7 @@ IGeometryInterface *DX11GraphicSession::OpenGeometryInterface(shader_handle hdl)
 void DX11GraphicSession::CloseGeometryInterface(shader_handle hdl)
 {
 	CHECK_GRAPHIC_CONTEXT;
-	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Texture2D, obj, return );
+	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Texture2D, obj, return);
 
 	if (TEXTURE_USAGE::CANVAS_TARGET != obj->m_textureInfo.usage) {
 		LOG_WARN("request d2d interface from invalid texture %X, usage is not canvas", hdl);
@@ -404,7 +404,7 @@ display_handle DX11GraphicSession::CreateDisplay(HWND hWnd)
 void DX11GraphicSession::SetDisplaySize(display_handle hdl, uint32_t width, uint32_t height)
 {
 	CHECK_GRAPHIC_CONTEXT;
-	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11SwapChain, obj, return );
+	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11SwapChain, obj, return);
 
 	obj->SetDisplaySize(width, height);
 }
@@ -539,8 +539,8 @@ bool DX11GraphicSession::BuildAllDX()
 
 	D3D_FEATURE_LEVEL levelUsed = D3D_FEATURE_LEVEL_10_0;
 	hr = D3D11CreateDevice(m_pAdapter, D3D_DRIVER_TYPE_UNKNOWN, nullptr, D3D11_CREATE_DEVICE_BGRA_SUPPORT,
-				       featureLevels.data(), (uint32_t)featureLevels.size(), D3D11_SDK_VERSION,
-				       m_pDX11Device.Assign(), &levelUsed, m_pDeviceContext.Assign());
+			       featureLevels.data(), (uint32_t)featureLevels.size(), D3D11_SDK_VERSION,
+			       m_pDX11Device.Assign(), &levelUsed, m_pDeviceContext.Assign());
 
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "D3D11CreateDevice");
@@ -898,7 +898,7 @@ void DX11GraphicSession::SetBlendState(VIDEO_BLEND_TYPE type)
 void DX11GraphicSession::SetVertexBuffer(shader_handle hdl, const void *buffer, size_t size)
 {
 	CHECK_GRAPHIC_CONTEXT;
-	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Shader, shader, return );
+	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Shader, shader, return);
 
 	auto expectLen = shader->m_shaderInfo.vertexCount * shader->m_shaderInfo.perVertexSize;
 	if (expectLen == size)
@@ -912,7 +912,7 @@ void DX11GraphicSession::SetVertexBuffer(shader_handle hdl, const void *buffer, 
 void DX11GraphicSession::SetVSConstBuffer(shader_handle hdl, const void *vsBuffer, size_t vsSize)
 {
 	CHECK_GRAPHIC_CONTEXT;
-	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Shader, shader, return );
+	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Shader, shader, return);
 
 	auto expectLen = shader->m_shaderInfo.vsBufferSize;
 	if (expectLen == vsSize)
@@ -926,7 +926,7 @@ void DX11GraphicSession::SetVSConstBuffer(shader_handle hdl, const void *vsBuffe
 void DX11GraphicSession::SetPSConstBuffer(shader_handle hdl, const void *psBuffer, size_t psSize)
 {
 	CHECK_GRAPHIC_CONTEXT;
-	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Shader, shader, return );
+	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Shader, shader, return);
 
 	auto expectLen = shader->m_shaderInfo.psBufferSize;
 	if (expectLen == psSize)
@@ -940,7 +940,7 @@ void DX11GraphicSession::SetPSConstBuffer(shader_handle hdl, const void *psBuffe
 void DX11GraphicSession::DrawTopplogy(shader_handle hdl, D3D11_PRIMITIVE_TOPOLOGY type)
 {
 	CHECK_GRAPHIC_CONTEXT;
-	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Shader, shader, return );
+	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Shader, shader, return);
 
 	ApplyShader(shader);
 
@@ -949,7 +949,7 @@ void DX11GraphicSession::DrawTopplogy(shader_handle hdl, D3D11_PRIMITIVE_TOPOLOG
 }
 
 void DX11GraphicSession::DrawTexture(shader_handle hdl, VIDEO_FILTER_TYPE flt,
-				     const std::vector<texture_handle> &textures)
+				     const std::vector<texture_handle> &textures, D3D11_PRIMITIVE_TOPOLOGY type)
 {
 	CHECK_GRAPHIC_CONTEXT;
 	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Shader, shader, return);
@@ -987,7 +987,7 @@ void DX11GraphicSession::DrawTexture(shader_handle hdl, VIDEO_FILTER_TYPE flt,
 		resourceTex->LockTexture();
 
 	m_pDeviceContext->PSSetShaderResources(0, (uint32_t)resources.size(), resources.data());
-	m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	m_pDeviceContext->IASetPrimitiveTopology(type);
 	m_pDeviceContext->Draw(shader->m_shaderInfo.vertexCount, 0);
 
 	if (resourceTex)

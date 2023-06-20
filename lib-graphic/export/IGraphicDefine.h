@@ -150,6 +150,20 @@ enum class GRAPHIC_FORMAT {
 	GF_BGRA_UNORM = DXGI_FORMAT_B8G8R8A8_UNORM,
 };
 
+enum class WORLD_TYPE {
+	VECTOR_UNKNOWN = 0,
+	VECTOR_MOVE,
+	VECTOR_SCALE,
+	VECTOR_ROTATE,
+};
+
+struct WorldVector {
+	WORLD_TYPE type = WORLD_TYPE::VECTOR_UNKNOWN;
+	std::optional<float> x;
+	std::optional<float> y;
+	std::optional<float> z;
+};
+
 struct TextureInformation {
 	uint32_t width = 0;
 	uint32_t height = 0;
@@ -227,18 +241,6 @@ struct TextFormatDesc {
 	TEXT_ALIGNMENT_TYPE alignH = TEXT_ALIGNMENT_TYPE::ALIGNMENT_NEAR;
 	TEXT_ALIGNMENT_TYPE alignV = TEXT_ALIGNMENT_TYPE::ALIGNMENT_NEAR;
 	TEXT_WORD_WRAP wordWrap = TEXT_WORD_WRAP::WORD_WRAPPING_WHOLE_WORD;
-};
-
-struct WorldVector {
-	float x = 0.f;
-	float y = 0.f;
-	float z = 0.f;
-};
-
-struct WorldDesc {
-	std::optional<WorldVector> rotate; // angle, [0, 360]
-	std::optional<WorldVector> move;
-	std::optional<WorldVector> scale;
 };
 
 class IGraphicObject {
