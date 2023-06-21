@@ -10,7 +10,6 @@ ColorRGBA clrBlack = {0, 0, 0, 1.f};
 ColorRGBA clrBlue = {0, 0, 1, 1.f};
 
 static const auto TEXTURE_VERTEX_COUNT = 4;
-static const auto INPUT_POS_TYPE = VERTEX_INPUT_TYPE::POSITION;
 struct TextureVertexDesc {
 	float x, y, z, w;
 	float u, v;
@@ -30,7 +29,7 @@ void initShader()
 	ShaderInformation shaderInfo;
 
 	VertexInputDesc desc;
-	desc.type = INPUT_POS_TYPE;
+	desc.type = VERTEX_INPUT_TYPE::POSITION;
 	desc.size = 16;
 	shaderInfo.vertexDesc.push_back(desc);
 
