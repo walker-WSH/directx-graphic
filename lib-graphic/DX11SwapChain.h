@@ -4,7 +4,7 @@
 
 namespace graphic {
 
-static const auto SWAPCHAIN_TEXTURE_FORMAT = GRAPHIC_FORMAT::GF_BGRA;
+static const auto SWAPCHAIN_TEXTURE_FORMAT = GRAPHIC_FORMAT::GF_RGBA;
 
 class DX11GraphicSession;
 

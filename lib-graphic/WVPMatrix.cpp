@@ -114,7 +114,7 @@ void TransposedPerspectiveMatrixWVP(const SIZE &canvas, const std::vector<WorldV
 
 	D3DXMATRIX projMatrix;
 	D3DXMatrixPerspectiveFovLH(&projMatrix,
-				   float(D3DX_PI * 0.5f), // 90 - degree
+				   XM_PIDIV2, // 90 - degree
 				   (float)canvas.cx / (float)canvas.cy, 0.1f, 2000.0f);
 
 	D3DXMATRIX wvpMatrix;
