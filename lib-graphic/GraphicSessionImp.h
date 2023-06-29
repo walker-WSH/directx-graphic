@@ -84,6 +84,7 @@ public:
 	virtual void SwitchRenderTarget(bool enableSRGB);
 	virtual void ClearBackground(const ColorRGBA *bkClr);
 	virtual void SetBlendState(VIDEO_BLEND_TYPE type);
+	virtual void SetRasterizerState(D3D11_CULL_MODE mode);
 	virtual void DrawTopplogy(shader_handle hdl, D3D11_PRIMITIVE_TOPOLOGY type, long indexId = INVALID_INDEX_ID);
 	virtual void DrawTexture(shader_handle hdl, VIDEO_FILTER_TYPE flt, const std::vector<texture_handle> &textures,
 				 D3D11_PRIMITIVE_TOPOLOGY type = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,
@@ -118,6 +119,7 @@ protected:
 	void ReleaseAllDX(bool isForRebuild);
 	bool InitBlendState();
 	bool InitSamplerState();
+	bool InitRasterizerState();
 
 	void SetRenderContext(ID3DRenderTarget *target, uint32_t width, uint32_t height,
 			      ComPtr<IDXGISwapChain> swapChain);
@@ -151,6 +153,7 @@ private:
 	ComPtr<IDXGIFactory1> m_pDX11Factory = nullptr;
 	ComPtr<ID3D11Device> m_pDX11Device = nullptr;
 	ComPtr<ID3D11DeviceContext> m_pDeviceContext = nullptr;
+	std::map<D3D11_CULL_MODE, ComPtr<ID3D11RasterizerState>> m_mapRasterizer;
 	ComPtr<ID3D11BlendState> m_pBlendStateNormal = nullptr;
 	ComPtr<ID3D11BlendState> m_pBlendStatePreMultAlpha = nullptr;
 	ComPtr<ID3D11SamplerState> m_pSampleStateAnisotropic = nullptr;

@@ -140,13 +140,13 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 	std::vector<WorldVector> worldList;
 	WorldVector vec;
 	vec.type = WORLD_TYPE::VECTOR_ROTATE;
-	vec.x = getRotate();
+	vec.y = getRotate();
 	worldList.push_back(vec);
 
 	CameraDesc camera;
-	camera.eyePos = {0.0f, 0.0f, 0.0f}; // 相机在中心
+	camera.eyePos = {0.0f, 2.0f, -3.0f};
 	camera.eyeUpDir = {0.0f, 1.0f, 0.0f};
-	camera.lookAt = {0.0f, 0.0f, 1.0f};
+	camera.lookAt = {0.0f, 0.0f, 0.0f};
 
 	TransposedPerspectiveMatrixWVP(canvas, &worldList, camera, matrixWVP);
 
@@ -172,6 +172,7 @@ void Csample1Dlg::render()
 	if (pGraphic->BeginRenderWindow(display)) {
 		pGraphic->ClearBackground(&clrBlue);
 		pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_DISABLED);
+		pGraphic->SetRasterizerState(D3D11_CULL_MODE::D3D11_CULL_BACK);
 
 		RenderTexture(texImg, SIZE(rcWindow.right, rcWindow.bottom), rcWindow);
 

@@ -514,6 +514,8 @@ void DX11GraphicSession::ReleaseAllDX(bool isForRebuild)
 
 	ReleaseD2D();
 
+	m_mapRasterizer.clear();
+
 	m_pAdapter = nullptr;
 	m_pDX11Factory = nullptr;
 
@@ -569,6 +571,11 @@ bool DX11GraphicSession::BuildAllDX()
 
 	if (!InitSamplerState()) {
 		LOG_WARN("InitSamplerState failed");
+		return false;
+	}
+
+	if (!InitRasterizerState()) {
+		LOG_WARN("InitRasterizerState failed");
 		return false;
 	}
 
@@ -680,6 +687,37 @@ bool DX11GraphicSession::InitSamplerState()
 		CHECK_DX_ERROR(hr, "CreateSamplerState D3D11_FILTER_MIN_MAG_MIP_POINT");
 		assert(false);
 		return false;
+	}
+
+	return true;
+}
+
+bool DX11GraphicSession::InitRasterizerState()
+{
+	D3D11_RASTERIZER_DESC rd;
+	memset(&rd, 0, sizeof(rd));
+	rd.FrontCounterClockwise = true;
+	rd.FillMode = D3D11_FILL_SOLID;
+	rd.DepthClipEnable = true;
+	rd.ScissorEnable = false;
+
+	std::vector<D3D11_CULL_MODE> stateList = {
+		D3D11_CULL_MODE::D3D11_CULL_NONE,
+		D3D11_CULL_MODE::D3D11_CULL_FRONT,
+		D3D11_CULL_MODE::D3D11_CULL_BACK,
+	};
+	for (const auto &item : stateList) {
+		rd.CullMode = item;
+
+		ComPtr<ID3D11RasterizerState> state;
+		auto hr = m_pDX11Device->CreateRasterizerState(&rd, state.Assign());
+		if (FAILED(hr)) {
+			CHECK_DX_ERROR(hr, "CreateRasterizerState");
+			assert(false);
+			return false;
+		}
+
+		m_mapRasterizer[item] = state;
 	}
 
 	return true;
@@ -906,6 +944,24 @@ void DX11GraphicSession::SetBlendState(VIDEO_BLEND_TYPE type)
 		m_pDeviceContext->OMSetBlendState(nullptr, nullptr, 0xffffffff);
 		break;
 	}
+}
+
+void DX11GraphicSession::SetRasterizerState(D3D11_CULL_MODE mode)
+{
+	CHECK_GRAPHIC_CONTEXT;
+
+	if (!m_pDeviceContext) {
+		assert(false);
+		return;
+	}
+
+	auto itr = m_mapRasterizer.find(mode);
+	if (itr == m_mapRasterizer.end()) {
+		assert(false);
+		return;
+	}
+
+	m_pDeviceContext->RSSetState(itr->second);
 }
 
 void DX11GraphicSession::SetVertexBuffer(shader_handle hdl, const void *buffer, size_t size)

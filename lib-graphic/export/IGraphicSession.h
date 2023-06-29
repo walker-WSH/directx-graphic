@@ -61,6 +61,7 @@ public:
 	virtual void SwitchRenderTarget(bool enableSRGB) = 0;
 	virtual void ClearBackground(const ColorRGBA *bkClr) = 0;
 	virtual void SetBlendState(VIDEO_BLEND_TYPE type) = 0;
+	virtual void SetRasterizerState(D3D11_CULL_MODE mode) = 0;
 	virtual void DrawTopplogy(shader_handle hdl, D3D11_PRIMITIVE_TOPOLOGY type, long indexId = INVALID_INDEX_ID) = 0;
 	virtual void DrawTexture(shader_handle hdl, VIDEO_FILTER_TYPE flt, const std::vector<texture_handle> &,
 				 D3D11_PRIMITIVE_TOPOLOGY type = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,
