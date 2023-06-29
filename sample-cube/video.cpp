@@ -62,16 +62,15 @@ void initShader()
 	XMFLOAT4 red = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 	XMFLOAT4 green = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
 	XMFLOAT4 blue = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+	XMFLOAT4 yellow = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
+	XMFLOAT4 white = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	XMFLOAT4 black = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 	TextureVertexDesc vertices[] = {
-		{XMFLOAT3(-1.0f, 1.0f, -1.0f), red},
-		{XMFLOAT3(1.0f, 1.0f, -1.0f), red},
-		{XMFLOAT3(1.0f, 1.0f, 1.0f), red},
-		{XMFLOAT3(-1.0f, 1.0f, 1.0f), red},
+		{XMFLOAT3(-1.0f, 1.0f, -1.0f), red},    {XMFLOAT3(1.0f, 1.0f, -1.0f), green},
+		{XMFLOAT3(1.0f, 1.0f, 1.0f), blue},     {XMFLOAT3(-1.0f, 1.0f, 1.0f), yellow},
 
-		{XMFLOAT3(-1.0f, -1.0f, -1.0f), green},
-		{XMFLOAT3(1.0f, -1.0f, -1.0f), green},
-		{XMFLOAT3(1.0f, -1.0f, 1.0f), green},  
-		{XMFLOAT3(-1.0f, -1.0f, 1.0f), green},
+		{XMFLOAT3(-1.0f, -1.0f, -1.0f), green}, {XMFLOAT3(1.0f, -1.0f, -1.0f), green},
+		{XMFLOAT3(1.0f, -1.0f, 1.0f), white},   {XMFLOAT3(-1.0f, -1.0f, 1.0f), black},
 	};
 
 	pGraphic->SetVertexBuffer(shader, vertices, sizeof(vertices));
