@@ -9,7 +9,7 @@ texture_handle texImg = nullptr;
 ColorRGBA clrBlack = {0, 0, 0, 1.f};
 ColorRGBA clrBlue = {0, 0, 1, 1.f};
 
-static const auto TEXTURE_VERTEX_COUNT = 4;
+static const auto TEXTURE_VERTEX_COUNT = 6 * 2 * 3;
 struct TextureVertexDesc {
 	float x, y, z, w;
 	float u, v;
@@ -60,12 +60,18 @@ void initShader()
 	float topUV = 0.f;
 	float rightUV = 1.f;
 	float bottomUV = 1.f;
+	
+	TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT] = {
+		{-x, y, z, 1.f, leftUV, topUV},     {-x, -y, z, 1.f, leftUV, bottomUV},
+		{x, y, z, 1.f, rightUV, topUV},     {x, y, z, 1.f, rightUV, topUV},
+		{-x, -y, z, 1.f, leftUV, bottomUV}, {x, -y, z, 1.f, rightUV, bottomUV},
 
-	TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT];
-	outputVertex[0] = {-x, y, z, 1.f, leftUV, topUV};
-	outputVertex[1] = {x, y, z, 1.f, rightUV, topUV};
-	outputVertex[2] = {-x, -y, z, 1.f, leftUV, bottomUV};
-	outputVertex[3] = {x, -y, z, 1.f, rightUV, bottomUV};
+		{x, y, z, 1.f, leftUV, topUV},      {x, y, -z, 1.f, leftUV, topUV},
+		{x, -y, z, 1.f, leftUV, topUV},     {x, -y, z, 1.f, leftUV, bottomUV},
+		{x, y, -z, 1.f, leftUV, bottomUV},  {x, -y, -z, 1.f, leftUV, bottomUV},
+
+	};
+
 
 	pGraphic->SetVertexBuffer(shader, outputVertex, sizeof(outputVertex));
 }
@@ -80,7 +86,7 @@ void Csample1Dlg::initGraphic(HWND hWnd)
 
 	initShader();
 
-	texImg = pGraphic->OpenImageTexture(L"res/posz.jpg");
+	texImg = pGraphic->OpenImageTexture(L"res/test.jpg");
 
 	display = pGraphic->CreateDisplay(hWnd);
 	assert(display);
@@ -121,15 +127,15 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 	worldList.push_back(vec);
 
 	CameraDesc camera;
-	camera.eyePos = {0.0f, 0.0f, -2.f};
+	camera.eyePos = {0.0f, 1.5f, -3.f};
 	camera.eyeUpDir = {0.0f, 1.0f, 0.0f};
-	camera.lookAt = {0.0f, 0.0f, 1.f};
+	camera.lookAt = {0.0f, 0.0f, 0.f};
 
 	TransposedPerspectiveMatrixWVP(canvas, &worldList, camera, matrixWVP);
 
 	pGraphic->SetVSConstBuffer(shader, &(matrixWVP[0][0]), sizeof(matrixWVP));
 	pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, textures,
-			      D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+			      D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void Csample1Dlg::render()
@@ -149,7 +155,7 @@ void Csample1Dlg::render()
 	if (pGraphic->BeginRenderWindow(display)) {
 		pGraphic->ClearBackground(&clrBlue);
 		pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_DISABLED);
-		//pGraphic->SetRasterizerState(D3D11_CULL_MODE::D3D11_CULL_BACK);
+		pGraphic->SetRasterizerState(D3D11_CULL_MODE::D3D11_CULL_BACK);
 
 		RenderTexture(texImg, SIZE(rcWindow.right, rcWindow.bottom), rcWindow);
 
