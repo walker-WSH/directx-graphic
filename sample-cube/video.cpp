@@ -59,16 +59,19 @@ void initShader()
 	indexId = pGraphic->CreateIndexBuffer(shader, indexDesc);
 
 	//---------------------------------------------------------------------------------------
+	XMFLOAT4 red = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+	XMFLOAT4 green = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+	XMFLOAT4 blue = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
 	TextureVertexDesc vertices[] = {
-		{XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f)},
-		{XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f)},
-		{XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f)},
-		{XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f)},
+		{XMFLOAT3(-1.0f, 1.0f, -1.0f), red},
+		{XMFLOAT3(1.0f, 1.0f, -1.0f), red},
+		{XMFLOAT3(1.0f, 1.0f, 1.0f), red},
+		{XMFLOAT3(-1.0f, 1.0f, 1.0f), red},
 
-		{XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f)},
-		{XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f)},
-		{XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f)},
-		{XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f)},
+		{XMFLOAT3(-1.0f, -1.0f, -1.0f), green},
+		{XMFLOAT3(1.0f, -1.0f, -1.0f), green},
+		{XMFLOAT3(1.0f, -1.0f, 1.0f), green},  
+		{XMFLOAT3(-1.0f, -1.0f, 1.0f), green},
 	};
 
 	pGraphic->SetVertexBuffer(shader, vertices, sizeof(vertices));
@@ -138,7 +141,7 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 	std::vector<WorldVector> worldList;
 	WorldVector vec;
 	vec.type = WORLD_TYPE::VECTOR_ROTATE;
-	vec.y = getRotate();
+	vec.x = getRotate();
 	worldList.push_back(vec);
 
 	CameraDesc camera;
