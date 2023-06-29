@@ -37,6 +37,8 @@ using font_handle = IGraphicObject *;
 using geometry_handle = IGraphicObject *;
 using graphic_cb = long;
 
+static long invalid_index = -1;
+
 enum class TEXTURE_USAGE {
 	UNKNOWN = 0,
 
@@ -189,6 +191,11 @@ struct ColorRGBA {
 	float green = 0.0;
 	float blue = 0.0;
 	float alpha = 1.0; // [0.0, 1.0]
+};
+
+struct IndexItemDesc {
+	UINT sizePerIndex = 0;
+	UINT indexCount = 0;
 };
 
 struct VertexInputDesc {

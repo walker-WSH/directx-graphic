@@ -61,9 +61,11 @@ public:
 
 	// shader
 	virtual shader_handle CreateShader(const ShaderInformation &info);
+	virtual long CreateIndexBuffer(shader_handle hdl, const IndexItemDesc &desc);
 	virtual void SetVertexBuffer(shader_handle hdl, const void *buffer, size_t size);
 	virtual void SetVSConstBuffer(shader_handle hdl, const void *vsBuffer, size_t vsSize);
 	virtual void SetPSConstBuffer(shader_handle hdl, const void *psBuffer, size_t psSize);
+	virtual void SetIndexBuffer(shader_handle hdl, long index_id, const void *data, size_t size);
 
 	// texture
 	virtual texture_handle OpenSharedTexture(HANDLE hSharedHanle);
@@ -82,9 +84,10 @@ public:
 	virtual void SwitchRenderTarget(bool enableSRGB);
 	virtual void ClearBackground(const ColorRGBA *bkClr);
 	virtual void SetBlendState(VIDEO_BLEND_TYPE type);
-	virtual void DrawTopplogy(shader_handle hdl, D3D11_PRIMITIVE_TOPOLOGY type);
+	virtual void DrawTopplogy(shader_handle hdl, D3D11_PRIMITIVE_TOPOLOGY type, long indexId = invalid_index);
 	virtual void DrawTexture(shader_handle hdl, VIDEO_FILTER_TYPE flt, const std::vector<texture_handle> &textures,
-				 D3D11_PRIMITIVE_TOPOLOGY type = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+				 D3D11_PRIMITIVE_TOPOLOGY type = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,
+				 long indexId = invalid_index);
 	virtual void EndRender(IGeometryInterface *geometryInterface = nullptr);
 
 	//---------------------------------------------------------------------------
@@ -108,6 +111,8 @@ public:
 	bool IsDuringRender() { return m_bDuringRendering; }
 	void HandleDirectResult(HRESULT hr, std::source_location location = std::source_location::current());
 
+	void UpdateShaderBuffer(ComPtr<ID3D11Buffer> buffer, const void *data, size_t size);
+
 protected:
 	bool BuildAllDX();
 	void ReleaseAllDX(bool isForRebuild);
@@ -116,10 +121,9 @@ protected:
 
 	void SetRenderContext(ID3DRenderTarget *target, uint32_t width, uint32_t height,
 			      ComPtr<IDXGISwapChain> swapChain);
-	void UpdateShaderBuffer(ComPtr<ID3D11Buffer> buffer, const void *data, size_t size);
 	bool GetResource(const std::vector<texture_handle> &textures,
 			 std::vector<ID3D11ShaderResourceView *> &resources);
-	void ApplyShader(DX11Shader *shader);
+	bool ApplyShader(DX11Shader *shader, long indexId);
 
 	bool IsTextureInfoSame(const D3D11_TEXTURE2D_DESC *dest, const D3D11_TEXTURE2D_DESC *src,
 			       TextureCopyRegion *region, std::string &reason);

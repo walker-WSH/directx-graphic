@@ -37,9 +37,11 @@ public:
 
 	// shader
 	virtual shader_handle CreateShader(const ShaderInformation &info) = 0;
+	virtual long CreateIndexBuffer(shader_handle hdl, const IndexItemDesc &desc) = 0;
 	virtual void SetVertexBuffer(shader_handle hdl, const void *buffer, size_t size) = 0;
 	virtual void SetVSConstBuffer(shader_handle hdl, const void *vsBuffer, size_t vsSize) = 0;
 	virtual void SetPSConstBuffer(shader_handle hdl, const void *psBuffer, size_t psSize) = 0;
+	virtual void SetIndexBuffer(shader_handle hdl, long index_id, const void *data, size_t size) = 0;
 
 	// texture
 	virtual texture_handle OpenSharedTexture(HANDLE hSharedHanle) = 0;
@@ -59,9 +61,10 @@ public:
 	virtual void SwitchRenderTarget(bool enableSRGB) = 0;
 	virtual void ClearBackground(const ColorRGBA *bkClr) = 0;
 	virtual void SetBlendState(VIDEO_BLEND_TYPE type) = 0;
-	virtual void DrawTopplogy(shader_handle hdl, D3D11_PRIMITIVE_TOPOLOGY type) = 0;
+	virtual void DrawTopplogy(shader_handle hdl, D3D11_PRIMITIVE_TOPOLOGY type, long indexId = invalid_index) = 0;
 	virtual void DrawTexture(shader_handle hdl, VIDEO_FILTER_TYPE flt, const std::vector<texture_handle> &,
-				 D3D11_PRIMITIVE_TOPOLOGY type = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP) = 0;
+				 D3D11_PRIMITIVE_TOPOLOGY type = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,
+				 long indexId = invalid_index) = 0;
 
 	virtual void EndRender(IGeometryInterface *geometryInterface = nullptr) = 0;
 };

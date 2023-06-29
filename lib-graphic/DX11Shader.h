@@ -1,5 +1,8 @@
 #pragma once
 #include <GraphicBase.h>
+#include <windows.h>
+#include <memory>
+#include <map>
 
 namespace graphic {
 
@@ -14,6 +17,10 @@ public:
 	virtual bool BuildGraphic();
 	virtual void ReleaseGraphic(bool isForRebuild);
 	virtual bool IsBuilt();
+
+	long CreateIndexBuffer(const IndexItemDesc &desc, long id = 0);
+	bool SetIndexValue(long id, const void *data, size_t size);
+	bool ApplyIndexBuffer(long id);
 
 protected:
 	std::vector<D3D11_INPUT_ELEMENT_DESC> GetInputLayout();
@@ -34,6 +41,9 @@ private:
 	// vertex info
 	ComPtr<ID3D11InputLayout> m_pInputLayout = nullptr;
 	ComPtr<ID3D11Buffer> m_pVertexBuffer = nullptr;
+
+	std::map<long, IndexItemDesc> m_mapIndexParams;
+	std::map<long, ComPtr<ID3D11Buffer>> m_mapIndexBuffer;
 };
 
 } // namespace graphic
