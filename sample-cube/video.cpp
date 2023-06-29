@@ -59,22 +59,22 @@ void initShader()
 	indexId = pGraphic->CreateIndexBuffer(shader, indexDesc);
 
 	//---------------------------------------------------------------------------------------
-	float scale = 1.f;
-	TextureVertexDesc vertices[TEXTURE_VERTEX_COUNT] = {
+	TextureVertexDesc vertices[] = {
 		{XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f)},
-		{XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f)},
+		{XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f)},
 		{XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f)},
-		{XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f)},
-		{XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)},
-		{XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f)},
-		{XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f)},
-		{XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)},
+		{XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f)},
+
+		{XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f)},
+		{XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f)},
+		{XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f)},
+		{XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f)},
 	};
 
 	pGraphic->SetVertexBuffer(shader, vertices, sizeof(vertices));
 
 	//---------------------------------------------------------------------------------------
-	WORD indices[TEXTURE_INDEX_COUNT] = {
+	WORD indices[] = {
 		3, 1, 0, 2, 1, 3,
 
 		0, 5, 4, 1, 5, 0,
@@ -142,9 +142,9 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 	worldList.push_back(vec);
 
 	CameraDesc camera;
-	camera.eyePos = {0.0f, 2.0f, -3.0f};
+	camera.eyePos = {0.0f, 0.0f, 0.0f}; // 相机在中心
 	camera.eyeUpDir = {0.0f, 1.0f, 0.0f};
-	camera.lookAt = {0.0f, 0.0f, 0.0f};
+	camera.lookAt = {0.0f, 0.0f, 1.0f};
 
 	TransposedPerspectiveMatrixWVP(canvas, &worldList, camera, matrixWVP);
 
