@@ -13,8 +13,8 @@ ColorRGBA clrBlue = {0, 0, 1, 1.f};
 static const auto TEXTURE_VERTEX_COUNT = 8;
 static const auto TEXTURE_INDEX_COUNT = 36;
 struct TextureVertexDesc {
-	float x, y, z, w;
-	float r, g, b, a;
+	XMFLOAT3 Pos;
+	XMFLOAT4 Color;
 };
 
 std::wstring GetShaderDirectory()
@@ -32,7 +32,7 @@ void initShader()
 
 	VertexInputDesc desc;
 	desc.type = VERTEX_INPUT_TYPE::POSITION;
-	desc.size = 16;
+	desc.size = 12;
 	shaderInfo.vertexDesc.push_back(desc);
 
 	desc.type = VERTEX_INPUT_TYPE::COLOR;
@@ -60,19 +60,18 @@ void initShader()
 
 	//---------------------------------------------------------------------------------------
 	float scale = 1.f;
+	TextureVertexDesc vertices[TEXTURE_VERTEX_COUNT] = {
+		{XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f)},
+		{XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f)},
+		{XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f)},
+		{XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f)},
+		{XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)},
+		{XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f)},
+		{XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f)},
+		{XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)},
+	};
 
-	TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT];
-	outputVertex[0] = {-scale, scale, -scale, 1.f, 0, 0, 0, 1.f};
-	outputVertex[1] = {scale, scale, -scale, 1.f, 0, 0, 0, 1.f};
-	outputVertex[2] = {scale, scale, scale, 1.f, 1.f, 0, 0, 1.f};
-	outputVertex[3] = {-scale, scale, scale, 1.f, 1.f, 0, 0, 1.f};
-
-	outputVertex[4] = {-scale, -scale, -scale, 1.f, 0, 1, 0, 1.f};
-	outputVertex[5] = {scale, -scale, -scale, 1.f, 0, 1, 0, 1.f};
-	outputVertex[6] = {scale, -scale, scale, 1.f, 0, 1, 0, 1.f};
-	outputVertex[7] = {-scale, -scale, scale, 1.f, 0, 1, 0, 1.f};
-
-	pGraphic->SetVertexBuffer(shader, outputVertex, sizeof(outputVertex));
+	pGraphic->SetVertexBuffer(shader, vertices, sizeof(vertices));
 
 	//---------------------------------------------------------------------------------------
 	WORD indices[TEXTURE_INDEX_COUNT] = {
@@ -139,19 +138,19 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 	std::vector<WorldVector> worldList;
 	WorldVector vec;
 	vec.type = WORLD_TYPE::VECTOR_ROTATE;
-	vec.x = getRotate();
+	vec.y = getRotate();
 	worldList.push_back(vec);
 
 	CameraDesc camera;
-	camera.eyePos = {0.0f, 2.f, -2.f};
-	camera.eyeUpDir = {0.0f, 1.0f, 1.f};
+	camera.eyePos = {0.0f, 2.0f, -3.0f};
+	camera.eyeUpDir = {0.0f, 1.0f, 0.0f};
 	camera.lookAt = {0.0f, 0.0f, 0.0f};
 
 	TransposedPerspectiveMatrixWVP(canvas, &worldList, camera, matrixWVP);
 
 	pGraphic->SetVSConstBuffer(shader, &(matrixWVP[0][0]), sizeof(matrixWVP));
 	pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, textures,
-			      D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, indexId);
+			      D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, indexId);
 }
 
 void Csample1Dlg::render()

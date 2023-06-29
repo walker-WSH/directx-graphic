@@ -12,6 +12,9 @@
 #include <source_location>
 #include <functional>
 #include <optional>
+#include <directxmath.h>
+
+using namespace DirectX;
 
 #ifdef GRAPHIC_API_EXPORTS
 #define GRAPHIC_API __declspec(dllexport)
