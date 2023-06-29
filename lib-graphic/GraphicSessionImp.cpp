@@ -437,7 +437,7 @@ shader_handle DX11GraphicSession::CreateShader(const ShaderInformation &info)
 long DX11GraphicSession::CreateIndexBuffer(shader_handle hdl, const IndexItemDesc &desc)
 {
 	CHECK_GRAPHIC_CONTEXT;
-	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Shader, shader, return invalid_index);
+	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Shader, shader, return INVALID_INDEX_ID);
 
 	return shader->CreateIndexBuffer(desc);
 }
@@ -781,7 +781,7 @@ bool DX11GraphicSession::ApplyShader(DX11Shader *shader, long indexId)
 		m_pDeviceContext->PSSetConstantBuffers(0, 1, buffer);
 	}
 
-	if (indexId != invalid_index)
+	if (indexId != INVALID_INDEX_ID)
 		return shader->ApplyIndexBuffer(indexId);
 
 	return true;
@@ -970,7 +970,7 @@ void DX11GraphicSession::DrawTopplogy(shader_handle hdl, D3D11_PRIMITIVE_TOPOLOG
 
 	m_pDeviceContext->IASetPrimitiveTopology(type);
 
-	if (indexId != invalid_index) {
+	if (indexId != INVALID_INDEX_ID) {
 		m_pDeviceContext->DrawIndexed(shader->m_mapIndexParams[indexId].indexCount, 0, 0);
 
 	} else {
@@ -1023,7 +1023,7 @@ void DX11GraphicSession::DrawTexture(shader_handle hdl, VIDEO_FILTER_TYPE flt,
 	m_pDeviceContext->PSSetShaderResources(0, (uint32_t)resources.size(), resources.data());
 	m_pDeviceContext->IASetPrimitiveTopology(type);
 
-	if (indexId != invalid_index) {
+	if (indexId != INVALID_INDEX_ID) {
 		m_pDeviceContext->DrawIndexed(shader->m_mapIndexParams[indexId].indexCount, 0, 0);
 
 	} else {

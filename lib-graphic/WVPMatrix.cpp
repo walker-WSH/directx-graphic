@@ -101,14 +101,14 @@ void TransposedOrthoMatrixWVP(const SIZE &canvas, bool convertCoord, const std::
 	memmove(&(outputMatrix[0][0]), src, sizeof(float) * 16);
 }
 
-void TransposedPerspectiveMatrixWVP(const SIZE &canvas, const std::vector<WorldVector> *worldList,
+void TransposedPerspectiveMatrixWVP(const SIZE &canvas, const std::vector<WorldVector> *worldList, CameraDesc camera,
 				   float outputMatrix[4][4])
 {
 	D3DXMATRIX worldMatrix = GetWorldMatrix(worldList);
 
-	D3DXVECTOR3 eyePos(0.0f, 0.0f, -1.0f);
-	D3DXVECTOR3 eyeUpDir(0.0f, 1.0f, 0.0f);
-	D3DXVECTOR3 lookAt(0.0f, 0.0f, 0.0f);
+	D3DXVECTOR3 eyePos(camera.eyePos.x, camera.eyePos.y, camera.eyePos.z);
+	D3DXVECTOR3 eyeUpDir(camera.eyeUpDir.x, camera.eyeUpDir.y, camera.eyeUpDir.z);
+	D3DXVECTOR3 lookAt(camera.lookAt.x, camera.lookAt.y, camera.lookAt.z);
 	D3DXMATRIX viewMatrix;
 	D3DXMatrixLookAtLH(&viewMatrix, &eyePos, &lookAt, &eyeUpDir);
 

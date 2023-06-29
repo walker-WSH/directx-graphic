@@ -3,16 +3,18 @@
 
 IGraphicSession *pGraphic = nullptr;
 shader_handle shader = nullptr;
+long indexId = INVALID_INDEX_ID;
 display_handle display = nullptr;
 texture_handle texImg = nullptr;
 
 ColorRGBA clrBlack = {0, 0, 0, 1.f};
 ColorRGBA clrBlue = {0, 0, 1, 1.f};
 
-static const auto TEXTURE_VERTEX_COUNT = 4;
+static const auto TEXTURE_VERTEX_COUNT = 8;
+static const auto TEXTURE_INDEX_COUNT = 36;
 struct TextureVertexDesc {
 	float x, y, z, w;
-	float u, v;
+	float r, g, b, a;
 };
 
 std::wstring GetShaderDirectory()
@@ -33,14 +35,14 @@ void initShader()
 	desc.size = 16;
 	shaderInfo.vertexDesc.push_back(desc);
 
-	desc.type = VERTEX_INPUT_TYPE::TEXTURE_COORD;
-	desc.size = 8;
+	desc.type = VERTEX_INPUT_TYPE::COLOR;
+	desc.size = 16;
 	shaderInfo.vertexDesc.push_back(desc);
 
 	std::wstring dir = GetShaderDirectory();
 
-	shaderInfo.vsFile = dir + L"default-vs.cso";
-	shaderInfo.psFile = dir + L"default-ps.cso";
+	shaderInfo.vsFile = dir + L"cube-vs.cso";
+	shaderInfo.psFile = dir + L"cube-ps.cso";
 
 	shaderInfo.vsBufferSize = sizeof(matrixWVP);
 	shaderInfo.psBufferSize = 0;
@@ -50,6 +52,44 @@ void initShader()
 
 	shader = pGraphic->CreateShader(shaderInfo);
 	assert(shader);
+
+	IndexItemDesc indexDesc;
+	indexDesc.sizePerIndex = sizeof(WORD);
+	indexDesc.indexCount = TEXTURE_INDEX_COUNT;
+	indexId = pGraphic->CreateIndexBuffer(shader, indexDesc);
+
+	//---------------------------------------------------------------------------------------
+	float scale = 1.f;
+
+	TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT];
+	outputVertex[0] = {-scale, scale, -scale, 1.f, 0, 0, 0, 1.f};
+	outputVertex[1] = {scale, scale, -scale, 1.f, 0, 0, 0, 1.f};
+	outputVertex[2] = {scale, scale, scale, 1.f, 1.f, 0, 0, 1.f};
+	outputVertex[3] = {-scale, scale, scale, 1.f, 1.f, 0, 0, 1.f};
+
+	outputVertex[4] = {-scale, -scale, -scale, 1.f, 0, 1, 0, 1.f};
+	outputVertex[5] = {scale, -scale, -scale, 1.f, 0, 1, 0, 1.f};
+	outputVertex[6] = {scale, -scale, scale, 1.f, 0, 1, 0, 1.f};
+	outputVertex[7] = {-scale, -scale, scale, 1.f, 0, 1, 0, 1.f};
+
+	pGraphic->SetVertexBuffer(shader, outputVertex, sizeof(outputVertex));
+
+	//---------------------------------------------------------------------------------------
+	WORD indices[TEXTURE_INDEX_COUNT] = {
+		3, 1, 0, 2, 1, 3,
+
+		0, 5, 4, 1, 5, 0,
+
+		3, 4, 7, 0, 4, 3,
+
+		1, 6, 5, 2, 6, 1,
+
+		2, 7, 6, 3, 7, 2,
+
+		6, 4, 5, 7, 4, 6,
+	};
+
+	pGraphic->SetIndexBuffer(shader, indexId, indices, indexDesc.sizePerIndex * indexDesc.indexCount);
 }
 
 void Csample1Dlg::initGraphic(HWND hWnd)
@@ -93,72 +133,25 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 {
 	AUTO_GRAPHIC_CONTEXT(pGraphic);
 
-	auto texInfo = pGraphic->GetTextureInfo(tex);
 	std::vector<texture_handle> textures = {tex};
 
 	float matrixWVP[4][4];
 	std::vector<WorldVector> worldList;
+	WorldVector vec;
+	vec.type = WORLD_TYPE::VECTOR_ROTATE;
+	vec.x = getRotate();
+	worldList.push_back(vec);
 
-	auto half_width = float(drawDest.right) / float(drawDest.bottom);
+	CameraDesc camera;
+	camera.eyePos = {0.0f, 2.f, -2.f};
+	camera.eyeUpDir = {0.0f, 1.0f, 1.f};
+	camera.lookAt = {0.0f, 0.0f, 0.0f};
 
-	{
-		WorldVector vec;
-		vec.type = WORLD_TYPE::VECTOR_MOVE;
-		vec.x = -half_width;
-		worldList.push_back(vec);
-	}
-	{
-		WorldVector vec;
-		vec.type = WORLD_TYPE::VECTOR_ROTATE;
-		vec.y = getRotate();
-		worldList.push_back(vec);
-	}
-	{
-		WorldVector vec;
-		vec.type = WORLD_TYPE::VECTOR_MOVE;
-		vec.x = half_width;
-		worldList.push_back(vec);
-	}
+	TransposedPerspectiveMatrixWVP(canvas, &worldList, camera, matrixWVP);
 
-	{
-		WorldVector vec;
-		vec.type = WORLD_TYPE::VECTOR_SCALE;
-		vec.x = vec.y = 0.5f;
-		//worldList.push_back(vec);
-	}
-
-	TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT];
-	float leftUV = 0.f;
-	float topUV = 0.f;
-	float rightUV = 1.f;
-	float bottomUV = 1.f;
-	const bool use3D = true;
-	if (use3D) {
-		auto half_width = float(drawDest.right) / float(drawDest.bottom);
-		auto half_height = 1.f;
-
-		// 顺时针渲染三角形：图像在正面才能看到
-		outputVertex[0] = {-half_width, half_height, 0, 1.f, leftUV, topUV};
-		outputVertex[1] = {half_width, half_height, 0, 1.f, rightUV, topUV};
-		outputVertex[2] = {-half_width, -half_height, 0, 1.f, leftUV, bottomUV};
-		outputVertex[3] = {half_width, -half_height, 0, 1.f, rightUV, bottomUV};
-
-		// should use this project matrix for 3D render
-		TransposedPerspectiveMatrixWVP(canvas, &worldList, CameraDesc(), matrixWVP);
-
-	} else {
-		outputVertex[0] = {-(float)texInfo.width / 2, (float)texInfo.height / 2, 0, 1.f, leftUV, topUV};
-		outputVertex[1] = {(float)texInfo.width / 2, (float)texInfo.height / 2, 0, 1.f, rightUV, topUV};
-		outputVertex[2] = {-(float)texInfo.width / 2, -(float)texInfo.height / 2, 0, 1.f, leftUV, bottomUV};
-		outputVertex[3] = {(float)texInfo.width / 2, -(float)texInfo.height / 2, 0, 1.f, rightUV, bottomUV};
-
-		// should use this orthogonal project matrix for 2D render
-		TransposedOrthoMatrixWVP(canvas, false, &worldList, matrixWVP);
-	}
-
-	pGraphic->SetVertexBuffer(shader, outputVertex, sizeof(outputVertex));
 	pGraphic->SetVSConstBuffer(shader, &(matrixWVP[0][0]), sizeof(matrixWVP));
-	pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, textures);
+	pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, textures,
+			      D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST, indexId);
 }
 
 void Csample1Dlg::render()

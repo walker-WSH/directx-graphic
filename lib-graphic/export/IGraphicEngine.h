@@ -17,10 +17,12 @@ GRAPHIC_API void DestroyGraphicSession(IGraphicSession *&graphic);
 
 // orthogonal matrix
 GRAPHIC_API void TransposedOrthoMatrixWVP(const SIZE &canvas, bool convertCoord,
-					  const std::vector<WorldVector> *worldList, float outputMatrix[4][4]);
+					  const std::vector<WorldVector> *worldList, 
+					  float outputMatrix[4][4]);
 
 // perspective matrix
 GRAPHIC_API void TransposedPerspectiveMatrixWVP(const SIZE &canvas, const std::vector<WorldVector> *worldList,
+						CameraDesc camera,
 						float outputMatrix[4][4]);
 
 } // namespace graphic

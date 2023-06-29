@@ -37,7 +37,7 @@ using font_handle = IGraphicObject *;
 using geometry_handle = IGraphicObject *;
 using graphic_cb = long;
 
-static long invalid_index = -1;
+static long INVALID_INDEX_ID = -1;
 
 enum class TEXTURE_USAGE {
 	UNKNOWN = 0,
@@ -164,6 +164,18 @@ struct WorldVector {
 	std::optional<float> x;
 	std::optional<float> y;
 	std::optional<float> z;
+};
+
+struct Vector3 {
+	float x = 0.f;
+	float y = 0.f;
+	float z = 0.f;
+};
+
+struct CameraDesc {
+	Vector3 eyePos = {0.0f, 0.0f, -1.0f};
+	Vector3 eyeUpDir = {0.0f, 1.0f, 0.0f};
+	Vector3 lookAt = {0.0f, 0.0f, 0.0f};
 };
 
 struct TextureInformation {

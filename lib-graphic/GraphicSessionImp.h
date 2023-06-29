@@ -84,10 +84,10 @@ public:
 	virtual void SwitchRenderTarget(bool enableSRGB);
 	virtual void ClearBackground(const ColorRGBA *bkClr);
 	virtual void SetBlendState(VIDEO_BLEND_TYPE type);
-	virtual void DrawTopplogy(shader_handle hdl, D3D11_PRIMITIVE_TOPOLOGY type, long indexId = invalid_index);
+	virtual void DrawTopplogy(shader_handle hdl, D3D11_PRIMITIVE_TOPOLOGY type, long indexId = INVALID_INDEX_ID);
 	virtual void DrawTexture(shader_handle hdl, VIDEO_FILTER_TYPE flt, const std::vector<texture_handle> &textures,
 				 D3D11_PRIMITIVE_TOPOLOGY type = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,
-				 long indexId = invalid_index);
+				 long indexId = INVALID_INDEX_ID);
 	virtual void EndRender(IGeometryInterface *geometryInterface = nullptr);
 
 	//---------------------------------------------------------------------------
