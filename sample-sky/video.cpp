@@ -147,13 +147,6 @@ void Csample1Dlg::uninitGraphic()
 	graphic::DestroyGraphicSession(pGraphic);
 }
 
-float Csample1Dlg::getRotate()
-{
-	auto ret = (float)m_sliderRotate.GetPos();
-	ATLTRACE("--------------------- %f \n", ret);
-	return ret;
-}
-
 void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 {
 	AUTO_GRAPHIC_CONTEXT(pGraphic);
@@ -164,13 +157,18 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 	std::vector<WorldVector> worldList;
 	WorldVector vec;
 	vec.type = WORLD_TYPE::VECTOR_ROTATE;
-	vec.y = getRotate();
+	vec.x = (float)rotateX;
+	vec.y = (float)rotateY;
 	worldList.push_back(vec);
 
+	eyePosZ = max(eyePosZ, -100);
+	eyePosZ = min(eyePosZ, 100);
+	float eyeZ = (float)eyePosZ / 100.f;
+
 	CameraDesc camera;
-	camera.eyePos = {0.0f, 0.5f, -0.5f};
+	camera.eyePos = {0.0f, 0.0f, eyeZ};
 	camera.eyeUpDir = {0.0f, 1.0f, 0.0f};
-	camera.lookAt = {0.0f, 0.0f, 0.f};
+	camera.lookAt = {0.0f, 0.0f, 1.f};
 
 	TransposedPerspectiveMatrixWVP(canvas, &worldList, camera, matrixWVP);
 

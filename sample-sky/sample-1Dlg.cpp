@@ -65,7 +65,6 @@ Csample1Dlg::~Csample1Dlg()
 void Csample1Dlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_SLIDER1, m_sliderRotate);
 }
 
 BEGIN_MESSAGE_MAP(Csample1Dlg, CDialogEx)
@@ -75,6 +74,13 @@ BEGIN_MESSAGE_MAP(Csample1Dlg, CDialogEx)
 	ON_WM_DESTROY()
 	ON_WM_TIMER()
 	ON_WM_ERASEBKGND()
+	ON_BN_CLICKED(IDC_BUTTON4, &Csample1Dlg::OnBnClickedButton4)
+	ON_BN_CLICKED(IDC_BUTTON3, &Csample1Dlg::OnBnClickedButton3)
+	ON_BN_CLICKED(IDC_BUTTON1, &Csample1Dlg::OnBnClickedButton1)
+	ON_BN_CLICKED(IDC_BUTTON2, &Csample1Dlg::OnBnClickedButton2)
+	ON_BN_CLICKED(IDC_BUTTON7, &Csample1Dlg::OnBnClickedButton7)
+	ON_BN_CLICKED(IDC_BUTTON5, &Csample1Dlg::OnBnClickedButton5)
+	ON_BN_CLICKED(IDC_BUTTON6, &Csample1Dlg::OnBnClickedButton6)
 	END_MESSAGE_MAP()
 
 
@@ -112,11 +118,11 @@ BOOL Csample1Dlg::OnInitDialog()
 	// TODO: 在此添加额外的初始化代码
 	ModifyStyle(0, WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
 
+	MoveWindow(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+	CenterWindow();
+
 	initGraphic(m_hWnd);
 	SetTimer(TIMER_RENDER, 33, 0);
-
-	m_sliderRotate.SetRange(-360, 360);
-	m_sliderRotate.SetPos(0);
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -193,4 +199,46 @@ void Csample1Dlg::OnTimer(UINT_PTR nIDEvent)
 BOOL Csample1Dlg::OnEraseBkgnd(CDC *pDC)
 {
 	return TRUE;
+}
+
+void Csample1Dlg::OnBnClickedButton3()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	rotateY -= 10;
+}
+
+void Csample1Dlg::OnBnClickedButton4()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	rotateY += 10;
+}
+
+void Csample1Dlg::OnBnClickedButton1()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	rotateX -= 10;
+}
+
+void Csample1Dlg::OnBnClickedButton2()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	rotateX += 10;
+}
+
+void Csample1Dlg::OnBnClickedButton7()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	rotateX = rotateY = eyePosZ = 0;
+}
+
+void Csample1Dlg::OnBnClickedButton5()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	eyePosZ += 10;
+}
+
+void Csample1Dlg::OnBnClickedButton6()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	eyePosZ -= 10;
 }

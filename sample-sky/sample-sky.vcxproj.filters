@@ -48,11 +48,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="sample1.rc">
-      <Filter>资源文件</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="res\sample1.rc2">
       <Filter>资源文件</Filter>
     </None>
@@ -69,5 +64,10 @@
     <FxCompile Include="HLSL\sky-vs.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="sample1.rc">
+      <Filter>源文件</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

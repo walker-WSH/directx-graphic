@@ -9,12 +9,14 @@ using namespace graphic;
 
 #define TIMER_RENDER 3000
 
+#define WINDOW_WIDTH 900
+#define WINDOW_HEIGHT WINDOW_WIDTH
+
 // Csample1Dlg 对话框
-class Csample1Dlg : public CDialogEx
-{
-// 构造
+class Csample1Dlg : public CDialogEx {
+	// 构造
 public:
-	Csample1Dlg(CWnd* pParent = nullptr);	// 标准构造函数
+	Csample1Dlg(CWnd *pParent = nullptr); // 标准构造函数
 	virtual ~Csample1Dlg();
 
 // 对话框数据
@@ -22,17 +24,20 @@ public:
 	enum { IDD = IDD_SAMPLE1_DIALOG };
 #endif
 
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 支持
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV 支持
 
 	void initGraphic(HWND hWnd);
 	void uninitGraphic();
 	void render();
 
 	void RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest);
-	float getRotate();
 
-// 实现
+	int rotateX = 0;
+	int rotateY = 0;
+	int eyePosZ = 0; // [-100, 100]
+
+	// 实现
 protected:
 	HICON m_hIcon;
 
@@ -45,6 +50,12 @@ protected:
 public:
 	afx_msg void OnDestroy();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
-	CSliderCtrl m_sliderRotate;
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg void OnBnClickedButton4();
+	afx_msg void OnBnClickedButton3();
+	afx_msg void OnBnClickedButton1();
+	afx_msg void OnBnClickedButton2();
+	afx_msg void OnBnClickedButton7();
+	afx_msg void OnBnClickedButton5();
+	afx_msg void OnBnClickedButton6();
 };
