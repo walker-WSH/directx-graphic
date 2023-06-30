@@ -3,16 +3,20 @@
 
 IGraphicSession *pGraphic = nullptr;
 shader_handle shader = nullptr;
+long indexId = INVALID_INDEX_ID;
 display_handle display = nullptr;
 texture_handle texImg = nullptr;
 
 ColorRGBA clrBlack = {0, 0, 0, 1.f};
 ColorRGBA clrBlue = {0, 0, 1, 1.f};
 
-static const auto TEXTURE_VERTEX_COUNT = 6 * 2 * 3;
+// 6个面 每个面四个顶点（每个顶点对应纹理坐标不一样 所以只能每个面单独定义一次顶点）
+static const auto TEXTURE_VERTEX_COUNT = 6 * 4;
+static const auto TEXTURE_INDEX_COUNT = 36;
+
 struct TextureVertexDesc {
-	float x, y, z, w;
-	float u, v;
+	XMFLOAT3 Pos;
+	XMFLOAT2 Tex;
 };
 
 std::wstring GetShaderDirectory()
@@ -30,7 +34,7 @@ void initShader()
 
 	VertexInputDesc desc;
 	desc.type = VERTEX_INPUT_TYPE::POSITION;
-	desc.size = 16;
+	desc.size = 12;
 	shaderInfo.vertexDesc.push_back(desc);
 
 	desc.type = VERTEX_INPUT_TYPE::TEXTURE_COORD;
@@ -51,29 +55,59 @@ void initShader()
 	shader = pGraphic->CreateShader(shaderInfo);
 	assert(shader);
 
+	IndexItemDesc indexDesc;
+	indexDesc.sizePerIndex = sizeof(WORD);
+	indexDesc.indexCount = TEXTURE_INDEX_COUNT;
+	indexId = pGraphic->CreateIndexBuffer(shader, indexDesc);
+
 	//---------------------------------------------------------------------------------------
-	auto x = 1.f;
-	auto y = 1.f;
-	auto z = 1.f;
+	TextureVertexDesc vertices[] = {
+		{XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT2(1.0f, 0.0f)},
+		{XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT2(0.0f, 0.0f)},
+		{XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f)},
+		{XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f)},
 
-	float leftUV = 0.f;
-	float topUV = 0.f;
-	float rightUV = 1.f;
-	float bottomUV = 1.f;
-	
-	TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT] = {
-		{-x, y, z, 1.f, leftUV, topUV},     {-x, -y, z, 1.f, leftUV, bottomUV},
-		{x, y, z, 1.f, rightUV, topUV},     {x, y, z, 1.f, rightUV, topUV},
-		{-x, -y, z, 1.f, leftUV, bottomUV}, {x, -y, z, 1.f, rightUV, bottomUV},
+		{XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(0.0f, 0.0f)},
+		{XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT2(1.0f, 0.0f)},
+		{XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f)},
+		{XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f)},
 
-		{x, y, z, 1.f, leftUV, topUV},      {x, y, -z, 1.f, leftUV, topUV},
-		{x, -y, z, 1.f, leftUV, topUV},     {x, -y, z, 1.f, leftUV, bottomUV},
-		{x, y, -z, 1.f, leftUV, bottomUV},  {x, -y, -z, 1.f, leftUV, bottomUV},
+		{XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f)},
+		{XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(1.0f, 1.0f)},
+		{XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT2(1.0f, 0.0f)},
+		{XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f)},
 
+		{XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f)},
+		{XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT2(0.0f, 1.0f)},
+		{XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT2(0.0f, 0.0f)},
+		{XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 0.0f)},
+
+		{XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(0.0f, 1.0f)},
+		{XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT2(1.0f, 1.0f)},
+		{XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT2(1.0f, 0.0f)},
+		{XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT2(0.0f, 0.0f)},
+
+		{XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f)},
+		{XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f)},
+		{XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f)},
+		{XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 0.0f)},
 	};
 
+	pGraphic->SetVertexBuffer(shader, vertices, sizeof(vertices));
 
-	pGraphic->SetVertexBuffer(shader, outputVertex, sizeof(outputVertex));
+	WORD indices[] = {3,  1,  0,  2,  1,  3,
+
+			  6,  4,  5,  7,  4,  6,
+
+			  11, 9,  8,  10, 9,  11,
+
+			  14, 12, 13, 15, 12, 14,
+
+			  19, 17, 16, 18, 17, 19,
+
+			  22, 20, 21, 23, 20, 22};
+
+	pGraphic->SetIndexBuffer(shader, indexId, indices, indexDesc.sizePerIndex * indexDesc.indexCount);
 }
 
 void Csample1Dlg::initGraphic(HWND hWnd)
@@ -86,7 +120,7 @@ void Csample1Dlg::initGraphic(HWND hWnd)
 
 	initShader();
 
-	texImg = pGraphic->OpenImageTexture(L"res/test.jpg");
+	texImg = pGraphic->OpenImageTexture(L"res/sky.png");
 
 	display = pGraphic->CreateDisplay(hWnd);
 	assert(display);
@@ -127,15 +161,15 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 	worldList.push_back(vec);
 
 	CameraDesc camera;
-	camera.eyePos = {0.0f, 1.5f, -3.f};
+	camera.eyePos = {0.0f, 0.f, 0.f};
 	camera.eyeUpDir = {0.0f, 1.0f, 0.0f};
-	camera.lookAt = {0.0f, 0.0f, 0.f};
+	camera.lookAt = {0.0f, 0.0f, 1.f};
 
 	TransposedPerspectiveMatrixWVP(canvas, &worldList, camera, matrixWVP);
 
 	pGraphic->SetVSConstBuffer(shader, &(matrixWVP[0][0]), sizeof(matrixWVP));
 	pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, textures,
-			      D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			      D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, indexId);
 }
 
 void Csample1Dlg::render()
@@ -155,7 +189,7 @@ void Csample1Dlg::render()
 	if (pGraphic->BeginRenderWindow(display)) {
 		pGraphic->ClearBackground(&clrBlue);
 		pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_DISABLED);
-		pGraphic->SetRasterizerState(D3D11_CULL_MODE::D3D11_CULL_BACK);
+		pGraphic->SetRasterizerState(D3D11_CULL_MODE::D3D11_CULL_FRONT);
 
 		RenderTexture(texImg, SIZE(rcWindow.right, rcWindow.bottom), rcWindow);
 
