@@ -87,14 +87,16 @@ void initShader()
 		{XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT2(1.0f, 0.0f)},
 		{XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT2(0.0f, 0.0f)},
 
-		{XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT2(1.0f, 1.0f)},
-		{XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT2(0.0f, 1.0f)},
-		{XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT2(0.0f, 0.0f)},
-		{XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT2(1.0f, 0.0f)},
+		{XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT2(0.20f, 0.666666f)},
+		{XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT2(0.5f, 0.666666f)},
+		{XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT2(0.5f, 0.333333f)},
+		{XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT2(0.25f, 0.333333f)},
 	};
 
 	pGraphic->SetVertexBuffer(shader, vertices, sizeof(vertices));
 
+#if 1
+	// 以下三角形 立方体外侧是正面
 	WORD indices[] = {3,  1,  0,  2,  1,  3,
 
 			  6,  4,  5,  7,  4,  6,
@@ -106,6 +108,20 @@ void initShader()
 			  19, 17, 16, 18, 17, 19,
 
 			  22, 20, 21, 23, 20, 22};
+
+#else
+	WORD indices[] = {3,  1,  0,  2,  1,  3,
+
+			  6,  4,  5,  7,  4,  6,
+
+			  11, 9,  8,  10, 9,  11,
+
+			  14, 12, 13, 15, 12, 14,
+
+			  19, 17, 16, 18, 17, 19,
+
+			  22, 20, 21, 23, 20, 22};
+#endif
 
 	pGraphic->SetIndexBuffer(shader, indexId, indices, indexDesc.sizePerIndex * indexDesc.indexCount);
 }
@@ -161,9 +177,15 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 	worldList.push_back(vec);
 
 	CameraDesc camera;
-	camera.eyePos = {0.0f, 0.f, 0.f};
-	camera.eyeUpDir = {0.0f, 1.0f, 0.0f};
-	camera.lookAt = {0.0f, 0.0f, 1.f};
+	if (0) {
+		camera.eyePos = {0.0f, 0.f, 0.f};
+		camera.eyeUpDir = {0.0f, 1.0f, 0.0f};
+		camera.lookAt = {0.0f, 0.0f, 1.f};
+	} else {
+		camera.eyePos = {0.0f, 2.f, -3.f};
+		camera.eyeUpDir = {0.0f, 1.0f, 0.0f};
+		camera.lookAt = {0.0f, 0.0f, 0.f};
+	}
 
 	TransposedPerspectiveMatrixWVP(canvas, &worldList, camera, matrixWVP);
 
@@ -189,7 +211,7 @@ void Csample1Dlg::render()
 	if (pGraphic->BeginRenderWindow(display)) {
 		pGraphic->ClearBackground(&clrBlue);
 		pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_DISABLED);
-		pGraphic->SetRasterizerState(D3D11_CULL_MODE::D3D11_CULL_FRONT);
+		pGraphic->SetRasterizerState(D3D11_CULL_MODE::D3D11_CULL_BACK); // 剔除三角形背面的画面
 
 		RenderTexture(texImg, SIZE(rcWindow.right, rcWindow.bottom), rcWindow);
 

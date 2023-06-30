@@ -76,6 +76,7 @@ void initShader()
 	pGraphic->SetVertexBuffer(shader, vertices, sizeof(vertices));
 
 	//---------------------------------------------------------------------------------------
+	// 以下三角形 立方体外侧是正面
 	WORD indices[] = {
 		3, 1, 0, 2, 1, 3,
 
@@ -172,7 +173,7 @@ void Csample1Dlg::render()
 	if (pGraphic->BeginRenderWindow(display)) {
 		pGraphic->ClearBackground(&clrBlue);
 		pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_DISABLED);
-		pGraphic->SetRasterizerState(D3D11_CULL_MODE::D3D11_CULL_BACK);
+		pGraphic->SetRasterizerState(D3D11_CULL_MODE::D3D11_CULL_BACK); // 剔除三角形背面的画面
 
 		RenderTexture(texImg, SIZE(rcWindow.right, rcWindow.bottom), rcWindow);
 
