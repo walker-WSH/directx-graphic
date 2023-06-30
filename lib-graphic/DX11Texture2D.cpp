@@ -185,17 +185,18 @@ bool DX11Texture2D::InitTargetTexture()
 {
 	D3D11_TEXTURE2D_DESC desc = {};
 	desc.Width = m_textureInfo.width;
-	desc.Height = m_textureInfo.height;
+	desc.Height = m_textureInfo.height; // TODO cube cx == cy
 	desc.Format = m_textureInfo.format;
 	desc.MipLevels = 1;
-	desc.ArraySize = 1;
+	desc.ArraySize = 1; // TODO cube 6
 	desc.SampleDesc.Count = 1;
 	desc.Usage = D3D11_USAGE_DEFAULT;
 	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
 
 	desc.MiscFlags |= D3D11_RESOURCE_MISC_SHARED;
+	//desc.MiscFlags |= D3D11_RESOURCE_MISC_TEXTURECUBE; // TODO cube must include
 	if (DXGI_FORMAT_B8G8R8A8_UNORM == m_textureInfo.format)
-		desc.MiscFlags |= D3D11_RESOURCE_MISC_GDI_COMPATIBLE;
+		desc.MiscFlags |= D3D11_RESOURCE_MISC_GDI_COMPATIBLE;  // TODO cube must not include
 
 	HRESULT hr =
 		DX11GraphicBase::m_graphicSession.D3DDevice()->CreateTexture2D(&desc, nullptr, m_pTexture2D.Assign());
@@ -308,8 +309,12 @@ bool DX11Texture2D::InitResourceView()
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC viewDesc{};
 	viewDesc.Format = resourceFormat;
-	viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	viewDesc.Texture2D.MipLevels = 1;
+	if (desc.MiscFlags & D3D11_RESOURCE_MISC_TEXTURECUBE) {
+		viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+	} else {
+		viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	}
 
 	HRESULT hr = DX11GraphicBase::m_graphicSession.D3DDevice()->CreateShaderResourceView(
 		m_pTexture2D, &viewDesc, m_pTextureResView.Assign());
