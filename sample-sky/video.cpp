@@ -63,16 +63,16 @@ void initShader()
 	//---------------------------------------------------------------------------------------
 	TextureVertexDesc vertices[] = {
 		// 图像0
-		{XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT2(0.25f, 0.33333f)},
-		{XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT2(0.5f, 0.33333f)},
-		{XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT2(0.5f, 0.0f)},
-		{XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT2(0.25f, 0.0f)},
+		{XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT2(0.25f, 0.f)},
+		{XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT2(0.25f, 0.33333f)},
+		{XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT2(0.5f, 0.33333f)},
+		{XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT2(0.5f, 0.f)},
 
 		// 图像1
-		{XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(0.25f, 0.666666f)},
-		{XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT2(0.5f, 0.666666f)},
-		{XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT2(0.5f, 0.33333f)},
-		{XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT2(0.25f, 0.33333f)},
+		{XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(0.25f, 1.f)},
+		{XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT2(0.25f, 0.666666f)},
+		{XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT2(0.5f, 0.666666f)},
+		{XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT2(0.5f, 1.f)},
 
 		// 图像4
 		{XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT2(0.75f, 0.666666f)},
@@ -168,9 +168,9 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 	worldList.push_back(vec);
 
 	CameraDesc camera;
-	camera.eyePos = {0.0f, -0.5f, 0.f};
+	camera.eyePos = {0.0f, 0.5f, -0.5f};
 	camera.eyeUpDir = {0.0f, 1.0f, 0.0f};
-	camera.lookAt = {0.0f, 0.0f, 1.f};
+	camera.lookAt = {0.0f, 0.0f, 0.f};
 
 	TransposedPerspectiveMatrixWVP(canvas, &worldList, camera, matrixWVP);
 
