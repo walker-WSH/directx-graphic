@@ -39,8 +39,8 @@ void initShader()
 
 	std::wstring dir = GetShaderDirectory();
 
-	shaderInfo.vsFile = dir + L"default-vs.cso";
-	shaderInfo.psFile = dir + L"default-ps.cso";
+	shaderInfo.vsFile = dir + L"rotate-vs.cso";
+	shaderInfo.psFile = dir + L"rotate-ps.cso";
 
 	shaderInfo.vsBufferSize = sizeof(matrixWVP);
 	shaderInfo.psBufferSize = 0;

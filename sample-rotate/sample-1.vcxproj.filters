@@ -63,10 +63,10 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="HLSL\default-ps.hlsl">
+    <FxCompile Include="HLSL\rotate-ps.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
-    <FxCompile Include="HLSL\default-vs.hlsl">
+    <FxCompile Include="HLSL\rotate-vs.hlsl">
       <Filter>hlsl</Filter>
     </FxCompile>
   </ItemGroup>
