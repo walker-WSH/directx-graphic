@@ -61,42 +61,46 @@ void initShader()
 	indexId = pGraphic->CreateIndexBuffer(shader, indexDesc);
 
 	//---------------------------------------------------------------------------------------
+	float stepY = 1.f / 3.f;
+	float stepY_x_1 = stepY * 1.f;
+	float stepY_x_2 = stepY * 2.f;
+
 	TextureVertexDesc vertices[] = {
-		// 图像0
+		// 图像0 顶部图像
 		{XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT2(0.25f, 0.f)},
-		{XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT2(0.25f, 0.33333f)},
-		{XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT2(0.5f, 0.33333f)},
+		{XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT2(0.25f, stepY_x_1)},
+		{XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT2(0.5f, stepY_x_1)},
 		{XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT2(0.5f, 0.f)},
 
-		// 图像1
+		// 图像1 底部图像
 		{XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(0.25f, 1.f)},
-		{XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT2(0.25f, 0.666666f)},
-		{XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT2(0.5f, 0.666666f)},
+		{XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT2(0.25f, stepY_x_2)},
+		{XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT2(0.5f, stepY_x_2)},
 		{XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT2(0.5f, 1.f)},
 
 		// 图像4
-		{XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT2(0.75f, 0.666666f)},
-		{XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(1.f, 0.666666f)},
-		{XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT2(1.f, 0.33333f)},
-		{XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT2(0.75f, 0.33333f)},
+		{XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT2(0.75f, stepY_x_2)},
+		{XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(1.f, stepY_x_2)},
+		{XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT2(1.f, stepY_x_1)},
+		{XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT2(0.75f, stepY_x_1)},
 
 		// 图像2
-		{XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(0, 0.666666f)},
-		{XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT2(0.25f, 0.666666f)},
-		{XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT2(0.25f, 0.33333f)},
-		{XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT2(0, 0.33333f)},
+		{XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT2(0.f, stepY_x_2)},
+		{XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT2(0.25f, stepY_x_2)},
+		{XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT2(0.25f, stepY_x_1)},
+		{XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT2(0.f, stepY_x_1)},
 
 		// 图像5
-		{XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT2(0.5f, 0.666666f)},
-		{XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT2(0.25f, 0.666666f)},
-		{XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT2(0.25f, 0.333333f)},
-		{XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT2(0.5f, 0.333333f)},
+		{XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT2(0.5f, stepY_x_2)},
+		{XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT2(0.25f, stepY_x_2)},
+		{XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT2(0.25f, stepY_x_1)},
+		{XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT2(0.5f, stepY_x_1)},
 
 		// 图像3
-		{XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT2(0.75f, 0.666666f)},
-		{XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT2(0.5f, 0.666666f)},
-		{XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT2(0.5f, 0.33333f)},
-		{XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT2(0.75f, 0.33333f)},
+		{XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT2(0.75f, stepY_x_2)},
+		{XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT2(0.5f, stepY_x_2)},
+		{XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT2(0.5f, stepY_x_1)},
+		{XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT2(0.75f, stepY_x_1)},
 
 	};
 
@@ -173,7 +177,9 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 	TransposedPerspectiveMatrixWVP(canvas, &worldList, camera, matrixWVP);
 
 	pGraphic->SetVSConstBuffer(shader, &(matrixWVP[0][0]), sizeof(matrixWVP));
-	pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, textures,
+
+	// 如果使用别的采样 会有明显的两面接缝
+	pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_POINT, textures,
 			      D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, indexId);
 }
 
