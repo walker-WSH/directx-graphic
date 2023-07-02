@@ -1208,16 +1208,37 @@ void DX11GraphicSession::CopyTextureInner(ComPtr<ID3D11Texture2D> dest, ComPtr<I
 	assert(dest && src);
 
 	if (region) {
+		D3D11_TEXTURE2D_DESC destDesc;
+		dest->GetDesc(&destDesc);
+
+		D3D11_TEXTURE2D_DESC srcDesc;
+		src->GetDesc(&srcDesc);
+
 		D3D11_BOX sourceRegion;
 		sourceRegion.left = region->srcLeft;
-		sourceRegion.right = region->srcRight;
 		sourceRegion.top = region->srcTop;
+		sourceRegion.right = region->srcRight;
 		sourceRegion.bottom = region->srcBottom;
 		sourceRegion.front = 0;
 		sourceRegion.back = 1;
 
-		m_pDeviceContext->CopySubresourceRegion(dest, 0, region->destLeft, region->destTop, 0, src, 0,
-							&sourceRegion);
+		if (sourceRegion.right <= 0) {
+			sourceRegion.right = srcDesc.Width;
+		}
+
+		if (sourceRegion.bottom <= 0) {
+			sourceRegion.bottom = srcDesc.Height;
+		}
+
+		if (region->destArraySliceIndex < 0 || region->destArraySliceIndex >= destDesc.ArraySize) {
+			LOG_WARN("invalid dest array slice index: %d on %d", region->destArraySliceIndex,
+				 destDesc.ArraySize);
+			assert(false);
+		}
+
+		m_pDeviceContext->CopySubresourceRegion(dest, D3D11CalcSubresource(0, region->destArraySliceIndex, 1),
+							region->destLeft, region->destTop, 0, src, 0, &sourceRegion);
+
 	} else {
 		m_pDeviceContext->CopyResource(dest, src);
 	}

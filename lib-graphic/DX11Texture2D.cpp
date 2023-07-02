@@ -8,7 +8,8 @@ namespace graphic {
 std::map<TEXTURE_USAGE, std::string> DX11Texture2D::mapTextureUsage = {
 	{TEXTURE_USAGE::UNKNOWN, "unknownTextureUsage"},  {TEXTURE_USAGE::CANVAS_TARGET, "canvasTexture"},
 	{TEXTURE_USAGE::READ_TEXTURE, "readTexture"},     {TEXTURE_USAGE::WRITE_TEXTURE, "writeTexture"},
-	{TEXTURE_USAGE::SHARED_TEXTURE, "sharedTexture"}, {TEXTURE_USAGE::STATIC_IMAGE_FILE, "imageTexture"},
+	{TEXTURE_USAGE::SHARED_TEXTURE, "sharedTexture"},   {TEXTURE_USAGE::STATIC_IMAGE_FILE, "imageTexture"},
+	{TEXTURE_USAGE::CUBE_TEXTURE, "cubeTexture"},
 };
 
 DX11Texture2D::DX11Texture2D(DX11GraphicSession &graphic, const TextureInformation &info)
@@ -51,7 +52,8 @@ bool DX11Texture2D::BuildGraphic()
 	bool bSuccessed = false;
 	switch (m_textureInfo.usage) {
 	case TEXTURE_USAGE::CANVAS_TARGET:
-		bSuccessed = InitTargetTexture();
+	case TEXTURE_USAGE::CUBE_TEXTURE:
+		bSuccessed = InitTargetTexture(m_textureInfo.usage == TEXTURE_USAGE::CUBE_TEXTURE);
 		break;
 
 	case TEXTURE_USAGE::WRITE_TEXTURE:
@@ -181,22 +183,31 @@ bool DX11Texture2D::InitReadTexture()
 	return true;
 }
 
-bool DX11Texture2D::InitTargetTexture()
+bool DX11Texture2D::InitTargetTexture(bool cube)
 {
+	if (cube && m_textureInfo.width != m_textureInfo.height) {
+		LOG_WARN("invalid size for cube texture: %dx%d", m_textureInfo.width, m_textureInfo.height);
+		assert(false);
+	}
+
 	D3D11_TEXTURE2D_DESC desc = {};
 	desc.Width = m_textureInfo.width;
-	desc.Height = m_textureInfo.height; // TODO cube cx == cy
+	desc.Height = m_textureInfo.height;
 	desc.Format = m_textureInfo.format;
 	desc.MipLevels = 1;
-	desc.ArraySize = 1; // TODO cube 6
+	desc.ArraySize = cube ? 6 : 1;
 	desc.SampleDesc.Count = 1;
 	desc.Usage = D3D11_USAGE_DEFAULT;
 	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
 
-	desc.MiscFlags |= D3D11_RESOURCE_MISC_SHARED;
-	//desc.MiscFlags |= D3D11_RESOURCE_MISC_TEXTURECUBE; // TODO cube must include
-	if (DXGI_FORMAT_B8G8R8A8_UNORM == m_textureInfo.format)
-		desc.MiscFlags |= D3D11_RESOURCE_MISC_GDI_COMPATIBLE;  // TODO cube must not include
+	if (cube) {
+		desc.MiscFlags |= D3D11_RESOURCE_MISC_TEXTURECUBE; //  cube must include
+
+	} else {
+		desc.MiscFlags |= D3D11_RESOURCE_MISC_SHARED;
+		if (DXGI_FORMAT_B8G8R8A8_UNORM == m_textureInfo.format)
+			desc.MiscFlags |= D3D11_RESOURCE_MISC_GDI_COMPATIBLE; //  cube must not include
+	}
 
 	HRESULT hr =
 		DX11GraphicBase::m_graphicSession.D3DDevice()->CreateTexture2D(&desc, nullptr, m_pTexture2D.Assign());

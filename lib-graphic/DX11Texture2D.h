@@ -29,7 +29,7 @@ public:
 protected:
 	bool InitWriteTexture();
 	bool InitReadTexture();
-	bool InitTargetTexture();
+	bool InitTargetTexture(bool cube);
 	bool InitSharedTexture();
 	bool InitImageTexture();
 	bool InitResourceView();

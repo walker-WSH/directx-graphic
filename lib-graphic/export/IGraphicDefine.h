@@ -60,8 +60,11 @@ enum class TEXTURE_USAGE {
 
 	// WARNING:
 	// "MipLevels" of static image texture may be more than 1 (it is not a fixed value).
-	// However, canvas's level is fixed with 1. So it may be unable to copy static texture to canvas texture.
+	// However, canvas's level is fixed with 1. So it may be unable to copy static texture to canvas texture by CopyResource().
 	STATIC_IMAGE_FILE,
+
+	// it include 6 subresource
+	CUBE_TEXTURE,
 };
 
 enum class VIDEO_FILTER_TYPE {
@@ -221,10 +224,11 @@ struct VertexInputDesc {
 struct TextureCopyRegion {
 	uint32_t destLeft = 0;
 	uint32_t destTop = 0;
+	uint32_t destArraySliceIndex = 0; // [0, 5]
 
 	uint32_t srcLeft = 0;
-	uint32_t srcRight = 0;
 	uint32_t srcTop = 0;
+	uint32_t srcRight = 0;
 	uint32_t srcBottom = 0;
 };
 
