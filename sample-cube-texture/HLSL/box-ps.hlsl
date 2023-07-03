@@ -1,4 +1,4 @@
-TextureCube g_TexCube : register(t0); // TextureCube 立方体纹理
+TextureCube g_TexCube : register(t0);
 SamplerState g_Sam : register(s0);
 
 struct VSOutput {
@@ -8,6 +8,6 @@ struct VSOutput {
 
 float4 main(VSOutput pIn) : SV_Target
 {
-	return float4(1, 0, 0, 1);
+	//return float4(1, 0, 0, 1);
 	return g_TexCube.Sample(g_Sam, pIn.posL);
 }

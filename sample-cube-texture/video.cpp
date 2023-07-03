@@ -1,5 +1,9 @@
 ﻿#include "pch.h"
 #include "sample-1Dlg.h"
+#include <string>
+#include <format>
+
+const auto IMAGE_COUNT = 6;
 
 IGraphicSession *pGraphic = nullptr;
 shader_handle shader = nullptr;
@@ -11,7 +15,7 @@ ColorRGBA clrBlack = {0, 0, 0, 1.f};
 ColorRGBA clrBlue = {0, 0, 1, 1.f};
 
 // 6个面 每个面四个顶点（每个顶点对应纹理坐标不一样 所以只能每个面单独定义一次顶点）
-static const auto TEXTURE_VERTEX_COUNT = 6 * 4;
+static const auto TEXTURE_VERTEX_COUNT = IMAGE_COUNT * 4;
 static const auto TEXTURE_INDEX_COUNT = 36;
 
 struct TextureVertexDesc {
@@ -114,19 +118,35 @@ void Csample1Dlg::initGraphic(HWND hWnd)
 
 	initShader();
 
-	auto texImg = pGraphic->OpenImageTexture(L"res/daylight0.png");
-	auto texInfo = pGraphic->GetTextureInfo(texImg);
-	 
-	texInfo.usage = TEXTURE_USAGE::CUBE_TEXTURE;
-	texCube = pGraphic->CreateTexture(texInfo);
+	std::vector<texture_handle> images;
+	images.reserve(IMAGE_COUNT);
+
+	TextureInformation texDesc;
+	for (auto i = 0; i < IMAGE_COUNT; i++) {
+		auto path = std::format(L"res/daylight{}.png", i);
+		auto texImg = pGraphic->OpenImageTexture(path.c_str());
+		images.push_back(texImg);
+
+		auto texInfo = pGraphic->GetTextureInfo(texImg);
+		if (i == 0) {
+			texDesc = texInfo;
+		} else {
+			assert(texInfo.width == texDesc.width);
+			assert(texInfo.height == texDesc.height);
+			assert(texInfo.format == texDesc.format);
+		}
+	}
+
+	texDesc.usage = TEXTURE_USAGE::CUBE_TEXTURE;
+	texCube = pGraphic->CreateTexture(texDesc);
 
 	TextureCopyRegion sub;
-	sub.srcRight = texInfo.width;
-	sub.srcBottom = texInfo.height;
+	sub.srcRight = texDesc.width;
+	sub.srcBottom = texDesc.height;
 
-	for (auto i = 0; i < 6; i++) {
+	for (auto i = 0; i < IMAGE_COUNT; i++) {
 		sub.destArraySliceIndex = i;
-		pGraphic->CopyTexture(texCube, texImg, &sub);
+		pGraphic->CopyTexture(texCube, images[i], &sub);
 	}
 
 	display = pGraphic->CreateDisplay(hWnd);
@@ -175,7 +195,7 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 	pGraphic->SetVSConstBuffer(shader, &(matrixWVP[0][0]), sizeof(matrixWVP));
 
 	// 如果使用别的采样 会有明显的两面接缝
-	pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_POINT, textures,
+	pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_ANISOTROPIC, textures,
 			      D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, indexId);
 }
 
@@ -196,7 +216,7 @@ void Csample1Dlg::render()
 	if (pGraphic->BeginRenderWindow(display)) {
 		pGraphic->ClearBackground(&clrBlue);
 		pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_DISABLED);
-		pGraphic->SetRasterizerState(D3D11_CULL_MODE::D3D11_CULL_BACK); // 剔除三角形背面的画面
+		pGraphic->SetRasterizerState(D3D11_CULL_MODE::D3D11_CULL_FRONT); // 剔除三角形其中一面的画面，剔除哪一面 也和设置的顶点顺逆时针有关
 
 		RenderTexture(texCube, SIZE(rcWindow.right, rcWindow.bottom), rcWindow);
 

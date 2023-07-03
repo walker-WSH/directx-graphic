@@ -1,5 +1,5 @@
 
-TextureCube g_TexCube : register(t0); // TextureCube 立方体纹理
+TextureCube g_TexCube : register(t0);
 SamplerState g_Sam : register(s0);
 
 cbuffer CBChangesEveryFrame : register(b0)
