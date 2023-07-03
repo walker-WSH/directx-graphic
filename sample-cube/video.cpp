@@ -65,12 +65,16 @@ void initShader()
 	XMFLOAT4 yellow = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
 	XMFLOAT4 white = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	XMFLOAT4 black = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	TextureVertexDesc vertices[] = {
-		{XMFLOAT3(-1.0f, 1.0f, -1.0f), red},    {XMFLOAT3(1.0f, 1.0f, -1.0f), green},
-		{XMFLOAT3(1.0f, 1.0f, 1.0f), blue},     {XMFLOAT3(-1.0f, 1.0f, 1.0f), yellow},
 
-		{XMFLOAT3(-1.0f, -1.0f, -1.0f), green}, {XMFLOAT3(1.0f, -1.0f, -1.0f), green},
-		{XMFLOAT3(1.0f, -1.0f, 1.0f), white},   {XMFLOAT3(-1.0f, -1.0f, 1.0f), black},
+	TextureVertexDesc vertices[] = {
+		{XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f)},
+		{XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f)},
+		{XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f)},
+		{XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f)},
+		{XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f)},
+		{XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f)},
+		{XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f)},
+		{XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)},
 	};
 
 	pGraphic->SetVertexBuffer(shader, vertices, sizeof(vertices));
@@ -173,7 +177,7 @@ void Csample1Dlg::render()
 	if (pGraphic->BeginRenderWindow(display)) {
 		pGraphic->ClearBackground(&clrBlue);
 		pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_DISABLED);
-		pGraphic->SetRasterizerState(D3D11_CULL_MODE::D3D11_CULL_BACK); // 剔除三角形背面的画面
+		//pGraphic->SetRasterizerState(D3D11_CULL_MODE::D3D11_CULL_FRONT); // 剔除三角形背面的画面
 
 		RenderTexture(texImg, SIZE(rcWindow.right, rcWindow.bottom), rcWindow);
 
