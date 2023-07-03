@@ -1191,11 +1191,6 @@ bool DX11GraphicSession::IsTextureInfoSame(const D3D11_TEXTURE2D_DESC *dest, con
 		return false;
 	}
 
-	if (dest->MipLevels != src->MipLevels) {
-		assert(false && "MipLevels is different for copying, will it work normally ?");
-		reason = "different MipLevels";
-	}
-
 	return true;
 }
 
@@ -1205,13 +1200,13 @@ void DX11GraphicSession::CopyTextureInner(ComPtr<ID3D11Texture2D> dest, ComPtr<I
 	CHECK_GRAPHIC_CONTEXT;
 	assert(dest && src);
 
+	D3D11_TEXTURE2D_DESC destDesc;
+	dest->GetDesc(&destDesc);
+
+	D3D11_TEXTURE2D_DESC srcDesc;
+	src->GetDesc(&srcDesc);
+
 	if (region) {
-		D3D11_TEXTURE2D_DESC destDesc;
-		dest->GetDesc(&destDesc);
-
-		D3D11_TEXTURE2D_DESC srcDesc;
-		src->GetDesc(&srcDesc);
-
 		D3D11_BOX sourceRegion;
 		sourceRegion.left = region->srcLeft;
 		sourceRegion.top = region->srcTop;
@@ -1234,11 +1229,20 @@ void DX11GraphicSession::CopyTextureInner(ComPtr<ID3D11Texture2D> dest, ComPtr<I
 			assert(false);
 		}
 
-		m_pDeviceContext->CopySubresourceRegion(dest, D3D11CalcSubresource(0, region->destArraySliceIndex, 1),
-							region->destLeft, region->destTop, 0, src, 0, &sourceRegion);
+		m_pDeviceContext->CopySubresourceRegion(
+			dest, D3D11CalcSubresource(0, region->destArraySliceIndex, destDesc.MipLevels),
+			region->destLeft, region->destTop, 0, src, D3D11CalcSubresource(0, 0, srcDesc.MipLevels),
+			&sourceRegion);
 
 	} else {
-		m_pDeviceContext->CopyResource(dest, src);
+		if (srcDesc.MipLevels == destDesc.MipLevels) {
+			m_pDeviceContext->CopyResource(dest, src);
+
+		} else {
+			m_pDeviceContext->CopySubresourceRegion(dest, D3D11CalcSubresource(0, 0, destDesc.MipLevels), 0,
+								0, 0, src,
+								D3D11CalcSubresource(0, 0, srcDesc.MipLevels), nullptr);
+		}
 	}
 }
 

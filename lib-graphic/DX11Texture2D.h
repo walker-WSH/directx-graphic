@@ -33,7 +33,6 @@ protected:
 	bool InitSharedTexture();
 	bool InitImageTexture();
 	ComPtr<ID3D11Texture2D> LoadImageTexture();
-	ComPtr<ID3D11Texture2D> CreateReadTexture(ComPtr<ID3D11Texture2D> pImage);
 	bool InitResourceView();
 
 protected:
