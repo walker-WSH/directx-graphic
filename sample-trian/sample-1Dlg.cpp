@@ -115,7 +115,7 @@ BOOL Csample1Dlg::OnInitDialog()
 	initGraphic(m_hWnd);
 	SetTimer(TIMER_RENDER, 33, 0);
 
-	m_sliderRotate.SetRange(-360, 360);
+	m_sliderRotate.SetRange(0, 600);
 	m_sliderRotate.SetPos(0);
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE

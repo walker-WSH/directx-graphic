@@ -130,15 +130,14 @@ void Csample1Dlg::RenderTexture(SIZE canvas, RECT drawDest)
 
 	XMMATRIX matrixWVP;
 	std::vector<WorldVector> worldList;
-	WorldVector vec;
-	vec.type = WORLD_TYPE::VECTOR_ROTATE;
-	vec.y = getRotate();
-	worldList.push_back(vec);
+
+	auto ret = (float)m_sliderRotate.GetPos();
+	auto percent = ret / 100.f;
 
 	CameraDesc camera;
-	camera.eyePos = {0.0f, 1.50f, -3.0f};
+	camera.eyePos = {0.0f, 1.50f, -6.0f + percent};
 	camera.eyeUpDir = {0.0f, 1.0f, 0.0f};
-	camera.lookAt = {0.0f, 0.0f, 0.0f};
+	camera.lookAt = {0.0f, 0.0f, 1.0f};
 
 	TransposedPerspectiveMatrixWVP(canvas, &worldList, camera, matrixWVP);
 
