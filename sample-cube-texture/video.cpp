@@ -182,8 +182,8 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 	vec.y = (float)rotateY;
 	worldList.push_back(vec);
 
-	eyePosZ = max(eyePosZ, -100);
-	eyePosZ = min(eyePosZ, 100);
+	eyePosZ = max(eyePosZ, -1000);
+	eyePosZ = min(eyePosZ, 1000);
 	float eyeZ = (float)eyePosZ / 100.f;
 
 	CameraDesc camera;
