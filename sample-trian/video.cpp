@@ -9,8 +9,8 @@ display_handle display = nullptr;
 ColorRGBA clrBlack = {0, 0, 0, 1.f};
 ColorRGBA clrBlue = {0, 0, 1, 1.f};
 
-static const auto TEXTURE_VERTEX_COUNT = 8;
-static const auto TEXTURE_INDEX_COUNT = 36;
+static const auto TEXTURE_VERTEX_COUNT = 4;
+static const auto TEXTURE_INDEX_COUNT = 6;
 struct TextureVertexDesc {
 	XMFLOAT3 Pos;
 	XMFLOAT4 Color;
@@ -40,8 +40,8 @@ void initShader()
 
 	std::wstring dir = GetShaderDirectory();
 
-	shaderInfo.vsFile = dir + L"cube-vs.cso";
-	shaderInfo.psFile = dir + L"cube-ps.cso";
+	shaderInfo.vsFile = dir + L"trian-vs.cso";
+	shaderInfo.psFile = dir + L"trian-ps.cso";
 
 	shaderInfo.vsBufferSize = sizeof(matrixWVP);
 	shaderInfo.psBufferSize = 0;
@@ -66,14 +66,10 @@ void initShader()
 	XMFLOAT4 black = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 
 	TextureVertexDesc vertices[] = {
-		{XMFLOAT3(-1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f)},
-		{XMFLOAT3(1.0f, 1.0f, -1.0f), XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f)},
-		{XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f)},
-		{XMFLOAT3(-1.0f, 1.0f, 1.0f), XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f)},
-		{XMFLOAT3(-1.0f, -1.0f, -1.0f), XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f)},
-		{XMFLOAT3(1.0f, -1.0f, -1.0f), XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f)},
-		{XMFLOAT3(1.0f, -1.0f, 1.0f), XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f)},
-		{XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)},
+		{XMFLOAT3(-1.0f, 1.0f, 1.0f), red},
+		{XMFLOAT3(1.0f, 1.0f, 1.0f), green},
+		{XMFLOAT3(1.0f, -1.0f, 1.0f), blue},
+		{XMFLOAT3(-1.0f, -1.0f, 1.0f), white},
 	};
 
 	pGraphic->SetVertexBuffer(shader, vertices, sizeof(vertices));
@@ -81,17 +77,7 @@ void initShader()
 	//---------------------------------------------------------------------------------------
 	// 以下三角形 立方体外侧是正面
 	WORD indices[] = {
-		3, 1, 0, 2, 1, 3,
-
-		0, 5, 4, 1, 5, 0,
-
-		3, 4, 7, 0, 4, 3,
-
-		1, 6, 5, 2, 6, 1,
-
-		2, 7, 6, 3, 7, 2,
-
-		6, 4, 5, 7, 4, 6,
+		0, 1, 3, 1, 2, 3,
 	};
 
 	pGraphic->SetIndexBuffer(shader, indexId, indices, indexDesc.sizePerIndex * indexDesc.indexCount);
@@ -144,7 +130,7 @@ void Csample1Dlg::RenderTexture(SIZE canvas, RECT drawDest)
 	worldList.push_back(vec);
 
 	CameraDesc camera;
-	camera.eyePos = {0.0f, 2.0f, -3.0f};
+	camera.eyePos = {0.0f, 0.0f, -3.0f};
 	camera.eyeUpDir = {0.0f, 1.0f, 0.0f};
 	camera.lookAt = {0.0f, 0.0f, 0.0f};
 
@@ -153,8 +139,6 @@ void Csample1Dlg::RenderTexture(SIZE canvas, RECT drawDest)
 	pGraphic->SetVSConstBuffer(shader, &(matrixWVP[0][0]), sizeof(matrixWVP));
 
 	pGraphic->DrawTopplogy(shader, D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, indexId);
-
-	//pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, textures,  D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, indexId);
 }
 
 void Csample1Dlg::render()
@@ -174,7 +158,7 @@ void Csample1Dlg::render()
 	if (pGraphic->BeginRenderWindow(display)) {
 		pGraphic->ClearBackground(&clrBlue);
 		pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_DISABLED);
-		//pGraphic->SetRasterizerState(D3D11_CULL_MODE::D3D11_CULL_FRONT); // 剔除三角形背面的画面
+		pGraphic->SetRasterizerState(D3D11_CULL_MODE::D3D11_CULL_NONE); // 剔除三角形背面的画面
 
 		RenderTexture(SIZE(rcWindow.right, rcWindow.bottom), rcWindow);
 
