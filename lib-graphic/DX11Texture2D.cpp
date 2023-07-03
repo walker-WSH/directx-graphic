@@ -1,4 +1,5 @@
 #include "DX11Texture2D.h"
+#include "IGraphicEngine.h"
 #include "GraphicSessionImp.h"
 #include <d3dcompiler.h>
 #include <dxsdk/include/D3DX11tex.h>
@@ -270,31 +271,143 @@ bool DX11Texture2D::InitSharedTexture()
 
 bool DX11Texture2D::InitImageTexture()
 {
+	ComPtr<ID3D11Texture2D> pImage = LoadImageTexture();
+	if (!pImage) {
+		LOG_WARN("failed to load input image");
+		assert(false);
+		return false;
+	}
+
+	ComPtr<ID3D11Texture2D> pTextureRead = CreateReadTexture(pImage);
+	if (!pTextureRead) {
+		LOG_WARN("failed to create read texture for input image");
+		assert(false);
+		return false;
+	}
+
+	D3D11_TEXTURE2D_DESC desc = {};
+	pTextureRead->GetDesc(&desc);
+
+	m_textureInfo.width = desc.Width;
+	m_textureInfo.height = desc.Height;
+	m_textureInfo.format = desc.Format;
+
+	bool res = InitWriteTexture();
+	if (!res) {
+		LOG_WARN("failed to create write texture for input image");
+		assert(false);
+		return false;
+	}
+
+	auto context = DX11GraphicBase::m_graphicSession.D3DContext();
+	D3D11_MAPPED_SUBRESOURCE mapRead;
+	D3D11_MAPPED_SUBRESOURCE mapWrite;
+	bool readSuc = false;
+	bool writeSuc = false;
+
+	do {
+		auto hr = context->Map(pTextureRead, 0, D3D11_MAP_READ, 0, &mapRead);
+		readSuc = SUCCEEDED(hr);
+		if (!readSuc) {
+			assert(false);
+			break;
+		}
+
+
+		hr = context->Map(m_pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapWrite);
+		writeSuc = SUCCEEDED(hr);
+		if (!writeSuc) {
+			assert(false);
+			break;
+		}
+
+		if (mapRead.RowPitch == mapWrite.RowPitch) {
+			auto length = mapRead.RowPitch * desc.Height;
+			memmove(mapWrite.pData, mapRead.pData, length);
+
+		} else {
+			auto src = (BYTE *)mapRead.pData;
+			auto dest = (BYTE *)mapWrite.pData;
+			auto linesize = min(mapRead.RowPitch, mapWrite.RowPitch);
+
+			for (UINT i = 0; i < desc.Height; i++) {
+				memmove(dest, src, linesize);
+
+				src += mapRead.RowPitch;
+				dest += mapWrite.RowPitch;
+			}
+		}
+
+	} while (0);
+
+	if (writeSuc)
+		context->Unmap(m_pTexture2D, 0);
+
+	if (readSuc)
+		context->Unmap(pTextureRead, 0);
+
+	return writeSuc && readSuc;
+}
+
+ComPtr<ID3D11Texture2D> DX11Texture2D::LoadImageTexture()
+{
+	ComPtr<ID3D11ShaderResourceView> pTextureResView = nullptr;
+	ComPtr<ID3D11Resource> pResource = nullptr;
+	ComPtr<ID3D11Texture2D> pTexture2D = nullptr;
+
 	HRESULT hr = D3DX11CreateShaderResourceViewFromFile(DX11GraphicBase::m_graphicSession.D3DDevice(),
 							    m_strImagePath.c_str(), NULL, NULL,
-							    m_pTextureResView.Assign(), NULL);
+							    pTextureResView.Assign(), NULL);
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "D3DX11CreateShaderResourceViewFromFile %X", this);
 		assert(false);
-		return false;
+		return nullptr;
 	}
 
-	ComPtr<ID3D11Resource> pResource;
-	m_pTextureResView->GetResource(pResource.Assign());
+	pTextureResView->GetResource(pResource.Assign());
 	if (!pResource) {
 		CHECK_DX_ERROR(hr, "m_pTextureResView->GetResource %X", this);
 		assert(false);
-		return false;
+		return nullptr;
 	}
 
-	hr = pResource->QueryInterface<ID3D11Texture2D>(m_pTexture2D.Assign());
+	hr = pResource->QueryInterface<ID3D11Texture2D>(pTexture2D.Assign());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "QueryInterfaceID3D11Texture2D %X", this);
 		assert(false);
-		return false;
+		return nullptr;
 	}
 
-	return true;
+	return pTexture2D;
+}
+
+ComPtr<ID3D11Texture2D> DX11Texture2D::CreateReadTexture(ComPtr<ID3D11Texture2D> pImageSrc)
+{
+	D3D11_TEXTURE2D_DESC descSrc = {};
+	pImageSrc->GetDesc(&descSrc);
+
+	D3D11_TEXTURE2D_DESC descRead = {};
+	descRead.Width = descSrc.Width;
+	descRead.Height = descSrc.Height;
+	descRead.Format = descSrc.Format;
+	descRead.MipLevels = descSrc.MipLevels;
+	descRead.ArraySize = descSrc.ArraySize;
+	descRead.SampleDesc.Count = 1;
+	descRead.Usage = D3D11_USAGE_STAGING;
+	descRead.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+
+	ComPtr<ID3D11Texture2D> pTextureRead = nullptr;
+	auto hr = DX11GraphicBase::m_graphicSession.D3DDevice()->CreateTexture2D(&descRead, nullptr,
+										 pTextureRead.Assign());
+	if (FAILED(hr)) {
+		CHECK_DX_ERROR(hr, "CreateTexture2D for read, %ux%u format:%d %X", m_textureInfo.width,
+			       m_textureInfo.height, (int)m_textureInfo.format, this);
+		assert(false);
+		return nullptr;
+	}
+
+	DX11GraphicBase::m_graphicSession.D3DContext()->CopyResource(pTextureRead, pImageSrc);
+	return pTextureRead;
 }
 
 bool DX11Texture2D::InitResourceView()

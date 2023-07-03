@@ -5,7 +5,6 @@ IGraphicSession *pGraphic = nullptr;
 shader_handle shader = nullptr;
 long indexId = INVALID_INDEX_ID;
 display_handle display = nullptr;
-texture_handle texImg = nullptr;
 texture_handle texCube = nullptr;
 
 ColorRGBA clrBlack = {0, 0, 0, 1.f};
@@ -115,7 +114,7 @@ void Csample1Dlg::initGraphic(HWND hWnd)
 
 	initShader();
 
-	texImg = pGraphic->OpenImageTexture(L"res/daylight0.png");
+	auto texImg = pGraphic->OpenImageTexture(L"res/daylight0.png");
 	auto texInfo = pGraphic->GetTextureInfo(texImg);
 	 
 	texInfo.usage = TEXTURE_USAGE::CUBE_TEXTURE;

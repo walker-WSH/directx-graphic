@@ -58,12 +58,9 @@ enum class TEXTURE_USAGE {
 	// it is for openning other shared texture
 	SHARED_TEXTURE,
 
-	// WARNING:
-	// "MipLevels" of static image texture may be more than 1 (it is not a fixed value).
-	// However, canvas's level is fixed with 1. So it may be unable to copy static texture to canvas texture by CopyResource().
 	STATIC_IMAGE_FILE,
 
-	// it include 6 subresource
+	// it includes 6 subresource
 	CUBE_TEXTURE,
 };
 

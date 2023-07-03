@@ -23,6 +23,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sample-rotate", "sample-rotate\sample-1.vcxproj", "{BE0CAFB9-0093-44F8-9B7C-A3527A730F2D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sample-cube-texture", "sample-cube-texture\sample-cube-texture.vcxproj", "{C9AAD922-564F-4FF9-9AA1-FF33A261F153}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5CC7C82D-26F3-4F27-81C0-868BC61B9962} = {5CC7C82D-26F3-4F27-81C0-868BC61B9962}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

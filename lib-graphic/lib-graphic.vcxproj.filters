@@ -62,6 +62,9 @@
     <ClCompile Include="WVPMatrix.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="helper.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common\ComPtr.hpp">
