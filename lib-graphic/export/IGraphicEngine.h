@@ -17,11 +17,11 @@ GRAPHIC_API void DestroyGraphicSession(IGraphicSession *&graphic);
 
 // orthogonal matrix
 GRAPHIC_API void TransposedOrthoMatrixWVP(const SIZE &canvas, bool convertCoord,
-					  const std::vector<WorldVector> *worldList, float outputMatrix[4][4]);
+					  const std::vector<WorldVector> *worldList, XMMATRIX &outputMatrix);
 
 // perspective matrix
 GRAPHIC_API void TransposedPerspectiveMatrixWVP(const SIZE &canvas, const std::vector<WorldVector> *worldList,
-						CameraDesc camera, float outputMatrix[4][4]);
+						CameraDesc camera, XMMATRIX &outputMatrix);
 
 // debug function (for BGRA or BGRX)
 GRAPHIC_API bool SaveDebugBitmap(const wchar_t *path, const uint8_t *data, int linesize, int width, int height,

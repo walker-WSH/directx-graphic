@@ -96,7 +96,7 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 	auto texInfo = pGraphic->GetTextureInfo(tex);
 	std::vector<texture_handle> textures = {tex};
 
-	float matrixWVP[4][4];
+	XMMATRIX matrixWVP;
 	std::vector<WorldVector> worldList;
 
 	auto half_width = float(drawDest.right) / float(drawDest.bottom);
@@ -157,7 +157,7 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 	}
 
 	pGraphic->SetVertexBuffer(shader, outputVertex, sizeof(outputVertex));
-	pGraphic->SetVSConstBuffer(shader, &(matrixWVP[0][0]), sizeof(matrixWVP));
+	pGraphic->SetVSConstBuffer(shader, &matrixWVP, sizeof(matrixWVP));
 	pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, textures);
 }
 

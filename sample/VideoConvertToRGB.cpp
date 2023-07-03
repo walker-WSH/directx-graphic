@@ -44,7 +44,7 @@ void VideoConvertToRGB::ConvertVideo(const AVFrame *src_frame, SIZE canvas, RECT
 	std::vector<texture_handle> texs = GetTextures();
 	SIZE resolution((LONG)ps_const_buffer.width, (LONG)ps_const_buffer.height);
 
-	float matrixWVP[4][4];
+	XMMATRIX matrixWVP;
 	TransposedOrthoMatrixWVP(canvas, true, nullptr, matrixWVP);
 
 	TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT];
@@ -52,7 +52,7 @@ void VideoConvertToRGB::ConvertVideo(const AVFrame *src_frame, SIZE canvas, RECT
 			  outputVertex);
 
 	original_video_info.graphic->SetVertexBuffer(convert_shader, outputVertex, sizeof(outputVertex));
-	original_video_info.graphic->SetVSConstBuffer(convert_shader, &(matrixWVP[0][0]), sizeof(matrixWVP));
+	original_video_info.graphic->SetVSConstBuffer(convert_shader, &matrixWVP, sizeof(matrixWVP));
 	original_video_info.graphic->SetPSConstBuffer(convert_shader, &ps_const_buffer,
 						      sizeof(ShaderConstBufferForToRGB));
 

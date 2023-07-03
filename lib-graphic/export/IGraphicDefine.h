@@ -164,21 +164,17 @@ enum class WORLD_TYPE {
 
 struct WorldVector {
 	WORLD_TYPE type = WORLD_TYPE::VECTOR_UNKNOWN;
+	
+	// x/y/z presents angle value when type is VECTOR_ROTATE
 	std::optional<float> x;
 	std::optional<float> y;
 	std::optional<float> z;
 };
 
-struct Vector3 {
-	float x = 0.f;
-	float y = 0.f;
-	float z = 0.f;
-};
-
 struct CameraDesc {
-	Vector3 eyePos = {0.0f, 0.0f, -1.0f};
-	Vector3 eyeUpDir = {0.0f, 1.0f, 0.0f};
-	Vector3 lookAt = {0.0f, 0.0f, 0.0f};
+	XMVECTOR eyePos = {0.0f, 0.0f, -1.0f};
+	XMVECTOR eyeUpDir = {0.0f, 1.0f, 0.0f};
+	XMVECTOR lookAt = {0.0f, 0.0f, 0.0f};
 };
 
 struct TextureInformation {

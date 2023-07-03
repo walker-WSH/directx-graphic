@@ -157,7 +157,7 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 
 	std::vector<texture_handle> textures = {tex};
 
-	float matrixWVP[4][4];
+	XMMATRIX matrixWVP;
 	std::vector<WorldVector> worldList;
 	WorldVector vec;
 	vec.type = WORLD_TYPE::VECTOR_ROTATE;
@@ -176,7 +176,7 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 
 	TransposedPerspectiveMatrixWVP(canvas, &worldList, camera, matrixWVP);
 
-	pGraphic->SetVSConstBuffer(shader, &(matrixWVP[0][0]), sizeof(matrixWVP));
+	pGraphic->SetVSConstBuffer(shader, &matrixWVP, sizeof(matrixWVP));
 
 	// 如果使用别的采样 会有明显的两面接缝
 	pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_POINT, textures,

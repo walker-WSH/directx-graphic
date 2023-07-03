@@ -4,7 +4,8 @@
 
 namespace graphic {
 
-bool SaveDebugBitmap(const wchar_t *path, const uint8_t *data, int linesize, int width, int height, int pixelSize,
+GRAPHIC_API bool SaveDebugBitmap(const wchar_t *path, const uint8_t *data, int linesize, int width, int height,
+				 int pixelSize,
 		     bool flip)
 {
 	if (!path || !data)

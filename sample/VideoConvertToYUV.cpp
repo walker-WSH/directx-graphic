@@ -62,7 +62,8 @@ bool VideoConvertToYUV::ConvertVideo(texture_handle src_tex)
 		SIZE canvas(item.width, item.height);
 		SIZE texSize(texInfo.width, texInfo.height);
 		RECT drawDest(0, 0, item.width, item.height);
-		float matrixWVP[4][4];
+
+		XMMATRIX matrixWVP;
 		TransposedOrthoMatrixWVP(canvas, true, nullptr, matrixWVP);
 
 		TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT];
@@ -71,7 +72,7 @@ bool VideoConvertToYUV::ConvertVideo(texture_handle src_tex)
 
 		original_video_info.graphic->SetVertexBuffer(item.shader, outputVertex, sizeof(outputVertex));
 
-		original_video_info.graphic->SetVSConstBuffer(item.shader, &(matrixWVP[0][0]), sizeof(matrixWVP));
+		original_video_info.graphic->SetVSConstBuffer(item.shader, &matrixWVP, sizeof(matrixWVP));
 
 		original_video_info.graphic->SetPSConstBuffer(item.shader, &item.ps_const_buffer,
 							      sizeof(ShaderConstBufferForToYUV));

@@ -174,7 +174,7 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 
 	std::vector<texture_handle> textures = {tex};
 
-	float matrixWVP[4][4];
+	XMMATRIX matrixWVP;
 	std::vector<WorldVector> worldList;
 	WorldVector vec;
 	vec.type = WORLD_TYPE::VECTOR_ROTATE;
@@ -193,7 +193,7 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 
 	TransposedPerspectiveMatrixWVP(canvas, &worldList, camera, matrixWVP);
 
-	pGraphic->SetVSConstBuffer(shader, &(matrixWVP[0][0]), sizeof(matrixWVP));
+	pGraphic->SetVSConstBuffer(shader, &matrixWVP, sizeof(matrixWVP));
 
 	pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_ANISOTROPIC, textures,
 			      D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, indexId);
