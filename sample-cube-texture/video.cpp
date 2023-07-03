@@ -195,7 +195,6 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 
 	pGraphic->SetVSConstBuffer(shader, &(matrixWVP[0][0]), sizeof(matrixWVP));
 
-	// 如果使用别的采样 会有明显的两面接缝
 	pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_ANISOTROPIC, textures,
 			      D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, indexId);
 }

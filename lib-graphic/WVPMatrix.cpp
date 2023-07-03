@@ -19,53 +19,47 @@ D3DXMATRIX GetWorldMatrix(const std::vector<WorldVector> *worldList)
 	D3DXMATRIX outputWorldMatrix;
 	D3DXMatrixIdentity(&outputWorldMatrix);
 
-	if (worldList) {
-		for (const auto &item : (*worldList)) {
-			switch (item.type) {
-			case WORLD_TYPE::VECTOR_MOVE: {
-				D3DXMATRIX temp;
-				D3DXMatrixIdentity(&temp);
-				D3DXMatrixTranslation(&temp, item.x.value_or(0.f), item.y.value_or(0.f),
-						      item.z.value_or(0.f));
-				outputWorldMatrix *= temp;
-			} break;
+	if (!worldList)
+		return outputWorldMatrix;
 
-			case WORLD_TYPE::VECTOR_SCALE: {
-				D3DXMATRIX temp;
-				D3DXMatrixIdentity(&temp);
-				D3DXMatrixScaling(&temp, item.x.value_or(1.f), item.y.value_or(1.f),
-						  item.z.value_or(1.f));
-				outputWorldMatrix *= temp;
-			} break;
+	for (const auto &item : (*worldList)) {
+		switch (item.type) {
+		case WORLD_TYPE::VECTOR_MOVE: {
+			D3DXMATRIX temp;
+			D3DXMatrixIdentity(&temp);
+			D3DXMatrixTranslation(&temp, item.x.value_or(0.f), item.y.value_or(0.f), item.z.value_or(0.f));
+			outputWorldMatrix *= temp;
+		} break;
 
-			case WORLD_TYPE::VECTOR_ROTATE: {
-				D3DXMATRIX temp;
-				D3DXMATRIX rotate;
-				D3DXMatrixIdentity(&rotate);
+		case WORLD_TYPE::VECTOR_SCALE: {
+			D3DXMATRIX temp;
+			D3DXMatrixIdentity(&temp);
+			D3DXMatrixScaling(&temp, item.x.value_or(1.f), item.y.value_or(1.f), item.z.value_or(1.f));
+			outputWorldMatrix *= temp;
+		} break;
 
-				D3DXMatrixRotationX(&temp, ConvertAngleToRadian(item.x.value_or(0.f)));
-				rotate *= temp;
+		case WORLD_TYPE::VECTOR_ROTATE: {
+			D3DXMATRIX temp;
+			D3DXMATRIX rotate;
+			D3DXMatrixIdentity(&rotate);
 
-				D3DXMatrixRotationY(&temp, ConvertAngleToRadian(item.y.value_or(0.f)));
-				rotate *= temp;
+			D3DXMatrixRotationX(&temp, ConvertAngleToRadian(item.x.value_or(0.f)));
+			rotate *= temp;
 
-				D3DXMatrixRotationZ(&temp, ConvertAngleToRadian(item.z.value_or(0.f)));
-				rotate *= temp;
+			D3DXMatrixRotationY(&temp, ConvertAngleToRadian(item.y.value_or(0.f)));
+			rotate *= temp;
 
-				outputWorldMatrix *= rotate;
-			} break;
+			D3DXMatrixRotationZ(&temp, ConvertAngleToRadian(item.z.value_or(0.f)));
+			rotate *= temp;
 
-			default:
-				assert(false);
-				break;
-			}
+			outputWorldMatrix *= rotate;
+		} break;
+
+		default:
+			assert(false);
+			break;
 		}
 	}
-
-	outputWorldMatrix.m[0][2] = -outputWorldMatrix.m[0][2];
-	outputWorldMatrix.m[1][2] = -outputWorldMatrix.m[1][2];
-	outputWorldMatrix.m[2][2] = -outputWorldMatrix.m[2][2];
-	outputWorldMatrix.m[3][2] = -outputWorldMatrix.m[3][2];
 
 	return outputWorldMatrix;
 }
@@ -89,7 +83,7 @@ D3DXMATRIX GetOrthoMatrix(SIZE canvas, bool convertCoord)
 }
 
 void TransposedOrthoMatrixWVP(const SIZE &canvas, bool convertCoord, const std::vector<WorldVector> *worldList,
-			float outputMatrix[4][4])
+			      float outputMatrix[4][4])
 {
 	D3DXMATRIX worldMatrix = GetWorldMatrix(worldList);
 	D3DXMATRIX orthoMatrix = GetOrthoMatrix(canvas, convertCoord);
@@ -102,7 +96,7 @@ void TransposedOrthoMatrixWVP(const SIZE &canvas, bool convertCoord, const std::
 }
 
 void TransposedPerspectiveMatrixWVP(const SIZE &canvas, const std::vector<WorldVector> *worldList, CameraDesc camera,
-				   float outputMatrix[4][4])
+				    float outputMatrix[4][4])
 {
 	D3DXMATRIX worldMatrix = GetWorldMatrix(worldList);
 
