@@ -694,12 +694,10 @@ bool DX11GraphicSession::InitSamplerState()
 
 bool DX11GraphicSession::InitRasterizerState()
 {
-	D3D11_RASTERIZER_DESC rd;
-	memset(&rd, 0, sizeof(rd));
-	rd.FrontCounterClockwise = true;
+	CD3D11_RASTERIZER_DESC rd(CD3D11_DEFAULT{});
+
+	rd.FrontCounterClockwise = false;
 	rd.FillMode = D3D11_FILL_SOLID;
-	rd.DepthClipEnable = true;
-	rd.ScissorEnable = false;
 
 	std::vector<D3D11_CULL_MODE> stateList = {
 		D3D11_CULL_MODE::D3D11_CULL_NONE,

@@ -123,8 +123,8 @@ void Csample1Dlg::initGraphic(HWND hWnd)
 
 	TextureInformation texDesc;
 	for (auto i = 0; i < IMAGE_COUNT; i++) {
-		//auto path = std::format(L"res/daylight{}.png", i);
-		auto path = std::format(L"res/test{}.jpg", i);
+		auto path = std::format(L"res/daylight{}.png", i);
+		//auto path = std::format(L"res/test{}.jpg", i);
 		auto texImg = pGraphic->OpenImageTexture(path.c_str());
 		images.push_back(texImg);
 
@@ -217,7 +217,8 @@ void Csample1Dlg::render()
 	if (pGraphic->BeginRenderWindow(display)) {
 		pGraphic->ClearBackground(&clrBlue);
 		pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_DISABLED);
-		pGraphic->SetRasterizerState(D3D11_CULL_MODE::D3D11_CULL_FRONT); // 剔除三角形其中一面的画面，剔除哪一面 也和设置的顶点顺逆时针有关
+		pGraphic->SetRasterizerState(
+			D3D11_CULL_MODE::D3D11_CULL_NONE); // 剔除三角形其中一面的画面，剔除哪一面 也和设置的顶点顺逆时针有关
 
 		RenderTexture(texCube, SIZE(rcWindow.right, rcWindow.bottom), rcWindow);
 
