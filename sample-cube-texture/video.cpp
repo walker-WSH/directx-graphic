@@ -123,7 +123,8 @@ void Csample1Dlg::initGraphic(HWND hWnd)
 
 	TextureInformation texDesc;
 	for (auto i = 0; i < IMAGE_COUNT; i++) {
-		auto path = std::format(L"res/daylight{}.png", i);
+		//auto path = std::format(L"res/daylight{}.png", i);
+		auto path = std::format(L"res/test{}.jpg", i);
 		auto texImg = pGraphic->OpenImageTexture(path.c_str());
 		images.push_back(texImg);
 
