@@ -65,6 +65,9 @@
     <ClCompile Include="helper.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="common\DDSTextureLoader.cpp">
+      <Filter>common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common\ComPtr.hpp">
@@ -123,6 +126,9 @@
     </ClInclude>
     <ClInclude Include="GraphicFormat.hpp">
       <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="common\DDSTextureLoader.h">
+      <Filter>common</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

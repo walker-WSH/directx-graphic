@@ -176,6 +176,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="common\DDSTextureLoader.cpp" />
     <ClCompile Include="common\StringConvert.cpp" />
     <ClCompile Include="common\WindowsPlatformHelper.cpp" />
     <ClCompile Include="D2DGeometry.cpp" />
@@ -196,6 +197,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common\ComPtr.hpp" />
+    <ClInclude Include="common\DDSTextureLoader.h" />
     <ClInclude Include="common\ListHelper.hpp" />
     <ClInclude Include="common\StringConvert.h" />
     <ClInclude Include="common\WindowsPlatformHelper.h" />
