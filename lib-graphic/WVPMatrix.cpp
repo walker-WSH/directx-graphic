@@ -2,6 +2,9 @@
 #include "IGraphicDefine.h"
 #include <assert.h>
 
+// use directxmath
+// https://www.cnblogs.com/X-Jun/p/9041966.html
+
 namespace graphic {
 
 XMMATRIX GetWorldMatrix(const std::vector<WorldVector> *worldList);

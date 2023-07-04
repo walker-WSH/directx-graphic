@@ -14,7 +14,7 @@
 #include <optional>
 #include <directxmath.h>
 
-using namespace DirectX;
+using namespace DirectX; // for directxmath.h
 
 #ifdef GRAPHIC_API_EXPORTS
 #define GRAPHIC_API __declspec(dllexport)

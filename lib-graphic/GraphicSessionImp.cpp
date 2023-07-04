@@ -696,7 +696,7 @@ bool DX11GraphicSession::InitRasterizerState()
 {
 	CD3D11_RASTERIZER_DESC rd(CD3D11_DEFAULT{});
 
-	rd.FrontCounterClockwise = false;
+	rd.FrontCounterClockwise = false; // 顶点顺时针为三角形的正面
 	rd.FillMode = D3D11_FILL_SOLID;
 
 	std::vector<D3D11_CULL_MODE> stateList = {
