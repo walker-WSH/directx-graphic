@@ -201,44 +201,49 @@ BOOL Csample1Dlg::OnEraseBkgnd(CDC *pDC)
 	return TRUE;
 }
 
+WorldVector getRotate(float x, float y, float z)
+{
+	WorldVector vec;
+	vec.type = WORLD_TYPE::VECTOR_ROTATE;
+	vec.x = x;
+	vec.y = y;
+	vec.z = z;
+
+	return vec;
+}
+
 void Csample1Dlg::OnBnClickedButton3()
 {
-	// TODO: 在此添加控件通知处理程序代码
-	rotateY -= 10;
+	worldList.push_back(getRotate(0, 10.f, 0));
 }
 
 void Csample1Dlg::OnBnClickedButton4()
 {
-	// TODO: 在此添加控件通知处理程序代码
-	rotateY += 10;
+	worldList.push_back(getRotate(0, -10.f, 0));
 }
 
 void Csample1Dlg::OnBnClickedButton1()
 {
-	// TODO: 在此添加控件通知处理程序代码
-	rotateX -= 10;
+	worldList.push_back(getRotate( 10.f, 0, 0));
 }
 
 void Csample1Dlg::OnBnClickedButton2()
 {
-	// TODO: 在此添加控件通知处理程序代码
-	rotateX += 10;
-}
-
-void Csample1Dlg::OnBnClickedButton7()
-{
-	// TODO: 在此添加控件通知处理程序代码
-	rotateX = rotateY = eyePosZ = 0;
+	worldList.push_back(getRotate(-10.f, 0, 0));
 }
 
 void Csample1Dlg::OnBnClickedButton5()
 {
-	// TODO: 在此添加控件通知处理程序代码
 	eyePosZ += 10;
 }
 
 void Csample1Dlg::OnBnClickedButton6()
 {
-	// TODO: 在此添加控件通知处理程序代码
 	eyePosZ -= 10;
+}
+
+void Csample1Dlg::OnBnClickedButton7()
+{
+	worldList.clear();
+	eyePosZ = 0;
 }

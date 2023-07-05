@@ -33,11 +33,9 @@ protected:
 
 	void RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest);
 
-	int rotateX = 0;
-	int rotateY = 0;
+	std::vector<WorldVector> worldList;
 	int eyePosZ = 0; // [-100, 100]
 
-	// 实现
 protected:
 	HICON m_hIcon;
 

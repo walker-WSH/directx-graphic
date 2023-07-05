@@ -172,16 +172,6 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 {
 	AUTO_GRAPHIC_CONTEXT(pGraphic);
 
-	std::vector<texture_handle> textures = {tex};
-
-	XMMATRIX matrixWVP;
-	std::vector<WorldVector> worldList;
-	WorldVector vec;
-	vec.type = WORLD_TYPE::VECTOR_ROTATE;
-	vec.x = (float)rotateX;
-	vec.y = (float)rotateY;
-	worldList.push_back(vec);
-
 	eyePosZ = max(eyePosZ, -1000);
 	eyePosZ = min(eyePosZ, 1000);
 	float eyeZ = (float)eyePosZ / 100.f;
@@ -191,10 +181,12 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 	camera.eyeUpDir = {0.0f, 1.0f, 0.0f};
 	camera.lookAt = {0.0f, 0.0f, 1.f};
 
+	XMMATRIX matrixWVP;
 	TransposedPerspectiveMatrixWVP(canvas, &worldList, camera, matrixWVP);
 
 	pGraphic->SetVSConstBuffer(shader, &matrixWVP, sizeof(matrixWVP));
 
+	std::vector<texture_handle> textures = {tex};
 	pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_ANISOTROPIC, textures,
 			      D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, indexId);
 }
