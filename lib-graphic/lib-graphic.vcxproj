@@ -96,7 +96,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)common\;$(ProjectDir)export\;$(ProjectDir);$(SolutionDir)3rd\;;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)common\;$(SolutionDir);$(ProjectDir);$(SolutionDir)3rd\;;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -118,7 +118,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)common\;$(ProjectDir)export\;$(ProjectDir);$(SolutionDir)3rd\;;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)common\;$(SolutionDir);$(ProjectDir);$(SolutionDir)3rd\;;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -140,7 +140,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)common\;$(ProjectDir)export\;$(ProjectDir);$(SolutionDir)3rd\;;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)common\;$(SolutionDir);$(ProjectDir);$(SolutionDir)3rd\;;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -162,7 +162,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <AdditionalIncludeDirectories>$(ProjectDir)common\;$(ProjectDir)export\;$(ProjectDir);$(SolutionDir)3rd\;;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)common\;$(SolutionDir);$(ProjectDir);$(SolutionDir)3rd\;;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
@@ -209,13 +209,13 @@
     <ClInclude Include="DX11SwapChain.h" />
     <ClInclude Include="DX11Texture2D.h" />
     <ClInclude Include="EnumAdapter.h" />
-    <ClInclude Include="export\IGeometryInterface.h" />
-    <ClInclude Include="export\IGraphicDefine.h" />
-    <ClInclude Include="export\IGraphicEngine.h" />
-    <ClInclude Include="export\IGraphicSession.h" />
     <ClInclude Include="GraphicBase.h" />
     <ClInclude Include="GraphicFormat.hpp" />
     <ClInclude Include="GraphicSessionImp.h" />
+    <ClInclude Include="IGeometryInterface.h" />
+    <ClInclude Include="IGraphicDefine.h" />
+    <ClInclude Include="IGraphicEngine.h" />
+    <ClInclude Include="IGraphicSession.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

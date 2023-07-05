@@ -1,6 +1,6 @@
 #pragma once
-#include <IGraphicDefine.h>
-#include <IGeometryInterface.h>
+#include <lib-graphic/IGraphicDefine.h>
+#include <lib-graphic/IGeometryInterface.h>
 
 namespace graphic {
 

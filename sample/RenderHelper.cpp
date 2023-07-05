@@ -2,7 +2,7 @@
 #include "RenderHelper.h"
 #include "VideoConvertToRGB.h"
 #include "VideoConvertToYUV.h"
-#include "IGraphicSession.h"
+#include "lib-graphic/IGraphicSession.h"
 #include <math.h>
 
 IGraphicSession *pGraphic = nullptr;

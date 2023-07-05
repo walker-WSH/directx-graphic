@@ -3,7 +3,7 @@
 #include <string>
 #include <memory>
 #include <vector>
-#include <IGraphicSession.h>
+#include <lib-graphic/IGraphicSession.h>
 
 namespace graphic {
 

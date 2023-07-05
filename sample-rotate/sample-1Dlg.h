@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "IGraphicEngine.h"
+#include "lib-graphic/IGraphicEngine.h"
 using namespace graphic;
 
 #define TIMER_RENDER 3000

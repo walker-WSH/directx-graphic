@@ -106,18 +106,6 @@
     <ClInclude Include="common\ListHelper.hpp">
       <Filter>common</Filter>
     </ClInclude>
-    <ClInclude Include="export\IGeometryInterface.h">
-      <Filter>export</Filter>
-    </ClInclude>
-    <ClInclude Include="export\IGraphicDefine.h">
-      <Filter>export</Filter>
-    </ClInclude>
-    <ClInclude Include="export\IGraphicEngine.h">
-      <Filter>export</Filter>
-    </ClInclude>
-    <ClInclude Include="export\IGraphicSession.h">
-      <Filter>export</Filter>
-    </ClInclude>
     <ClInclude Include="GraphicSessionImp.h">
       <Filter>source</Filter>
     </ClInclude>
@@ -129,6 +117,18 @@
     </ClInclude>
     <ClInclude Include="common\DDSTextureLoader.h">
       <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="IGraphicSession.h">
+      <Filter>export</Filter>
+    </ClInclude>
+    <ClInclude Include="IGeometryInterface.h">
+      <Filter>export</Filter>
+    </ClInclude>
+    <ClInclude Include="IGraphicDefine.h">
+      <Filter>export</Filter>
+    </ClInclude>
+    <ClInclude Include="IGraphicEngine.h">
+      <Filter>export</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

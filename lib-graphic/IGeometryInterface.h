@@ -1,5 +1,5 @@
 #pragma once
-#include <IGraphicDefine.h>
+#include <lib-graphic/IGraphicDefine.h>
 
 /*
 Note: If you want to use D2D based on DX11, the texutre of DX11 must be:

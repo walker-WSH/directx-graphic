@@ -2,9 +2,9 @@
 #include <assert.h>
 #include <optional>
 #include <map>
-#include "IGraphicDefine.h"
-#include "IGraphicEngine.h"
-#include "IGraphicSession.h"
+#include "lib-graphic/IGraphicDefine.h"
+#include "lib-graphic/IGraphicEngine.h"
+#include "lib-graphic/IGraphicSession.h"
 
 using namespace graphic;
 

@@ -1,5 +1,5 @@
 #pragma once
-#include "IGraphicDefine.h"
+#include "lib-graphic/IGraphicDefine.h"
 #include <DirectXMath.h>
 #include <array>
 #include <vector>

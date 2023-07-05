@@ -1,6 +1,6 @@
 #pragma once
 #include <assert.h>
-#include "IGraphicDefine.h"
+#include "lib-graphic/IGraphicDefine.h"
 #include "VideoConvertColor.h"
 
 extern "C" {

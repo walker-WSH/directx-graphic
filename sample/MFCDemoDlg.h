@@ -8,8 +8,8 @@
 #include <process.h>
 #include <functional>
 #include "AsyncTask.h"
-#include "IGraphicDefine.h"
-#include "IGraphicEngine.h"
+#include "lib-graphic/IGraphicDefine.h"
+#include "lib-graphic/IGraphicEngine.h"
 #include "CDlgBulge.h"
 #include "CDlgEditFace.h"
 #include "CDlgHighlight.h"
