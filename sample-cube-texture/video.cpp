@@ -172,17 +172,22 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 {
 	AUTO_GRAPHIC_CONTEXT(pGraphic);
 
-	eyePosZ = max(eyePosZ, -1000);
-	eyePosZ = min(eyePosZ, 1000);
+	eyePosZ = max(eyePosZ, -98);
+	eyePosZ = min(eyePosZ, 98);
 	float eyeZ = (float)eyePosZ / 100.f;
 
 	CameraDesc camera;
 	camera.eyePos = {0.0f, 0.0f, eyeZ};
 	camera.eyeUpDir = {0.0f, 1.0f, 0.0f};
-	camera.lookAt = {0.0f, 0.0f, 1.f};
+	camera.lookAt = {0.0f, 0.0f, 10.f};
+
+	std::vector<WorldVector> worldTemp = worldList;
+	if (m_bLBDown) {
+		worldTemp.push_back(get_rotate());
+	}
 
 	XMMATRIX matrixWVP;
-	TransposedPerspectiveMatrixWVP(canvas, &worldList, camera, matrixWVP);
+	TransposedPerspectiveMatrixWVP(canvas, &worldTemp, camera, matrixWVP);
 
 	pGraphic->SetVSConstBuffer(shader, &matrixWVP, sizeof(matrixWVP));
 

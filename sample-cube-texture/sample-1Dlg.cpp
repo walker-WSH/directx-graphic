@@ -74,13 +74,13 @@ BEGIN_MESSAGE_MAP(Csample1Dlg, CDialogEx)
 	ON_WM_DESTROY()
 	ON_WM_TIMER()
 	ON_WM_ERASEBKGND()
-	ON_BN_CLICKED(IDC_BUTTON4, &Csample1Dlg::OnBnClickedButton4)
-	ON_BN_CLICKED(IDC_BUTTON3, &Csample1Dlg::OnBnClickedButton3)
-	ON_BN_CLICKED(IDC_BUTTON1, &Csample1Dlg::OnBnClickedButton1)
-	ON_BN_CLICKED(IDC_BUTTON2, &Csample1Dlg::OnBnClickedButton2)
 	ON_BN_CLICKED(IDC_BUTTON7, &Csample1Dlg::OnBnClickedButton7)
 	ON_BN_CLICKED(IDC_BUTTON5, &Csample1Dlg::OnBnClickedButton5)
 	ON_BN_CLICKED(IDC_BUTTON6, &Csample1Dlg::OnBnClickedButton6)
+	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONUP()
+	ON_WM_MOUSEMOVE()
+	ON_WM_MOUSEWHEEL()
 	END_MESSAGE_MAP()
 
 
@@ -201,37 +201,6 @@ BOOL Csample1Dlg::OnEraseBkgnd(CDC *pDC)
 	return TRUE;
 }
 
-WorldVector getRotate(float x, float y, float z)
-{
-	WorldVector vec;
-	vec.type = WORLD_TYPE::VECTOR_ROTATE;
-	vec.x = x;
-	vec.y = y;
-	vec.z = z;
-
-	return vec;
-}
-
-void Csample1Dlg::OnBnClickedButton3()
-{
-	worldList.push_back(getRotate(0, 10.f, 0));
-}
-
-void Csample1Dlg::OnBnClickedButton4()
-{
-	worldList.push_back(getRotate(0, -10.f, 0));
-}
-
-void Csample1Dlg::OnBnClickedButton1()
-{
-	worldList.push_back(getRotate( 10.f, 0, 0));
-}
-
-void Csample1Dlg::OnBnClickedButton2()
-{
-	worldList.push_back(getRotate(-10.f, 0, 0));
-}
-
 void Csample1Dlg::OnBnClickedButton5()
 {
 	eyePosZ += 10;
@@ -246,4 +215,57 @@ void Csample1Dlg::OnBnClickedButton7()
 {
 	worldList.clear();
 	eyePosZ = 0;
+}
+
+WorldVector Csample1Dlg::get_rotate()
+{
+	assert(m_bLBDown);
+
+	CPoint delta = m_ptMove - m_ptDown;
+
+	WorldVector vec;
+	vec.type = WORLD_TYPE::VECTOR_ROTATE;
+	vec.x = 100.f * float(delta.y) / 500.f;
+	vec.y = 100.f * float(delta.x) / 500.f;
+
+	return vec;
+}
+
+void Csample1Dlg::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	m_bLBDown = true;
+	m_ptDown = m_ptMove = point;
+	SetCapture();
+	CDialogEx::OnLButtonDown(nFlags, point);
+}
+
+void Csample1Dlg::OnLButtonUp(UINT nFlags, CPoint point)
+{
+	worldList.push_back(get_rotate());
+	m_bLBDown = false;
+
+	ReleaseCapture();
+	CDialogEx::OnLButtonUp(nFlags, point);
+}
+
+void Csample1Dlg::OnMouseMove(UINT nFlags, CPoint point)
+{
+	if (m_bLBDown) {
+		m_ptMove = point;
+	}
+
+	CDialogEx::OnMouseMove(nFlags, point);
+}
+
+BOOL Csample1Dlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	auto step = 5;
+	if (zDelta > 0) {
+		eyePosZ += step;
+	} else {
+		eyePosZ -= step;
+	}
+
+	return CDialogEx::OnMouseWheel(nFlags, zDelta, pt);
 }

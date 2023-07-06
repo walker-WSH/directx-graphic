@@ -33,8 +33,14 @@ protected:
 
 	void RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest);
 
-	std::vector<WorldVector> worldList;
 	int eyePosZ = 0; // [-100, 100]
+
+	std::vector<WorldVector> worldList;
+	bool m_bLBDown = false;
+	CPoint m_ptDown;
+	CPoint m_ptMove;
+
+	WorldVector get_rotate();
 
 protected:
 	HICON m_hIcon;
@@ -49,11 +55,11 @@ public:
 	afx_msg void OnDestroy();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
-	afx_msg void OnBnClickedButton4();
-	afx_msg void OnBnClickedButton3();
-	afx_msg void OnBnClickedButton1();
-	afx_msg void OnBnClickedButton2();
 	afx_msg void OnBnClickedButton7();
 	afx_msg void OnBnClickedButton5();
 	afx_msg void OnBnClickedButton6();
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 };
