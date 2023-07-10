@@ -211,7 +211,14 @@ bool DX11GraphicSession::CopyTexture(texture_handle dest, texture_handle src, Te
 		return false;
 	}
 
+	srcTex->LockTexture();
+	destTex->LockTexture();
+
 	CopyTextureInner(destTex->m_pTexture2D, srcTex->m_pTexture2D, region);
+
+	srcTex->UnlockTexture();
+	destTex->UnlockTexture();
+
 	return true;
 }
 
@@ -233,7 +240,10 @@ bool DX11GraphicSession::CopyDisplay(texture_handle dest, display_handle src, Te
 		return false;
 	}
 
+	destTex->LockTexture();
 	CopyTextureInner(destTex->m_pTexture2D, srcDisplay->m_pSwapBackTexture2D, region);
+	destTex->UnlockTexture();
+
 	return true;
 }
 
