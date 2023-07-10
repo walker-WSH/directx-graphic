@@ -13,7 +13,7 @@ class DX11Texture2D : public DX11GraphicBase, public D2DRenderTarget, public ID3
 public:
 	static std::map<TEXTURE_USAGE, std::string> mapTextureUsage;
 
-	DX11Texture2D(DX11GraphicSession &graphic, const TextureInformation &info);
+	DX11Texture2D(DX11GraphicSession &graphic, const TextureInformation &info, int flags);
 	DX11Texture2D(DX11GraphicSession &graphic, HANDLE handle);
 	DX11Texture2D(DX11GraphicSession &graphic, const WCHAR *fullPath);
 
@@ -45,6 +45,7 @@ protected:
 	HANDLE m_hSharedHandle = 0;
 	std::wstring m_strImagePath = L"";
 	TextureInformation m_textureInfo = {};
+	const int m_nCreateFlags = 0;
 };
 
 } // namespace graphic

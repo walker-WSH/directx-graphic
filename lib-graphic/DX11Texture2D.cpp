@@ -13,10 +13,11 @@ std::map<TEXTURE_USAGE, std::string> DX11Texture2D::mapTextureUsage = {
 	{TEXTURE_USAGE::CUBE_TEXTURE, "cubeTexture"},
 };
 
-DX11Texture2D::DX11Texture2D(DX11GraphicSession &graphic, const TextureInformation &info)
+DX11Texture2D::DX11Texture2D(DX11GraphicSession &graphic, const TextureInformation &info, int flags)
 	: DX11GraphicBase(graphic, mapTextureUsage[info.usage].c_str()),
 	  D2DRenderTarget(graphic, false),
-	  m_textureInfo(info)
+	  m_textureInfo(info),
+	  m_nCreateFlags(flags)
 {
 	BuildGraphic();
 }
@@ -205,9 +206,20 @@ bool DX11Texture2D::InitTargetTexture(bool cube)
 		desc.MiscFlags |= D3D11_RESOURCE_MISC_TEXTURECUBE; //  cube must include
 
 	} else {
-		desc.MiscFlags |= D3D11_RESOURCE_MISC_SHARED;
-		if (DXGI_FORMAT_B8G8R8A8_UNORM == m_textureInfo.format)
-			desc.MiscFlags |= D3D11_RESOURCE_MISC_GDI_COMPATIBLE; //  cube must not include
+		if (m_nCreateFlags & CREATE_TEXTURE_FLAG_SHARED_MUTEX) {
+			desc.MiscFlags |= D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX;
+		} else {
+			desc.MiscFlags |= D3D11_RESOURCE_MISC_SHARED;
+		}
+
+		if (m_nCreateFlags & CREATE_TEXTURE_FLAG_GDI_SHARED) {
+			if (DXGI_FORMAT_B8G8R8A8_UNORM == m_textureInfo.format) {
+				desc.MiscFlags |=
+					D3D11_RESOURCE_MISC_GDI_COMPATIBLE; //  cube must not include
+			} else {
+				assert(false && "unsupported format");
+			}
+		}
 	}
 
 	HRESULT hr =

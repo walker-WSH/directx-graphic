@@ -46,7 +46,7 @@ public:
 	// texture
 	virtual texture_handle OpenSharedTexture(HANDLE hSharedHanle) = 0;
 	virtual texture_handle OpenImageTexture(const WCHAR *fullPath) = 0;
-	virtual texture_handle CreateTexture(const TextureInformation &info) = 0;
+	virtual texture_handle CreateTexture(const TextureInformation &info, int textureCreateFlags = 0) = 0;
 	virtual TextureInformation GetTextureInfo(texture_handle tex) = 0;
 	virtual HANDLE GetSharedHandle(texture_handle tex) = 0;
 	virtual bool CopyTexture(texture_handle dest, texture_handle src, TextureCopyRegion *region = nullptr) = 0;

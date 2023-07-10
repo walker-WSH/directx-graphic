@@ -154,7 +154,7 @@ texture_handle DX11GraphicSession::OpenImageTexture(const WCHAR *fullPath)
 	return tex;
 }
 
-texture_handle DX11GraphicSession::CreateTexture(const TextureInformation &info)
+texture_handle DX11GraphicSession::CreateTexture(const TextureInformation &info, int flags)
 {
 	CHECK_GRAPHIC_CONTEXT;
 
@@ -163,7 +163,7 @@ texture_handle DX11GraphicSession::CreateTexture(const TextureInformation &info)
 	assert(info.width <= m_uMaxTextureSize);
 	assert(info.height <= m_uMaxTextureSize);
 
-	DX11Texture2D *tex = new DX11Texture2D(*this, info);
+	DX11Texture2D *tex = new DX11Texture2D(*this, info, flags);
 	if (!tex->IsBuilt()) {
 		LOG_WARN("failed to create texture %X %dx%d format:%d usage:%s", tex, info.width, info.height,
 			 (int)info.format, DX11Texture2D::mapTextureUsage[info.usage].c_str());

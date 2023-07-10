@@ -42,6 +42,9 @@ using graphic_cb = long;
 
 static long INVALID_INDEX_ID = -1;
 
+static auto CREATE_TEXTURE_FLAG_SHARED_MUTEX = 1 << 0;
+static auto CREATE_TEXTURE_FLAG_GDI_SHARED = 1 << 1;
+
 enum class TEXTURE_USAGE {
 	UNKNOWN = 0,
 
