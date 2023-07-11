@@ -53,28 +53,22 @@ XMMATRIX GetOrthoMatrix(SIZE canvas, bool convertCoord)
 	return ret;
 }
 
-float ConvertAngleToRadian(float angle)
-{
-	auto radian = double(angle) * XM_PI / 180.0;
-	return (float)radian;
-}
-
 XMMATRIX GetRotateMatrix(const WorldVector &param)
 {
 	XMMATRIX rotate = XMMatrixIdentity();
 
 	if (param.x.has_value()) {
-		XMMATRIX temp = XMMatrixRotationX(ConvertAngleToRadian(param.x.value_or(0.f)));
+		XMMATRIX temp = XMMatrixRotationX(XMConvertToRadians(param.x.value_or(0.f)));
 		rotate *= temp;
 	}
 
 	if (param.y.has_value()) {
-		XMMATRIX temp = XMMatrixRotationY(ConvertAngleToRadian(param.y.value_or(0.f)));
+		XMMATRIX temp = XMMatrixRotationY(XMConvertToRadians(param.y.value_or(0.f)));
 		rotate *= temp;
 	}
 
 	if (param.z.has_value()) {
-		XMMATRIX temp = XMMatrixRotationZ(ConvertAngleToRadian(param.z.value_or(0.f)));
+		XMMATRIX temp = XMMatrixRotationZ(XMConvertToRadians(param.z.value_or(0.f)));
 		rotate *= temp;
 	}
 
