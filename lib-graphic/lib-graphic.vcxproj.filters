@@ -130,5 +130,8 @@
     <ClInclude Include="IGraphicEngine.h">
       <Filter>export</Filter>
     </ClInclude>
+    <ClInclude Include="GraphicLog.h">
+      <Filter>source</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

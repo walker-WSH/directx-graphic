@@ -215,6 +215,7 @@
     <ClInclude Include="EnumAdapter.h" />
     <ClInclude Include="GraphicBase.h" />
     <ClInclude Include="GraphicFormat.hpp" />
+    <ClInclude Include="GraphicLog.h" />
     <ClInclude Include="GraphicSessionImp.h" />
     <ClInclude Include="IGeometryInterface.h" />
     <ClInclude Include="IGraphicDefine.h" />
