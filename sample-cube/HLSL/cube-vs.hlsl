@@ -4,7 +4,7 @@ cbuffer MatrixBuffer
 	matrix wvp;
 };
 
-struct VertexInput{
+struct VertexInput {
 	float4 position : POSITION;
 	float4 color : COLOR0;
 };

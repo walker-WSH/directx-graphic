@@ -47,7 +47,8 @@ bool VideoConvertToYUV::ConvertVideo(texture_handle src_tex)
 	AUTO_GRAPHIC_CONTEXT(original_video_info.graphic);
 
 	auto texInfo = original_video_info.graphic->GetTextureInfo(src_tex);
-	if (texInfo.width != original_video_info.width || texInfo.height != original_video_info.height) {
+	if (texInfo.width != original_video_info.width ||
+	    texInfo.height != original_video_info.height) {
 		assert(false);
 		return false;
 	}
@@ -67,17 +68,20 @@ bool VideoConvertToYUV::ConvertVideo(texture_handle src_tex)
 		TransposedOrthoMatrixWVP(canvas, true, nullptr, matrixWVP);
 
 		TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT];
-		FillTextureVertex(0.f, 0.f, (float)item.width, (float)item.height, false, false, 0, 0, 0, 0,
-				  outputVertex);
+		FillTextureVertex(0.f, 0.f, (float)item.width, (float)item.height, false, false, 0,
+				  0, 0, 0, outputVertex);
 
-		original_video_info.graphic->SetVertexBuffer(item.shader, outputVertex, sizeof(outputVertex));
+		original_video_info.graphic->SetVertexBuffer(item.shader, outputVertex,
+							     sizeof(outputVertex));
 
-		original_video_info.graphic->SetVSConstBuffer(item.shader, &matrixWVP, sizeof(matrixWVP));
+		original_video_info.graphic->SetVSConstBuffer(item.shader, &matrixWVP,
+							      sizeof(matrixWVP));
 
 		original_video_info.graphic->SetPSConstBuffer(item.shader, &item.ps_const_buffer,
 							      sizeof(ShaderConstBufferForToYUV));
 
-		original_video_info.graphic->DrawTexture(item.shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_POINT, textures);
+		original_video_info.graphic->DrawTexture(
+			item.shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_POINT, textures);
 		original_video_info.graphic->EndRender();
 
 		// copy it to read video
@@ -108,8 +112,8 @@ bool VideoConvertToYUV::MapConvertedYUV(void *output_data[AV_NUM_DATA_POINTERS],
 	int index = 0;
 	for (const auto &item : video_plane_list) {
 		D3D11_MAPPED_SUBRESOURCE info;
-		if (original_video_info.graphic->MapTexture(item.read_tex, MAP_TEXTURE_FEATURE::FOR_READ_TEXTURE,
-							    &info)) {
+		if (original_video_info.graphic->MapTexture(
+			    item.read_tex, MAP_TEXTURE_FEATURE::FOR_READ_TEXTURE, &info)) {
 			maped_texs.push_back(item.read_tex);
 
 			output_data[index] = info.pData;
@@ -148,7 +152,8 @@ void VideoConvertToYUV::UnmapConvertedYUV()
 		original_video_info.graphic->UnmapTexture(item.read_tex);
 }
 
-void VideoConvertToYUV::InitMatrix(enum VIDEO_RANGE_TYPE color_range, enum VIDEO_COLOR_SPACE color_space)
+void VideoConvertToYUV::InitMatrix(enum VIDEO_RANGE_TYPE color_range,
+				   enum VIDEO_COLOR_SPACE color_space)
 {
 	std::array<float, 16> color_matrix{};
 	GetVideoMatrix(color_range, color_space, &color_matrix, nullptr, nullptr);

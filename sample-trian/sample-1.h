@@ -5,26 +5,24 @@
 #pragma once
 
 #ifndef __AFXWIN_H__
-	#error "在包含此文件之前包含 'pch.h' 以生成 PCH"
+#error "在包含此文件之前包含 'pch.h' 以生成 PCH"
 #endif
 
-#include "resource.h"		// 主符号
-
+#include "resource.h" // 主符号
 
 // Csample1App:
 // 有关此类的实现，请参阅 sample-1.cpp
 //
 
-class Csample1App : public CWinApp
-{
+class Csample1App : public CWinApp {
 public:
 	Csample1App();
 
-// 重写
+	// 重写
 public:
 	virtual BOOL InitInstance();
 
-// 实现
+	// 实现
 
 	DECLARE_MESSAGE_MAP()
 };

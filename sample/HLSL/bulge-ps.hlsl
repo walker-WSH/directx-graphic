@@ -30,7 +30,8 @@ float4 main(PixelInputType input) : SV_TARGET
 		k = clamp(k, 0.f, 1.f);
 		curCoord = circleCenter + (curCoord - circleCenter) * k;
 
-		float2 newTexUV = float2(curCoord.x / (float)texWidth, curCoord.y / (float)texHeight);
+		float2 newTexUV =
+			float2(curCoord.x / (float)texWidth, curCoord.y / (float)texHeight);
 		float4 textureColor = image0.Sample(sampleType, newTexUV);
 		return textureColor;
 

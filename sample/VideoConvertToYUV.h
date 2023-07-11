@@ -17,7 +17,8 @@ public:
 
 	bool ConvertVideo(texture_handle src_tex);
 
-	bool MapConvertedYUV(void *output_data[AV_NUM_DATA_POINTERS], uint32_t output_linesize[AV_NUM_DATA_POINTERS]);
+	bool MapConvertedYUV(void *output_data[AV_NUM_DATA_POINTERS],
+			     uint32_t output_linesize[AV_NUM_DATA_POINTERS]);
 	void UnmapConvertedYUV();
 
 private:

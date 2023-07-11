@@ -13,7 +13,9 @@ extern texture_handle texHightlight;
 
 IMPLEMENT_DYNAMIC(CDlgHighlight, CDialogEx)
 
-CDlgHighlight::CDlgHighlight(CWnd *pParent /*=nullptr*/) : CDialogEx(IDD_DIALOG_HIGHLIGHT, pParent) {}
+CDlgHighlight::CDlgHighlight(CWnd *pParent /*=nullptr*/) : CDialogEx(IDD_DIALOG_HIGHLIGHT, pParent)
+{
+}
 
 CDlgHighlight::~CDlgHighlight() {}
 
@@ -103,7 +105,8 @@ void CDlgHighlight::OnPaint()
 		pGraphic->SetDisplaySize(edit_display, rc.right, rc.right);
 
 		if (pGraphic->BeginRenderCanvas(edit_canvasTex)) {
-			RenderTexture(std::vector<texture_handle>{test_chromakey}, SIZE(info.width, info.height),
+			RenderTexture(std::vector<texture_handle>{test_chromakey},
+				      SIZE(info.width, info.height),
 				      RECT(0, 0, info.width, info.height));
 			pGraphic->EndRender();
 		}
@@ -111,7 +114,9 @@ void CDlgHighlight::OnPaint()
 
 	IGeometryInterface *d2d = pGraphic->OpenGeometryInterface(edit_canvasEffect);
 	if (d2d) {
-		d2d->DrawChromakey(edit_canvasTex, ColorRGB(77 / 255.f, 181.f / 255.f, 83.f / 255.f), redius / 10.f);
+		d2d->DrawChromakey(edit_canvasTex,
+				   ColorRGB(77 / 255.f, 181.f / 255.f, 83.f / 255.f),
+				   redius / 10.f);
 		pGraphic->CloseGeometryInterface(edit_canvasEffect);
 	}
 
@@ -123,7 +128,8 @@ void CDlgHighlight::OnPaint()
 		} else {
 			ColorRGBA bk(1, 1, 1, 1);
 			pGraphic->ClearBackground(&bk);
-			RenderTexture(std::vector<texture_handle>{edit_canvasEffect}, SIZE(rc.right, rc.bottom), rc);
+			RenderTexture(std::vector<texture_handle>{edit_canvasEffect},
+				      SIZE(rc.right, rc.bottom), rc);
 		}
 
 		pGraphic->EndRender(d2d);

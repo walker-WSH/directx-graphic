@@ -69,7 +69,8 @@ void Csample1Dlg::initGraphic(HWND hWnd)
 
 	RECT rcWindow;
 	::GetClientRect(hWnd, &rcWindow);
-	pGraphic->SetDisplaySize(display, rcWindow.right - rcWindow.left, rcWindow.bottom - rcWindow.top);
+	pGraphic->SetDisplaySize(display, rcWindow.right - rcWindow.left,
+				 rcWindow.bottom - rcWindow.top);
 }
 
 void Csample1Dlg::uninitGraphic()
@@ -147,10 +148,30 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 		TransposedPerspectiveMatrixWVP(canvas, &worldList, CameraDesc(), matrixWVP);
 
 	} else {
-		outputVertex[0] = {-(float)texInfo.width / 2, (float)texInfo.height / 2, 0, 1.f, leftUV, topUV};
-		outputVertex[1] = {(float)texInfo.width / 2, (float)texInfo.height / 2, 0, 1.f, rightUV, topUV};
-		outputVertex[2] = {-(float)texInfo.width / 2, -(float)texInfo.height / 2, 0, 1.f, leftUV, bottomUV};
-		outputVertex[3] = {(float)texInfo.width / 2, -(float)texInfo.height / 2, 0, 1.f, rightUV, bottomUV};
+		outputVertex[0] = {-(float)texInfo.width / 2,
+				   (float)texInfo.height / 2,
+				   0,
+				   1.f,
+				   leftUV,
+				   topUV};
+		outputVertex[1] = {(float)texInfo.width / 2,
+				   (float)texInfo.height / 2,
+				   0,
+				   1.f,
+				   rightUV,
+				   topUV};
+		outputVertex[2] = {-(float)texInfo.width / 2,
+				   -(float)texInfo.height / 2,
+				   0,
+				   1.f,
+				   leftUV,
+				   bottomUV};
+		outputVertex[3] = {(float)texInfo.width / 2,
+				   -(float)texInfo.height / 2,
+				   0,
+				   1.f,
+				   rightUV,
+				   bottomUV};
 
 		// should use this orthogonal project matrix for 2D render
 		TransposedOrthoMatrixWVP(canvas, false, &worldList, matrixWVP);
@@ -168,7 +189,8 @@ void Csample1Dlg::render()
 	RECT rcWindow;
 	::GetClientRect(m_hWnd, &rcWindow);
 
-	pGraphic->SetDisplaySize(display, rcWindow.right - rcWindow.left, rcWindow.bottom - rcWindow.top);
+	pGraphic->SetDisplaySize(display, rcWindow.right - rcWindow.left,
+				 rcWindow.bottom - rcWindow.top);
 
 	if (!pGraphic->IsGraphicBuilt()) {
 		if (!pGraphic->ReBuildGraphic())

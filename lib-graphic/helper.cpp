@@ -4,14 +4,14 @@
 
 namespace graphic {
 
-GRAPHIC_API bool SaveDebugBitmap(const wchar_t *path, const uint8_t *data, int linesize, int width, int height,
-				 int pixelSize,
-		     bool flip)
+GRAPHIC_API bool SaveDebugBitmap(const wchar_t *path, const uint8_t *data, int linesize, int width,
+				 int height, int pixelSize, bool flip)
 {
 	if (!path || !data)
 		return false;
 
-	HANDLE hWrite = CreateFile(path, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE hWrite = CreateFile(path, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,
+				   FILE_ATTRIBUTE_NORMAL, NULL);
 	if (!hWrite || hWrite == INVALID_HANDLE_VALUE)
 		return false;
 
@@ -39,7 +39,8 @@ GRAPHIC_API bool SaveDebugBitmap(const wchar_t *path, const uint8_t *data, int l
 
 	for (int i = 0; i < height; ++i) {
 		if (flip)
-			WriteFile(hWrite, data + (height - 1 - i) * linesize, dwStride, &dwNumOfWrite, NULL);
+			WriteFile(hWrite, data + (height - 1 - i) * linesize, dwStride,
+				  &dwNumOfWrite, NULL);
 		else
 			WriteFile(hWrite, data + i * linesize, dwStride, &dwNumOfWrite, NULL);
 	}

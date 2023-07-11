@@ -35,13 +35,17 @@ bool D2DTextFormat::BuildGraphic()
 
 	auto wf = m_graphicSession.D2DWriteFactory();
 
-	DWRITE_FONT_WEIGHT bold = m_textFormat.bold ? DWRITE_FONT_WEIGHT_DEMI_BOLD : DWRITE_FONT_WEIGHT_NORMAL;
-	DWRITE_FONT_STYLE style = m_textFormat.italic ? DWRITE_FONT_STYLE_ITALIC : DWRITE_FONT_STYLE_NORMAL;
-	auto hr = wf->CreateTextFormat(m_textFormat.fontName.c_str(), NULL, bold, style, m_textFormat.stretchH,
-				       m_textFormat.fontSize, L"", &m_pTextFormat);
+	DWRITE_FONT_WEIGHT bold = m_textFormat.bold ? DWRITE_FONT_WEIGHT_DEMI_BOLD
+						    : DWRITE_FONT_WEIGHT_NORMAL;
+	DWRITE_FONT_STYLE style = m_textFormat.italic ? DWRITE_FONT_STYLE_ITALIC
+						      : DWRITE_FONT_STYLE_NORMAL;
+	auto hr = wf->CreateTextFormat(m_textFormat.fontName.c_str(), NULL, bold, style,
+				       m_textFormat.stretchH, m_textFormat.fontSize, L"",
+				       &m_pTextFormat);
 	if (FAILED(hr)) {
 		LOG_WARN("CreateTextFormat failed with 0x%x, [%s] fontsize:%f D2DTextFormat:%X", hr,
-			 str::w2u(m_textFormat.fontName.c_str()).c_str(), m_textFormat.fontSize, this);
+			 str::w2u(m_textFormat.fontName.c_str()).c_str(), m_textFormat.fontSize,
+			 this);
 		assert(false);
 		return false;
 	}
@@ -51,7 +55,8 @@ bool D2DTextFormat::BuildGraphic()
 
 	if (m_textFormat.lineSpacing > 0.f) {
 		// according to doc of MS, value of "baseline" should be 0.8f x "lineSpacing"
-		m_pTextFormat->SetLineSpacing(DWRITE_LINE_SPACING_METHOD_UNIFORM, m_textFormat.lineSpacing,
+		m_pTextFormat->SetLineSpacing(DWRITE_LINE_SPACING_METHOD_UNIFORM,
+					      m_textFormat.lineSpacing,
 					      m_textFormat.lineSpacing * 0.8f);
 	} else {
 		m_pTextFormat->SetLineSpacing(DWRITE_LINE_SPACING_METHOD_DEFAULT, 0.f, 0.f);
@@ -77,7 +82,8 @@ bool D2DTextFormat::BuildGraphic()
 		break;
 
 	default:
-		LOG_WARN("unknown word wrap : %d, D2DTextFormat: %X", (int)m_textFormat.wordWrap, this);
+		LOG_WARN("unknown word wrap : %d, D2DTextFormat: %X", (int)m_textFormat.wordWrap,
+			 this);
 		assert(false);
 		break;
 	}

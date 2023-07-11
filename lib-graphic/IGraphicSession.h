@@ -24,7 +24,8 @@ public:
 
 	// d2d
 	virtual font_handle CreateTextFont(const TextFormatDesc &desc) = 0;
-	virtual geometry_handle CreateGeometry(const std::vector<D2D1_POINT_2F> &points, GEOMETRY_TYPE type,
+	virtual geometry_handle CreateGeometry(const std::vector<D2D1_POINT_2F> &points,
+					       GEOMETRY_TYPE type,
 					       GEOMETRY_FRONT_END_STYLE style) = 0;
 	virtual D2D1_SIZE_F CalcTextSize(const wchar_t *text, font_handle font) = 0;
 	virtual IGeometryInterface *OpenGeometryInterface(shader_handle targetTex) = 0;
@@ -41,31 +42,40 @@ public:
 	virtual void SetVertexBuffer(shader_handle hdl, const void *buffer, size_t size) = 0;
 	virtual void SetVSConstBuffer(shader_handle hdl, const void *vsBuffer, size_t vsSize) = 0;
 	virtual void SetPSConstBuffer(shader_handle hdl, const void *psBuffer, size_t psSize) = 0;
-	virtual void SetIndexBuffer(shader_handle hdl, long index_id, const void *data, size_t size) = 0;
+	virtual void SetIndexBuffer(shader_handle hdl, long index_id, const void *data,
+				    size_t size) = 0;
 
 	// texture
 	virtual texture_handle OpenSharedTexture(HANDLE hSharedHanle) = 0;
 	virtual texture_handle OpenImageTexture(const WCHAR *fullPath) = 0;
-	virtual texture_handle CreateTexture(const TextureInformation &info, int textureCreateFlags = 0) = 0;
+	virtual texture_handle CreateTexture(const TextureInformation &info,
+					     int textureCreateFlags = 0) = 0;
 	virtual TextureInformation GetTextureInfo(texture_handle tex) = 0;
 	virtual HANDLE GetSharedHandle(texture_handle tex) = 0;
-	virtual bool CopyTexture(texture_handle dest, texture_handle src, TextureCopyRegion *region = nullptr) = 0;
-	virtual bool CopyDisplay(texture_handle dest, display_handle src, TextureCopyRegion *region = nullptr) = 0;
-	virtual bool MapTexture(texture_handle tex, MAP_TEXTURE_FEATURE type, D3D11_MAPPED_SUBRESOURCE *) = 0;
+	virtual bool CopyTexture(texture_handle dest, texture_handle src,
+				 TextureCopyRegion *region = nullptr) = 0;
+	virtual bool CopyDisplay(texture_handle dest, display_handle src,
+				 TextureCopyRegion *region = nullptr) = 0;
+	virtual bool MapTexture(texture_handle tex, MAP_TEXTURE_FEATURE type,
+				D3D11_MAPPED_SUBRESOURCE *) = 0;
 	virtual void UnmapTexture(texture_handle tex) = 0;
 
 	// render
-	virtual bool BeginRenderCanvas(texture_handle hdl, IGeometryInterface **geometryInterface = nullptr) = 0;
-	virtual bool BeginRenderWindow(display_handle hdl, IGeometryInterface **geometryInterface = nullptr) = 0;
+	virtual bool BeginRenderCanvas(texture_handle hdl,
+				       IGeometryInterface **geometryInterface = nullptr) = 0;
+	virtual bool BeginRenderWindow(display_handle hdl,
+				       IGeometryInterface **geometryInterface = nullptr) = 0;
 
 	virtual void SwitchRenderTarget(bool enableSRGB) = 0;
 	virtual void ClearBackground(const ColorRGBA *bkClr) = 0;
 	virtual void SetBlendState(VIDEO_BLEND_TYPE type) = 0;
 	virtual void SetRasterizerState(D3D11_CULL_MODE mode) = 0;
-	virtual void DrawTopplogy(shader_handle hdl, D3D11_PRIMITIVE_TOPOLOGY type, long indexId = INVALID_INDEX_ID) = 0;
-	virtual void DrawTexture(shader_handle hdl, VIDEO_FILTER_TYPE flt, const std::vector<texture_handle> &,
-				 D3D11_PRIMITIVE_TOPOLOGY type = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,
-				 long indexId = INVALID_INDEX_ID) = 0;
+	virtual void DrawTopplogy(shader_handle hdl, D3D11_PRIMITIVE_TOPOLOGY type,
+				  long indexId = INVALID_INDEX_ID) = 0;
+	virtual void
+	DrawTexture(shader_handle hdl, VIDEO_FILTER_TYPE flt, const std::vector<texture_handle> &,
+		    D3D11_PRIMITIVE_TOPOLOGY type = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,
+		    long indexId = INVALID_INDEX_ID) = 0;
 
 	virtual void EndRender(IGeometryInterface *geometryInterface = nullptr) = 0;
 };

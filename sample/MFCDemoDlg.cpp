@@ -406,7 +406,8 @@ void RunChildProcess(const wchar_t *param)
 	si.dwFlags = STARTF_FORCEOFFFEEDBACK;
 	si.wShowWindow = SW_HIDE;
 
-	BOOL bOK = CreateProcessW(path, cmd, NULL, NULL, TRUE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+	BOOL bOK =
+		CreateProcessW(path, cmd, NULL, NULL, TRUE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
 	if (!bOK) {
 		assert(false);
 		return;

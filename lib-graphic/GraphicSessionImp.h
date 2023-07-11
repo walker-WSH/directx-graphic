@@ -48,8 +48,8 @@ public:
 
 	// d2d
 	virtual font_handle CreateTextFont(const TextFormatDesc &desc);
-	virtual geometry_handle CreateGeometry(const std::vector<D2D1_POINT_2F> &points, GEOMETRY_TYPE type,
-					       GEOMETRY_FRONT_END_STYLE style);
+	virtual geometry_handle CreateGeometry(const std::vector<D2D1_POINT_2F> &points,
+					       GEOMETRY_TYPE type, GEOMETRY_FRONT_END_STYLE style);
 	virtual D2D1_SIZE_F CalcTextSize(const wchar_t *text, font_handle font);
 	virtual IGeometryInterface *OpenGeometryInterface(shader_handle targetTex);
 	virtual void CloseGeometryInterface(shader_handle targetTex);
@@ -65,7 +65,8 @@ public:
 	virtual void SetVertexBuffer(shader_handle hdl, const void *buffer, size_t size);
 	virtual void SetVSConstBuffer(shader_handle hdl, const void *vsBuffer, size_t vsSize);
 	virtual void SetPSConstBuffer(shader_handle hdl, const void *psBuffer, size_t psSize);
-	virtual void SetIndexBuffer(shader_handle hdl, long index_id, const void *data, size_t size);
+	virtual void SetIndexBuffer(shader_handle hdl, long index_id, const void *data,
+				    size_t size);
 
 	// texture
 	virtual texture_handle OpenSharedTexture(HANDLE hSharedHanle);
@@ -73,22 +74,30 @@ public:
 	virtual texture_handle CreateTexture(const TextureInformation &info, int flags = 0);
 	virtual TextureInformation GetTextureInfo(texture_handle tex);
 	virtual HANDLE GetSharedHandle(texture_handle tex);
-	virtual bool CopyTexture(texture_handle dest, texture_handle src, TextureCopyRegion *region = nullptr);
-	virtual bool CopyDisplay(texture_handle dest, display_handle src, TextureCopyRegion *region = nullptr);
-	virtual bool MapTexture(texture_handle tex, MAP_TEXTURE_FEATURE type, D3D11_MAPPED_SUBRESOURCE *mapData);
+	virtual bool CopyTexture(texture_handle dest, texture_handle src,
+				 TextureCopyRegion *region = nullptr);
+	virtual bool CopyDisplay(texture_handle dest, display_handle src,
+				 TextureCopyRegion *region = nullptr);
+	virtual bool MapTexture(texture_handle tex, MAP_TEXTURE_FEATURE type,
+				D3D11_MAPPED_SUBRESOURCE *mapData);
 	virtual void UnmapTexture(texture_handle tex);
 
 	// render
-	virtual bool BeginRenderCanvas(texture_handle hdl, IGeometryInterface **geometryInterface = nullptr);
-	virtual bool BeginRenderWindow(display_handle hdl, IGeometryInterface **geometryInterface = nullptr);
+	virtual bool BeginRenderCanvas(texture_handle hdl,
+				       IGeometryInterface **geometryInterface = nullptr);
+	virtual bool BeginRenderWindow(display_handle hdl,
+				       IGeometryInterface **geometryInterface = nullptr);
 	virtual void SwitchRenderTarget(bool enableSRGB);
 	virtual void ClearBackground(const ColorRGBA *bkClr);
 	virtual void SetBlendState(VIDEO_BLEND_TYPE type);
 	virtual void SetRasterizerState(D3D11_CULL_MODE mode);
-	virtual void DrawTopplogy(shader_handle hdl, D3D11_PRIMITIVE_TOPOLOGY type, long indexId = INVALID_INDEX_ID);
-	virtual void DrawTexture(shader_handle hdl, VIDEO_FILTER_TYPE flt, const std::vector<texture_handle> &textures,
-				 D3D11_PRIMITIVE_TOPOLOGY type = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,
-				 long indexId = INVALID_INDEX_ID);
+	virtual void DrawTopplogy(shader_handle hdl, D3D11_PRIMITIVE_TOPOLOGY type,
+				  long indexId = INVALID_INDEX_ID);
+	virtual void
+	DrawTexture(shader_handle hdl, VIDEO_FILTER_TYPE flt,
+		    const std::vector<texture_handle> &textures,
+		    D3D11_PRIMITIVE_TOPOLOGY type = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,
+		    long indexId = INVALID_INDEX_ID);
 	virtual void EndRender(IGeometryInterface *geometryInterface = nullptr);
 
 	//---------------------------------------------------------------------------
@@ -110,7 +119,8 @@ public:
 	void RemoveObject(DX11GraphicBase *obj);
 	bool IsGraphicObjectAlive(IGraphicObject *obj);
 	bool IsDuringRender() { return m_bDuringRendering; }
-	void HandleDirectResult(HRESULT hr, std::source_location location = std::source_location::current());
+	void HandleDirectResult(HRESULT hr,
+				std::source_location location = std::source_location::current());
 
 	void UpdateShaderBuffer(ComPtr<ID3D11Buffer> buffer, const void *data, size_t size);
 
@@ -129,7 +139,8 @@ protected:
 
 	bool IsTextureInfoSame(const D3D11_TEXTURE2D_DESC *dest, const D3D11_TEXTURE2D_DESC *src,
 			       TextureCopyRegion *region, std::string &reason);
-	void CopyTextureInner(ComPtr<ID3D11Texture2D> dest, ComPtr<ID3D11Texture2D> src, TextureCopyRegion *region);
+	void CopyTextureInner(ComPtr<ID3D11Texture2D> dest, ComPtr<ID3D11Texture2D> src,
+			      TextureCopyRegion *region);
 
 	bool BuildD2D();
 	void ReleaseD2D();
@@ -146,7 +157,8 @@ private:
 	ComPtr<ID2D1Factory1> m_pD2DFactory = nullptr;
 	ComPtr<IDWriteFactory1> m_pDWriteFactory = nullptr;
 	ComPtr<ID2D1DeviceContext> m_pD2DDeviceContext = nullptr;
-	std::map<LINE_DASH_STYLE, D2DLineStyle *> m_mapLineStyle; // lifetime is managed in m_listObject
+	std::map<LINE_DASH_STYLE, D2DLineStyle *>
+		m_mapLineStyle; // lifetime is managed in m_listObject
 	std::map<D2D_EFFECT_TYPE, ComPtr<ID2D1Effect>> m_mapD2DEffect;
 
 	ComPtr<IDXGIAdapter1> m_pAdapter = nullptr;

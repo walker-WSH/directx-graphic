@@ -190,7 +190,8 @@ void CDlgEditFace::OnPaint()
 	}
 
 	if (pGraphic->BeginRenderCanvas(edit_bulgeTex)) {
-		RenderShiftTexture(std::vector<texture_handle>{texGrid}, SIZE(texInfo.width, texInfo.height),
+		RenderShiftTexture(std::vector<texture_handle>{texGrid},
+				   SIZE(texInfo.width, texInfo.height),
 				   RECT(0, 0, texInfo.width, texInfo.height), &moveParam);
 		pGraphic->EndRender();
 	}

@@ -11,24 +11,25 @@ GRAPHIC_API std::shared_ptr<std::vector<GraphicCardDesc>> EnumGraphicCard()
 {
 	std::shared_ptr<std::vector<GraphicCardDesc>> pReturnList(new std::vector<GraphicCardDesc>);
 
-	DXGraphic::EnumD3DAdapters(nullptr,
-				   [pReturnList](void *userdata, ComPtr<IDXGIFactory1>, ComPtr<IDXGIAdapter1> adapter,
-						 const DXGI_ADAPTER_DESC &desc, const char *version) {
-					   GraphicCardDesc info;
-					   info.graphicName = desc.Description;
-					   info.driverVersion = version;
+	DXGraphic::EnumD3DAdapters(nullptr, [pReturnList](void *userdata, ComPtr<IDXGIFactory1>,
+							  ComPtr<IDXGIAdapter1> adapter,
+							  const DXGI_ADAPTER_DESC &desc,
+							  const char *version) {
+		GraphicCardDesc info;
+		info.graphicName = desc.Description;
+		info.driverVersion = version;
 
-					   info.adapterLuid = desc.AdapterLuid;
-					   info.vendorId = desc.VendorId;
-					   info.deviceId = desc.DeviceId;
+		info.adapterLuid = desc.AdapterLuid;
+		info.vendorId = desc.VendorId;
+		info.deviceId = desc.DeviceId;
 
-					   info.dedicatedVideoMemory = desc.DedicatedVideoMemory;
-					   info.dedicatedSystemMemory = desc.DedicatedSystemMemory;
-					   info.sharedSystemMemory = desc.SharedSystemMemory;
+		info.dedicatedVideoMemory = desc.DedicatedVideoMemory;
+		info.dedicatedSystemMemory = desc.DedicatedSystemMemory;
+		info.sharedSystemMemory = desc.SharedSystemMemory;
 
-					   pReturnList->push_back(info);
-					   return true;
-				   });
+		pReturnList->push_back(info);
+		return true;
+	});
 
 	return pReturnList;
 }

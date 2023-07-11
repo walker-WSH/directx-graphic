@@ -32,8 +32,8 @@ void close_file();
 
 AVFrame *decode_frame();
 
-bool SaveBitmapFile(const wchar_t *path, const uint8_t *data, int linesize, int width, int height, int pixelSize,
-		    bool flip);
+bool SaveBitmapFile(const wchar_t *path, const uint8_t *data, int linesize, int width, int height,
+		    int pixelSize, bool flip);
 
 void SaveI420(uint32_t width, uint32_t height, void *data[AV_NUM_DATA_POINTERS],
 	      uint32_t linesize[AV_NUM_DATA_POINTERS]);

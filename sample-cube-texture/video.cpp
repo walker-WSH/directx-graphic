@@ -105,7 +105,8 @@ void initShader()
 		20, 21, 22, 22, 23, 20  // 正面(-Z面)
 	};
 
-	pGraphic->SetIndexBuffer(shader, indexId, indices, indexDesc.sizePerIndex * indexDesc.indexCount);
+	pGraphic->SetIndexBuffer(shader, indexId, indices,
+				 indexDesc.sizePerIndex * indexDesc.indexCount);
 }
 
 void Csample1Dlg::initGraphic(HWND hWnd)
@@ -155,7 +156,8 @@ void Csample1Dlg::initGraphic(HWND hWnd)
 
 	RECT rcWindow;
 	::GetClientRect(hWnd, &rcWindow);
-	pGraphic->SetDisplaySize(display, rcWindow.right - rcWindow.left, rcWindow.bottom - rcWindow.top);
+	pGraphic->SetDisplaySize(display, rcWindow.right - rcWindow.left,
+				 rcWindow.bottom - rcWindow.top);
 }
 
 void Csample1Dlg::uninitGraphic()
@@ -203,7 +205,8 @@ void Csample1Dlg::render()
 	RECT rcWindow;
 	::GetClientRect(m_hWnd, &rcWindow);
 
-	pGraphic->SetDisplaySize(display, rcWindow.right - rcWindow.left, rcWindow.bottom - rcWindow.top);
+	pGraphic->SetDisplaySize(display, rcWindow.right - rcWindow.left,
+				 rcWindow.bottom - rcWindow.top);
 
 	if (!pGraphic->IsGraphicBuilt()) {
 		if (!pGraphic->ReBuildGraphic())
@@ -214,7 +217,8 @@ void Csample1Dlg::render()
 		pGraphic->ClearBackground(&clrBlue);
 		pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_DISABLED);
 		pGraphic->SetRasterizerState(
-			D3D11_CULL_MODE::D3D11_CULL_NONE); // 剔除三角形其中一面的画面，剔除哪一面 也和设置的顶点顺逆时针有关
+			D3D11_CULL_MODE::
+				D3D11_CULL_NONE); // 剔除三角形其中一面的画面，剔除哪一面 也和设置的顶点顺逆时针有关
 
 		RenderTexture(texCube, SIZE(rcWindow.right, rcWindow.bottom), rcWindow);
 

@@ -65,7 +65,8 @@ int open_file()
 	video = input_ctx->streams[video_stream];
 
 	AVCodecParameters *const codecpar = video->codecpar;
-	const AVCodec *const decoder = avcodec_find_decoder(codecpar->codec_id); // fix discarded-qualifiers
+	const AVCodec *const decoder =
+		avcodec_find_decoder(codecpar->codec_id); // fix discarded-qualifiers
 
 	decoder_ctx = avcodec_alloc_context3(decoder);
 	avcodec_parameters_to_context(decoder_ctx, codecpar);
@@ -137,9 +138,10 @@ AVFrame *decode_frame()
 
 	if (got_frame) {
 		if (!sws_ctx) {
-			sws_ctx = sws_getContext(frame->width, frame->height, (enum AVPixelFormat)frame->format,
-						 frame->width, frame->height, TEST_RENDER_YUV_FORMAT, SWS_BICUBIC, NULL,
-						 NULL, NULL);
+			sws_ctx = sws_getContext(frame->width, frame->height,
+						 (enum AVPixelFormat)frame->format, frame->width,
+						 frame->height, TEST_RENDER_YUV_FORMAT, SWS_BICUBIC,
+						 NULL, NULL, NULL);
 			assert(sws_ctx);
 		}
 
@@ -154,8 +156,8 @@ AVFrame *decode_frame()
 			return nullptr;
 		}
 
-		sws_scale(sws_ctx, (const uint8_t *const *)frame->data, frame->linesize, 0, frame->height, output->data,
-			  output->linesize);
+		sws_scale(sws_ctx, (const uint8_t *const *)frame->data, frame->linesize, 0,
+			  frame->height, output->data, output->linesize);
 
 		av_frame_free(&frame);
 		return output;
@@ -166,13 +168,14 @@ AVFrame *decode_frame()
 	}
 }
 
-bool SaveBitmapFile(const wchar_t *path, const uint8_t *data, int linesize, int width, int height, int pixelSize,
-		    bool flip)
+bool SaveBitmapFile(const wchar_t *path, const uint8_t *data, int linesize, int width, int height,
+		    int pixelSize, bool flip)
 {
 	if (!path || !data)
 		return false;
 
-	HANDLE hWrite = CreateFile(path, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE hWrite = CreateFile(path, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,
+				   FILE_ATTRIBUTE_NORMAL, NULL);
 	if (!hWrite || hWrite == INVALID_HANDLE_VALUE)
 		return false;
 
@@ -200,16 +203,19 @@ bool SaveBitmapFile(const wchar_t *path, const uint8_t *data, int linesize, int 
 
 	for (size_t i = 0; i < (size_t)height; ++i) {
 		if (flip)
-			WriteFile(hWrite, data + ((size_t)height - 1 - i) * linesize, dwStride, &dwNumOfWrite, NULL);
+			WriteFile(hWrite, data + ((size_t)height - 1 - i) * linesize, dwStride,
+				  &dwNumOfWrite, NULL);
 		else
-			WriteFile(hWrite, data + i * (size_t)linesize, dwStride, &dwNumOfWrite, NULL);
+			WriteFile(hWrite, data + i * (size_t)linesize, dwStride, &dwNumOfWrite,
+				  NULL);
 	}
 
 	CloseHandle(hWrite);
 	return true;
 }
 
-void WritePlaneData(HANDLE hWrite, const void *data, int32_t srcLinesize, int32_t dstLinesize, int32_t counts)
+void WritePlaneData(HANDLE hWrite, const void *data, int32_t srcLinesize, int32_t dstLinesize,
+		    int32_t counts)
 {
 	DWORD dwCount = 0;
 	if (srcLinesize == dstLinesize) {
@@ -217,7 +223,8 @@ void WritePlaneData(HANDLE hWrite, const void *data, int32_t srcLinesize, int32_
 	} else {
 		assert(srcLinesize >= dstLinesize);
 		for (size_t i = 0; i < (size_t)counts; i++) {
-			WriteFile(hWrite, (uint8_t *)data + i * srcLinesize, dstLinesize, &dwCount, NULL);
+			WriteFile(hWrite, (uint8_t *)data + i * srcLinesize, dstLinesize, &dwCount,
+				  NULL);
 		}
 	}
 }
@@ -228,7 +235,8 @@ void SaveI420(uint32_t width, uint32_t height, void *data[AV_NUM_DATA_POINTERS],
 	wchar_t path[MAX_PATH];
 	swprintf_s(path, L"d:/%dx%d.yuv420p", width, height);
 
-	HANDLE hWrite = CreateFile(path, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE hWrite = CreateFile(path, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,
+				   FILE_ATTRIBUTE_NORMAL, NULL);
 	if (!hWrite || hWrite == INVALID_HANDLE_VALUE) {
 		assert(false);
 		return;
@@ -247,7 +255,8 @@ void SaveNV12(uint32_t width, uint32_t height, void *data[AV_NUM_DATA_POINTERS],
 	wchar_t path[MAX_PATH];
 	swprintf_s(path, L"d:/%dx%d.nv12", width, height);
 
-	HANDLE hWrite = CreateFile(path, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE hWrite = CreateFile(path, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,
+				   FILE_ATTRIBUTE_NORMAL, NULL);
 	if (!hWrite || hWrite == INVALID_HANDLE_VALUE) {
 		assert(false);
 		return;

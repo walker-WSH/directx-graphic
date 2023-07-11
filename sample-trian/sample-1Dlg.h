@@ -10,11 +10,10 @@ using namespace graphic;
 #define TIMER_RENDER 3000
 
 // Csample1Dlg 对话框
-class Csample1Dlg : public CDialogEx
-{
-// 构造
+class Csample1Dlg : public CDialogEx {
+	// 构造
 public:
-	Csample1Dlg(CWnd* pParent = nullptr);	// 标准构造函数
+	Csample1Dlg(CWnd *pParent = nullptr); // 标准构造函数
 	virtual ~Csample1Dlg();
 
 // 对话框数据
@@ -22,8 +21,8 @@ public:
 	enum { IDD = IDD_SAMPLE1_DIALOG };
 #endif
 
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 支持
+protected:
+	virtual void DoDataExchange(CDataExchange *pDX); // DDX/DDV 支持
 
 	void initGraphic(HWND hWnd);
 	void uninitGraphic();
@@ -32,7 +31,7 @@ public:
 	void RenderTexture(SIZE canvas, RECT drawDest);
 	float getRotate();
 
-// 实现
+	// 实现
 protected:
 	HICON m_hIcon;
 

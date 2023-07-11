@@ -7,9 +7,12 @@
 namespace graphic {
 
 std::map<TEXTURE_USAGE, std::string> DX11Texture2D::mapTextureUsage = {
-	{TEXTURE_USAGE::UNKNOWN, "unknownTextureUsage"},  {TEXTURE_USAGE::CANVAS_TARGET, "canvasTexture"},
-	{TEXTURE_USAGE::READ_TEXTURE, "readTexture"},     {TEXTURE_USAGE::WRITE_TEXTURE, "writeTexture"},
-	{TEXTURE_USAGE::SHARED_TEXTURE, "sharedTexture"},   {TEXTURE_USAGE::STATIC_IMAGE_FILE, "imageTexture"},
+	{TEXTURE_USAGE::UNKNOWN, "unknownTextureUsage"},
+	{TEXTURE_USAGE::CANVAS_TARGET, "canvasTexture"},
+	{TEXTURE_USAGE::READ_TEXTURE, "readTexture"},
+	{TEXTURE_USAGE::WRITE_TEXTURE, "writeTexture"},
+	{TEXTURE_USAGE::SHARED_TEXTURE, "sharedTexture"},
+	{TEXTURE_USAGE::STATIC_IMAGE_FILE, "imageTexture"},
 	{TEXTURE_USAGE::CUBE_TEXTURE, "cubeTexture"},
 };
 
@@ -128,11 +131,12 @@ bool DX11Texture2D::InitWriteTexture()
 	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	desc.Usage = D3D11_USAGE_DYNAMIC;
 
-	HRESULT hr =
-		DX11GraphicBase::m_graphicSession.D3DDevice()->CreateTexture2D(&desc, nullptr, m_pTexture2D.Assign());
+	HRESULT hr = DX11GraphicBase::m_graphicSession.D3DDevice()->CreateTexture2D(
+		&desc, nullptr, m_pTexture2D.Assign());
 	if (FAILED(hr)) {
-		CHECK_DX_ERROR(hr, "CreateTexture2D for write, %ux%u format:%d %X", m_textureInfo.width,
-			       m_textureInfo.height, (int)m_textureInfo.format, this);
+		CHECK_DX_ERROR(hr, "CreateTexture2D for write, %ux%u format:%d %X",
+			       m_textureInfo.width, m_textureInfo.height, (int)m_textureInfo.format,
+			       this);
 		assert(false);
 		return false;
 	}
@@ -141,7 +145,8 @@ bool DX11Texture2D::InitWriteTexture()
 		return false;
 
 	D3D11_MAPPED_SUBRESOURCE map;
-	hr = DX11GraphicBase::m_graphicSession.D3DContext()->Map(m_pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &map);
+	hr = DX11GraphicBase::m_graphicSession.D3DContext()->Map(m_pTexture2D, 0,
+								 D3D11_MAP_WRITE_DISCARD, 0, &map);
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "mapWriteTexture %X", this);
 		assert(false);
@@ -164,17 +169,19 @@ bool DX11Texture2D::InitReadTexture()
 	desc.Usage = D3D11_USAGE_STAGING;
 	desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
 
-	HRESULT hr =
-		DX11GraphicBase::m_graphicSession.D3DDevice()->CreateTexture2D(&desc, nullptr, m_pTexture2D.Assign());
+	HRESULT hr = DX11GraphicBase::m_graphicSession.D3DDevice()->CreateTexture2D(
+		&desc, nullptr, m_pTexture2D.Assign());
 	if (FAILED(hr)) {
-		CHECK_DX_ERROR(hr, "CreateTexture2D for read, %ux%u format:%d %X", m_textureInfo.width,
-			       m_textureInfo.height, (int)m_textureInfo.format, this);
+		CHECK_DX_ERROR(hr, "CreateTexture2D for read, %ux%u format:%d %X",
+			       m_textureInfo.width, m_textureInfo.height, (int)m_textureInfo.format,
+			       this);
 		assert(false);
 		return false;
 	}
 
 	D3D11_MAPPED_SUBRESOURCE map;
-	hr = DX11GraphicBase::m_graphicSession.D3DContext()->Map(m_pTexture2D, 0, D3D11_MAP_READ, 0, &map);
+	hr = DX11GraphicBase::m_graphicSession.D3DContext()->Map(m_pTexture2D, 0, D3D11_MAP_READ, 0,
+								 &map);
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "mapReadTexture");
 		assert(false);
@@ -188,7 +195,8 @@ bool DX11Texture2D::InitReadTexture()
 bool DX11Texture2D::InitTargetTexture(bool cube)
 {
 	if (cube && m_textureInfo.width != m_textureInfo.height) {
-		LOG_WARN("invalid size for cube texture: %dx%d", m_textureInfo.width, m_textureInfo.height);
+		LOG_WARN("invalid size for cube texture: %dx%d", m_textureInfo.width,
+			 m_textureInfo.height);
 		assert(false);
 	}
 
@@ -222,17 +230,18 @@ bool DX11Texture2D::InitTargetTexture(bool cube)
 		}
 	}
 
-	HRESULT hr =
-		DX11GraphicBase::m_graphicSession.D3DDevice()->CreateTexture2D(&desc, nullptr, m_pTexture2D.Assign());
+	HRESULT hr = DX11GraphicBase::m_graphicSession.D3DDevice()->CreateTexture2D(
+		&desc, nullptr, m_pTexture2D.Assign());
 	if (FAILED(hr)) {
-		CHECK_DX_ERROR(hr, "CreateTexture2D for target, %ux%u format:%d %X", m_textureInfo.width,
-			       m_textureInfo.height, (int)m_textureInfo.format, this);
+		CHECK_DX_ERROR(hr, "CreateTexture2D for target, %ux%u format:%d %X",
+			       m_textureInfo.width, m_textureInfo.height, (int)m_textureInfo.format,
+			       this);
 		assert(false);
 		return false;
 	}
 
-	hr = DX11GraphicBase::m_graphicSession.D3DDevice()->CreateRenderTargetView(m_pTexture2D, nullptr,
-										   m_pRenderTargetView.Assign());
+	hr = DX11GraphicBase::m_graphicSession.D3DDevice()->CreateRenderTargetView(
+		m_pTexture2D, nullptr, m_pRenderTargetView.Assign());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateRenderTargetView %X", this);
 		assert(false);
@@ -258,8 +267,8 @@ bool DX11Texture2D::InitTargetTexture(bool cube)
 	}
 
 	ComPtr<IDXGISurface1> sfc;
-	hr = DX11GraphicBase::m_graphicSession.D3DDevice()->OpenSharedResource(m_hSharedHandle, __uuidof(IDXGISurface1),
-									       (LPVOID *)(sfc.Assign()));
+	hr = DX11GraphicBase::m_graphicSession.D3DDevice()->OpenSharedResource(
+		m_hSharedHandle, __uuidof(IDXGISurface1), (LPVOID *)(sfc.Assign()));
 	if (SUCCEEDED(hr))
 		D2DRenderTarget::BuildD2DFromDXGI(sfc, m_textureInfo.format);
 
@@ -320,9 +329,9 @@ ComPtr<ID3D11Texture2D> DX11Texture2D::LoadImageTexture()
 	ComPtr<ID3D11Resource> pResource = nullptr;
 	ComPtr<ID3D11Texture2D> pTexture2D = nullptr;
 
-	HRESULT hr = D3DX11CreateShaderResourceViewFromFile(DX11GraphicBase::m_graphicSession.D3DDevice(),
-							    m_strImagePath.c_str(), NULL, NULL,
-							    pTextureResView.Assign(), NULL);
+	HRESULT hr = D3DX11CreateShaderResourceViewFromFile(
+		DX11GraphicBase::m_graphicSession.D3DDevice(), m_strImagePath.c_str(), NULL, NULL,
+		pTextureResView.Assign(), NULL);
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "D3DX11CreateShaderResourceViewFromFile %X", this);
 		assert(false);
@@ -385,7 +394,8 @@ bool DX11Texture2D::InitResourceView()
 	}
 
 	if (desc.MiscFlags & D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX) {
-		hr = m_pTexture2D->QueryInterface(__uuidof(IDXGIKeyedMutex), (void **)m_pKeyedMutex.Assign());
+		hr = m_pTexture2D->QueryInterface(__uuidof(IDXGIKeyedMutex),
+						  (void **)m_pKeyedMutex.Assign());
 		if (FAILED(hr)) {
 			CHECK_DX_ERROR(hr, "IDXGIKeyedMutex failed %X", this);
 			assert(false);

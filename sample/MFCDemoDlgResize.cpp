@@ -17,11 +17,14 @@ LRESULT CMFCDemoDlg::OnNcHitTest(CPoint pt)
 	// 最好将四个角的判断放在前面
 	if (pt.x <= rcWindow.left + RESIZE_REGION_SIZE && pt.y <= rcWindow.top + RESIZE_REGION_SIZE)
 		return HTTOPLEFT;
-	else if (pt.x >= rcWindow.right - RESIZE_REGION_SIZE && pt.y <= rcWindow.top + RESIZE_REGION_SIZE)
+	else if (pt.x >= rcWindow.right - RESIZE_REGION_SIZE &&
+		 pt.y <= rcWindow.top + RESIZE_REGION_SIZE)
 		return HTTOPRIGHT;
-	else if (pt.x <= rcWindow.left + RESIZE_REGION_SIZE && pt.y >= rcWindow.bottom - RESIZE_REGION_SIZE)
+	else if (pt.x <= rcWindow.left + RESIZE_REGION_SIZE &&
+		 pt.y >= rcWindow.bottom - RESIZE_REGION_SIZE)
 		return HTBOTTOMLEFT;
-	else if (pt.x >= rcWindow.right - RESIZE_REGION_SIZE && pt.y >= rcWindow.bottom - RESIZE_REGION_SIZE)
+	else if (pt.x >= rcWindow.right - RESIZE_REGION_SIZE &&
+		 pt.y >= rcWindow.bottom - RESIZE_REGION_SIZE)
 		return HTBOTTOMRIGHT;
 	else if (pt.x <= rcWindow.left + RESIZE_REGION_SIZE)
 		return HTLEFT;
@@ -63,7 +66,8 @@ void CMFCDemoDlg::OnNcLButtonDown(UINT nHitTest, CPoint point)
 		SendMessage(WM_SYSCOMMAND, SC_SIZE | WMSZ_BOTTOMLEFT, MAKELPARAM(point.x, point.y));
 		break;
 	case HTBOTTOMRIGHT:
-		SendMessage(WM_SYSCOMMAND, SC_SIZE | WMSZ_BOTTOMRIGHT, MAKELPARAM(point.x, point.y));
+		SendMessage(WM_SYSCOMMAND, SC_SIZE | WMSZ_BOTTOMRIGHT,
+			    MAKELPARAM(point.x, point.y));
 		break;
 	default:
 		__super::OnNcLButtonDown(nHitTest, point);

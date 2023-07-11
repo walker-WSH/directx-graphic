@@ -48,20 +48,24 @@ void VideoConvertToRGB::ConvertVideo(const AVFrame *src_frame, SIZE canvas, RECT
 	TransposedOrthoMatrixWVP(canvas, true, nullptr, matrixWVP);
 
 	TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT];
-	FillTextureVertex(0.f, 0.f, ps_const_buffer.width, ps_const_buffer.height, false, false, 0, 0, 0, 0,
-			  outputVertex);
+	FillTextureVertex(0.f, 0.f, ps_const_buffer.width, ps_const_buffer.height, false, false, 0,
+			  0, 0, 0, outputVertex);
 
-	original_video_info.graphic->SetVertexBuffer(convert_shader, outputVertex, sizeof(outputVertex));
-	original_video_info.graphic->SetVSConstBuffer(convert_shader, &matrixWVP, sizeof(matrixWVP));
+	original_video_info.graphic->SetVertexBuffer(convert_shader, outputVertex,
+						     sizeof(outputVertex));
+	original_video_info.graphic->SetVSConstBuffer(convert_shader, &matrixWVP,
+						      sizeof(matrixWVP));
 	original_video_info.graphic->SetPSConstBuffer(convert_shader, &ps_const_buffer,
 						      sizeof(ShaderConstBufferForToRGB));
 
-	original_video_info.graphic->DrawTexture(convert_shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_POINT, texs);
+	original_video_info.graphic->DrawTexture(convert_shader,
+						 VIDEO_FILTER_TYPE::VIDEO_FILTER_POINT, texs);
 }
 
 void VideoConvertToRGB::UpdateVideo(const AVFrame *av_frame)
 {
-	if (av_frame->width != original_video_info.width || av_frame->height != original_video_info.height ||
+	if (av_frame->width != original_video_info.width ||
+	    av_frame->height != original_video_info.height ||
 	    av_frame->format != original_video_info.format) {
 		assert(false);
 		return;
@@ -76,8 +80,8 @@ void VideoConvertToRGB::UpdateVideo(const AVFrame *av_frame)
 			break;
 
 		D3D11_MAPPED_SUBRESOURCE data;
-		if (original_video_info.graphic->MapTexture(item.texture, MAP_TEXTURE_FEATURE::FOR_WRITE_TEXTURE,
-							    &data)) {
+		if (original_video_info.graphic->MapTexture(
+			    item.texture, MAP_TEXTURE_FEATURE::FOR_WRITE_TEXTURE, &data)) {
 
 			uint32_t stride = min(data.RowPitch, (uint32_t)av_frame->linesize[i]);
 			uint8_t *src = av_frame->data[i];
@@ -110,7 +114,8 @@ std::vector<texture_handle> VideoConvertToRGB::GetTextures()
 	return ret;
 }
 
-void VideoConvertToRGB::InitMatrix(enum VIDEO_RANGE_TYPE color_range, enum VIDEO_COLOR_SPACE color_space)
+void VideoConvertToRGB::InitMatrix(enum VIDEO_RANGE_TYPE color_range,
+				   enum VIDEO_COLOR_SPACE color_space)
 {
 	std::array<float, 16> color_matrix{};
 	std::array<float, 3> color_range_min{0.0f, 0.0f, 0.0f};
@@ -120,7 +125,8 @@ void VideoConvertToRGB::InitMatrix(enum VIDEO_RANGE_TYPE color_range, enum VIDEO
 	ps_const_buffer.width = (float)original_video_info.width;
 	ps_const_buffer.height = (float)original_video_info.height;
 	ps_const_buffer.half_width = (float)original_video_info.width * 0.5f;
-	ps_const_buffer.full_range = (original_video_info.color_range == VIDEO_RANGE_TYPE::VIDEO_RANGE_FULL) ? 1 : 0;
+	ps_const_buffer.full_range =
+		(original_video_info.color_range == VIDEO_RANGE_TYPE::VIDEO_RANGE_FULL) ? 1 : 0;
 
 	ps_const_buffer.color_vec0.x = color_matrix[0];
 	ps_const_buffer.color_vec0.y = color_matrix[1];

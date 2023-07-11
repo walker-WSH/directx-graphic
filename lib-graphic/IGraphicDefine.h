@@ -24,8 +24,9 @@ using namespace DirectX; // for directxmath.h
 
 #define COMBINE2(a, b) a##b
 #define COMBINE1(a, b) COMBINE2(a, b)
-#define AUTO_GRAPHIC_CONTEXT(graphic) \
-	IAutoGraphicContext COMBINE1(autoContext, __LINE__)(graphic, std::source_location::current())
+#define AUTO_GRAPHIC_CONTEXT(graphic)                                \
+	IAutoGraphicContext COMBINE1(autoContext, __LINE__)(graphic, \
+							    std::source_location::current())
 
 namespace graphic {
 
@@ -167,7 +168,7 @@ enum class WORLD_TYPE {
 
 struct WorldVector {
 	WORLD_TYPE type = WORLD_TYPE::VECTOR_UNKNOWN;
-	
+
 	// x/y/z presents angle value when type is VECTOR_ROTATE
 	std::optional<float> x;
 	std::optional<float> y;
@@ -271,8 +272,9 @@ public:
 
 	virtual bool IsBuilt() = 0;
 
-	virtual graphic_cb RegisterCallback(std::function<void(IGraphicObject *obj)> cbRebuilt,
-					    std::function<void(IGraphicObject *obj)> cbReleased) = 0;
+	virtual graphic_cb
+	RegisterCallback(std::function<void(IGraphicObject *obj)> cbRebuilt,
+			 std::function<void(IGraphicObject *obj)> cbReleased) = 0;
 	virtual void UnregisterCallback(graphic_cb hdl) = 0;
 	virtual void ClearCallback() = 0;
 

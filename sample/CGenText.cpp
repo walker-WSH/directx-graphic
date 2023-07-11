@@ -63,7 +63,8 @@ int _GetFontStyle()
 
 STRING_FORMAT_PTR _CreateStringFormat()
 {
-	int formatFlags = Gdiplus::StringFormatFlagsNoWrap | Gdiplus::StringFormatFlagsNoFitBlackBox |
+	int formatFlags = Gdiplus::StringFormatFlagsNoWrap |
+			  Gdiplus::StringFormatFlagsNoFitBlackBox |
 			  Gdiplus::StringFormatFlagsMeasureTrailingSpaces;
 	Gdiplus::StringFormat *fmt = new Gdiplus::StringFormat(formatFlags);
 
@@ -128,7 +129,8 @@ void *CreateTextFrame()
 
 	float emSize = graphics.GetDpiX() * font.GetSize() / 72.f;
 	Gdiplus::GraphicsPath path(Gdiplus::FillModeWinding);
-	status = path.AddString(m_strText.c_str(), -1, family.get(), fontStyle, emSize, outLayout, stringformat.get());
+	status = path.AddString(m_strText.c_str(), -1, family.get(), fontStyle, emSize, outLayout,
+				stringformat.get());
 	if (status != Gdiplus::Ok) {
 		return NULL;
 	}
@@ -139,7 +141,8 @@ void *CreateTextFrame()
 
 	Gdiplus::BitmapData BitmapData;
 	Gdiplus::Rect rcImage = Gdiplus::Rect(0, 0, bmp->GetWidth(), bmp->GetHeight());
-	status = bmp->LockBits(&rcImage, Gdiplus::ImageLockModeRead, bmp->GetPixelFormat(), &BitmapData);
+	status = bmp->LockBits(&rcImage, Gdiplus::ImageLockModeRead, bmp->GetPixelFormat(),
+			       &BitmapData);
 	if (status != Gdiplus::Ok) {
 		return NULL;
 	}
@@ -159,7 +162,8 @@ void *CreateTextFrame()
 	D3D11_MAPPED_SUBRESOURCE mapdata;
 	if (pGraphic->MapTexture(texForWrite, MAP_TEXTURE_FEATURE::FOR_WRITE_TEXTURE, &mapdata)) {
 		if (BitmapData.Stride == mapdata.RowPitch) {
-			memmove(mapdata.pData, BitmapData.Scan0, (size_t)BitmapData.Stride * BitmapData.Height);
+			memmove(mapdata.pData, BitmapData.Scan0,
+				(size_t)BitmapData.Stride * BitmapData.Height);
 		} else {
 			BYTE *src = (BYTE *)BitmapData.Scan0;
 			BYTE *dest = (BYTE *)mapdata.pData;

@@ -11,7 +11,8 @@ XMMATRIX GetWorldMatrix(const std::vector<WorldVector> *worldList);
 XMMATRIX GetOrthoMatrix(SIZE canvas, bool convertCoord);
 
 GRAPHIC_API void TransposedOrthoMatrixWVP(const SIZE &canvas, bool convertCoord,
-					  const std::vector<WorldVector> *worldList, XMMATRIX &outputMatrix)
+					  const std::vector<WorldVector> *worldList,
+					  XMMATRIX &outputMatrix)
 {
 	XMMATRIX worldMatrix = GetWorldMatrix(worldList);
 	XMMATRIX orthoMatrix = GetOrthoMatrix(canvas, convertCoord);
@@ -20,13 +21,15 @@ GRAPHIC_API void TransposedOrthoMatrixWVP(const SIZE &canvas, bool convertCoord,
 	outputMatrix = XMMatrixTranspose(temp);
 }
 
-GRAPHIC_API void TransposedPerspectiveMatrixWVP(const SIZE &canvas, const std::vector<WorldVector> *worldList,
+GRAPHIC_API void TransposedPerspectiveMatrixWVP(const SIZE &canvas,
+						const std::vector<WorldVector> *worldList,
 						CameraDesc camera, XMMATRIX &outputMatrix)
 {
 	XMMATRIX worldMatrix = GetWorldMatrix(worldList);
 	XMMATRIX viewMatrix = XMMatrixLookAtLH(camera.eyePos, camera.lookAt, camera.eyeUpDir);
 	XMMATRIX projMatrix = XMMatrixPerspectiveFovLH(XM_PIDIV2, // 90 - degree
-						       (float)canvas.cx / (float)canvas.cy, 0.1f, 2000.0f);
+						       (float)canvas.cx / (float)canvas.cy, 0.1f,
+						       2000.0f);
 
 	XMMATRIX temp;
 	temp = worldMatrix * viewMatrix;
@@ -84,14 +87,14 @@ XMMATRIX GetWorldMatrix(const std::vector<WorldVector> *worldList)
 	for (const auto &item : (*worldList)) {
 		switch (item.type) {
 		case WORLD_TYPE::VECTOR_MOVE: {
-			XMMATRIX temp =
-				XMMatrixTranslation(item.x.value_or(0.f), item.y.value_or(0.f), item.z.value_or(0.f));
+			XMMATRIX temp = XMMatrixTranslation(
+				item.x.value_or(0.f), item.y.value_or(0.f), item.z.value_or(0.f));
 			outputWorldMatrix *= temp;
 		} break;
 
 		case WORLD_TYPE::VECTOR_SCALE: {
-			XMMATRIX temp =
-				XMMatrixScaling(item.x.value_or(1.f), item.y.value_or(1.f), item.z.value_or(1.f));
+			XMMATRIX temp = XMMatrixScaling(item.x.value_or(1.f), item.y.value_or(1.f),
+							item.z.value_or(1.f));
 			outputWorldMatrix *= temp;
 		} break;
 

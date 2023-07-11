@@ -20,9 +20,10 @@ static std::map<GraphicCardType, int> g_mapGraphicOrder = {
 
 namespace DXGraphic {
 // callback: request stopping enum if callback returns false
-void EnumD3DAdapters(void *userdata, std::function<bool(void *, ComPtr<IDXGIFactory1> factory, ComPtr<IDXGIAdapter1>,
-							const DXGI_ADAPTER_DESC &, const char *)>
-					     callback);
+void EnumD3DAdapters(void *userdata,
+		     std::function<bool(void *, ComPtr<IDXGIFactory1> factory, ComPtr<IDXGIAdapter1>,
+					const DXGI_ADAPTER_DESC &, const char *)>
+			     callback);
 
 std::string GetAdapterDriverVersion(ComPtr<IDXGIAdapter1> adapter);
 

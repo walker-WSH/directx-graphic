@@ -28,7 +28,8 @@ bool D2DRenderTarget::BeginDrawD2D(std::source_location location)
 	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 
 	if (m_bIsForSwapchain && !m_graphicSession.IsDuringRender()) {
-		LOG_WARN("D2D is not used during render HWND %X from %s", this, location.function_name());
+		LOG_WARN("D2D is not used during render HWND %X from %s", this,
+			 location.function_name());
 		assert(false);
 	}
 
@@ -52,7 +53,8 @@ HRESULT D2DRenderTarget::EndDrawD2D(std::source_location location)
 	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 
 	if (m_bIsForSwapchain && !m_graphicSession.IsDuringRender()) {
-		LOG_WARN("D2D is not used during render HWND %X from %s", this, location.function_name());
+		LOG_WARN("D2D is not used during render HWND %X from %s", this,
+			 location.function_name());
 		assert(false);
 	}
 
@@ -74,7 +76,8 @@ HRESULT D2DRenderTarget::EndDrawD2D(std::source_location location)
 	auto ret = m_pRenderTarget->EndDraw();
 	if (FAILED(ret)) {
 		LOG_WARN("D2D failed to end draw with %X %s ,from %s", ret,
-			 (D2DERR_RECREATE_TARGET == ret) ? ", need to recreate" : "", location.function_name());
+			 (D2DERR_RECREATE_TARGET == ret) ? ", need to recreate" : "",
+			 location.function_name());
 	}
 
 	return ret;
@@ -89,16 +92,16 @@ bool D2DRenderTarget::IsInterfaceValid()
 void D2DRenderTarget::ClearBackground(const ColorRGBA *bkClr)
 {
 	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
-	CHECK_D2D_RENDER_STATE(return );
+	CHECK_D2D_RENDER_STATE(return);
 
 	m_pRenderTarget->Clear(D2D1::ColorF(bkClr->red, bkClr->green, bkClr->blue, bkClr->alpha));
 }
 
-void D2DRenderTarget::DrawString(const wchar_t *text, size_t len, font_handle font, const ColorRGBA *color,
-				 D2D1_RECT_F *region)
+void D2DRenderTarget::DrawString(const wchar_t *text, size_t len, font_handle font,
+				 const ColorRGBA *color, D2D1_RECT_F *region)
 {
 	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
-	CHECK_D2D_RENDER_STATE(return );
+	CHECK_D2D_RENDER_STATE(return);
 	assert(text);
 
 	auto brush = GetSolidBrush(color);
@@ -117,27 +120,28 @@ void D2DRenderTarget::DrawString(const wchar_t *text, size_t len, font_handle fo
 		temp.bottom = size.height;
 	}
 
-	CHECK_GRAPHIC_OBJECT_VALID(m_graphicSession, font, D2DTextFormat, realObj, return );
+	CHECK_GRAPHIC_OBJECT_VALID(m_graphicSession, font, D2DTextFormat, realObj, return);
 	m_pRenderTarget->DrawText(text, (uint32_t)len, realObj->m_pTextFormat, temp, brush);
 }
 
-void D2DRenderTarget::DrawLine(D2D1_POINT_2F start, D2D1_POINT_2F end, const ColorRGBA *color, FLOAT strokeWidth,
-			       LINE_DASH_STYLE style)
+void D2DRenderTarget::DrawLine(D2D1_POINT_2F start, D2D1_POINT_2F end, const ColorRGBA *color,
+			       FLOAT strokeWidth, LINE_DASH_STYLE style)
 {
 	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
-	CHECK_D2D_RENDER_STATE(return );
+	CHECK_D2D_RENDER_STATE(return);
 
 	auto brush = GetSolidBrush(color);
 	if (!brush)
 		return;
 
-	m_pRenderTarget->DrawLine(start, end, brush, strokeWidth, m_graphicSession.GetLineStyle(style));
+	m_pRenderTarget->DrawLine(start, end, brush, strokeWidth,
+				  m_graphicSession.GetLineStyle(style));
 }
 
 void D2DRenderTarget::FillEllipse(const D2D1_ELLIPSE &ellipse, const ColorRGBA *color)
 {
 	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
-	CHECK_D2D_RENDER_STATE(return );
+	CHECK_D2D_RENDER_STATE(return);
 
 	auto brush = GetSolidBrush(color);
 	if (!brush)
@@ -146,36 +150,38 @@ void D2DRenderTarget::FillEllipse(const D2D1_ELLIPSE &ellipse, const ColorRGBA *
 	m_pRenderTarget->FillEllipse(ellipse, brush);
 }
 
-void D2DRenderTarget::DrawEllipse(const D2D1_ELLIPSE &ellipse, const ColorRGBA *color, FLOAT strokeWidth,
-				  LINE_DASH_STYLE style)
+void D2DRenderTarget::DrawEllipse(const D2D1_ELLIPSE &ellipse, const ColorRGBA *color,
+				  FLOAT strokeWidth, LINE_DASH_STYLE style)
 {
 	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
-	CHECK_D2D_RENDER_STATE(return );
+	CHECK_D2D_RENDER_STATE(return);
 
 	auto brush = GetSolidBrush(color);
 	if (!brush)
 		return;
 
-	m_pRenderTarget->DrawEllipse(ellipse, brush, strokeWidth, m_graphicSession.GetLineStyle(style));
+	m_pRenderTarget->DrawEllipse(ellipse, brush, strokeWidth,
+				     m_graphicSession.GetLineStyle(style));
 }
 
-void D2DRenderTarget::DrawRectangle(const D2D1_RECT_F &rect, const ColorRGBA *color, FLOAT strokeWidth,
-				    LINE_DASH_STYLE style)
+void D2DRenderTarget::DrawRectangle(const D2D1_RECT_F &rect, const ColorRGBA *color,
+				    FLOAT strokeWidth, LINE_DASH_STYLE style)
 {
 	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
-	CHECK_D2D_RENDER_STATE(return );
+	CHECK_D2D_RENDER_STATE(return);
 
 	auto brush = GetSolidBrush(color);
 	if (!brush)
 		return;
 
-	m_pRenderTarget->DrawRectangle(rect, brush, strokeWidth, m_graphicSession.GetLineStyle(style));
+	m_pRenderTarget->DrawRectangle(rect, brush, strokeWidth,
+				       m_graphicSession.GetLineStyle(style));
 }
 
 void D2DRenderTarget::FillRectangle(const D2D1_RECT_F &rect, const ColorRGBA *color)
 {
 	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
-	CHECK_D2D_RENDER_STATE(return );
+	CHECK_D2D_RENDER_STATE(return);
 
 	auto brush = GetSolidBrush(color);
 	if (!brush)
@@ -184,10 +190,11 @@ void D2DRenderTarget::FillRectangle(const D2D1_RECT_F &rect, const ColorRGBA *co
 	m_pRenderTarget->FillRectangle(rect, brush);
 }
 
-void D2DRenderTarget::FillRoundedRectangle(const D2D1_ROUNDED_RECT &roundedRect, const ColorRGBA *color)
+void D2DRenderTarget::FillRoundedRectangle(const D2D1_ROUNDED_RECT &roundedRect,
+					   const ColorRGBA *color)
 {
 	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
-	CHECK_D2D_RENDER_STATE(return );
+	CHECK_D2D_RENDER_STATE(return);
 
 	auto brush = GetSolidBrush(color);
 	if (!brush)
@@ -196,29 +203,31 @@ void D2DRenderTarget::FillRoundedRectangle(const D2D1_ROUNDED_RECT &roundedRect,
 	m_pRenderTarget->FillRoundedRectangle(roundedRect, brush);
 }
 
-void D2DRenderTarget::DrawRoundedRectangle(const D2D1_ROUNDED_RECT &roundedRect, const ColorRGBA *color,
-					   FLOAT strokeWidth, LINE_DASH_STYLE style)
+void D2DRenderTarget::DrawRoundedRectangle(const D2D1_ROUNDED_RECT &roundedRect,
+					   const ColorRGBA *color, FLOAT strokeWidth,
+					   LINE_DASH_STYLE style)
 {
 	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
-	CHECK_D2D_RENDER_STATE(return );
+	CHECK_D2D_RENDER_STATE(return);
 
 	auto brush = GetSolidBrush(color);
 	if (!brush)
 		return;
 
-	m_pRenderTarget->DrawRoundedRectangle(roundedRect, brush, strokeWidth, m_graphicSession.GetLineStyle(style));
+	m_pRenderTarget->DrawRoundedRectangle(roundedRect, brush, strokeWidth,
+					      m_graphicSession.GetLineStyle(style));
 }
 
 void D2DRenderTarget::FillGeometry(geometry_handle path, const ColorRGBA *color)
 {
 	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
-	CHECK_D2D_RENDER_STATE(return );
+	CHECK_D2D_RENDER_STATE(return);
 
 	auto brush = GetSolidBrush(color);
 	if (!brush)
 		return;
 
-	CHECK_GRAPHIC_OBJECT_VALID(m_graphicSession, path, D2DGeometry, realObj, return );
+	CHECK_GRAPHIC_OBJECT_VALID(m_graphicSession, path, D2DGeometry, realObj, return);
 	assert(realObj->m_listPoints.size() >= 3);
 	m_pRenderTarget->FillGeometry(realObj->m_pD2DGeometry, brush);
 }
@@ -227,13 +236,13 @@ void D2DRenderTarget::DrawGeometry(geometry_handle path, const ColorRGBA *color,
 				   LINE_DASH_STYLE style)
 {
 	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
-	CHECK_D2D_RENDER_STATE(return );
+	CHECK_D2D_RENDER_STATE(return);
 
 	auto brush = GetSolidBrush(color);
 	if (!brush)
 		return;
 
-	CHECK_GRAPHIC_OBJECT_VALID(m_graphicSession, path, D2DGeometry, realObj, return );
+	CHECK_GRAPHIC_OBJECT_VALID(m_graphicSession, path, D2DGeometry, realObj, return);
 	assert(realObj->m_listPoints.size() >= 2);
 	m_pRenderTarget->DrawGeometry(realObj->m_pD2DGeometry, brush, strokeWidth,
 				      m_graphicSession.GetLineStyle(style));
@@ -256,11 +265,13 @@ bool D2DRenderTarget::FlushGeometry(std::source_location location)
 	return false;
 }
 
-void D2DRenderTarget::DrawGaussianBlur(texture_handle srcCanvas, float value, const D2D1_POINT_2F *targetOffset,
-				       const D2D1_RECT_F *imageRectangle, D2D1_INTERPOLATION_MODE interpolationMode,
+void D2DRenderTarget::DrawGaussianBlur(texture_handle srcCanvas, float value,
+				       const D2D1_POINT_2F *targetOffset,
+				       const D2D1_RECT_F *imageRectangle,
+				       D2D1_INTERPOLATION_MODE interpolationMode,
 				       D2D1_COMPOSITE_MODE compositeMode)
 {
-	CHECK_GRAPHIC_OBJECT_VALID(m_graphicSession, srcCanvas, DX11Texture2D, srcTex, return );
+	CHECK_GRAPHIC_OBJECT_VALID(m_graphicSession, srcCanvas, DX11Texture2D, srcTex, return);
 
 	if (!IsInterfaceValid() || !srcTex->IsInterfaceValid()) {
 		assert(false);
@@ -277,14 +288,16 @@ void D2DRenderTarget::DrawGaussianBlur(texture_handle srcCanvas, float value, co
 
 		pEffect->SetInput(0, srcTex->m_pD2DBitmapOnDXGI);
 		pEffect->SetValue(D2D1_GAUSSIANBLUR_PROP_STANDARD_DEVIATION, value);
-		pEffect->SetValue(D2D1_GAUSSIANBLUR_PROP_OPTIMIZATION, D2D1_GAUSSIANBLUR_OPTIMIZATION_SPEED);
+		pEffect->SetValue(D2D1_GAUSSIANBLUR_PROP_OPTIMIZATION,
+				  D2D1_GAUSSIANBLUR_OPTIMIZATION_SPEED);
 
 		pD2DContext->SetTarget(m_pD2DBitmapOnDXGI);
 
 		pD2DContext->BeginDraw();
 		pD2DContext->SetTransform(D2D1::Matrix3x2F::Identity());
 		pD2DContext->Clear(clrBk);
-		pD2DContext->DrawImage(pEffect, targetOffset, imageRectangle, interpolationMode, compositeMode);
+		pD2DContext->DrawImage(pEffect, targetOffset, imageRectangle, interpolationMode,
+				       compositeMode);
 		auto hr = pD2DContext->EndDraw();
 
 		// Here we must reset its parameters, otherwise swapchain will fail to resize.
@@ -297,10 +310,12 @@ void D2DRenderTarget::DrawGaussianBlur(texture_handle srcCanvas, float value, co
 }
 
 void D2DRenderTarget::DrawDirectBlur(texture_handle srcCanvas, float value, float angle,
-				     const D2D1_POINT_2F *targetOffset, const D2D1_RECT_F *imageRectangle,
-				     D2D1_INTERPOLATION_MODE interpolationMode, D2D1_COMPOSITE_MODE compositeMode)
+				     const D2D1_POINT_2F *targetOffset,
+				     const D2D1_RECT_F *imageRectangle,
+				     D2D1_INTERPOLATION_MODE interpolationMode,
+				     D2D1_COMPOSITE_MODE compositeMode)
 {
-	CHECK_GRAPHIC_OBJECT_VALID(m_graphicSession, srcCanvas, DX11Texture2D, srcTex, return );
+	CHECK_GRAPHIC_OBJECT_VALID(m_graphicSession, srcCanvas, DX11Texture2D, srcTex, return);
 
 	if (!IsInterfaceValid() || !srcTex->IsInterfaceValid()) {
 		assert(false);
@@ -318,14 +333,16 @@ void D2DRenderTarget::DrawDirectBlur(texture_handle srcCanvas, float value, floa
 		pEffect->SetInput(0, srcTex->m_pD2DBitmapOnDXGI);
 		pEffect->SetValue(D2D1_DIRECTIONALBLUR_PROP_STANDARD_DEVIATION, value);
 		pEffect->SetValue(D2D1_DIRECTIONALBLUR_PROP_ANGLE, angle);
-		pEffect->SetValue(D2D1_DIRECTIONALBLUR_PROP_OPTIMIZATION, D2D1_DIRECTIONALBLUR_OPTIMIZATION_SPEED);
+		pEffect->SetValue(D2D1_DIRECTIONALBLUR_PROP_OPTIMIZATION,
+				  D2D1_DIRECTIONALBLUR_OPTIMIZATION_SPEED);
 
 		pD2DContext->SetTarget(m_pD2DBitmapOnDXGI);
 
 		pD2DContext->BeginDraw();
 		pD2DContext->SetTransform(D2D1::Matrix3x2F::Identity());
 		pD2DContext->Clear(clrBk);
-		pD2DContext->DrawImage(pEffect, targetOffset, imageRectangle, interpolationMode, compositeMode);
+		pD2DContext->DrawImage(pEffect, targetOffset, imageRectangle, interpolationMode,
+				       compositeMode);
 		auto hr = pD2DContext->EndDraw();
 
 		// Here we must reset its parameters, otherwise swapchain will fail to resize.
@@ -337,11 +354,13 @@ void D2DRenderTarget::DrawDirectBlur(texture_handle srcCanvas, float value, floa
 	}
 }
 
-void D2DRenderTarget::DrawHighlight(texture_handle srcCanvas, float highlight, float shadows, float clarity,
-				    float radius, const D2D1_POINT_2F *targetOffset, const D2D1_RECT_F *imageRectangle,
-				    D2D1_INTERPOLATION_MODE interpolationMode, D2D1_COMPOSITE_MODE compositeMode)
+void D2DRenderTarget::DrawHighlight(texture_handle srcCanvas, float highlight, float shadows,
+				    float clarity, float radius, const D2D1_POINT_2F *targetOffset,
+				    const D2D1_RECT_F *imageRectangle,
+				    D2D1_INTERPOLATION_MODE interpolationMode,
+				    D2D1_COMPOSITE_MODE compositeMode)
 {
-	CHECK_GRAPHIC_OBJECT_VALID(m_graphicSession, srcCanvas, DX11Texture2D, srcTex, return );
+	CHECK_GRAPHIC_OBJECT_VALID(m_graphicSession, srcCanvas, DX11Texture2D, srcTex, return);
 
 	if (!IsInterfaceValid() || !srcTex->IsInterfaceValid()) {
 		assert(false);
@@ -367,7 +386,8 @@ void D2DRenderTarget::DrawHighlight(texture_handle srcCanvas, float highlight, f
 		pD2DContext->BeginDraw();
 		pD2DContext->SetTransform(D2D1::Matrix3x2F::Identity());
 		pD2DContext->Clear(clrBk);
-		pD2DContext->DrawImage(pEffect, targetOffset, imageRectangle, interpolationMode, compositeMode);
+		pD2DContext->DrawImage(pEffect, targetOffset, imageRectangle, interpolationMode,
+				       compositeMode);
 		auto hr = pD2DContext->EndDraw();
 
 		// Here we must reset its parameters, otherwise swapchain will fail to resize.
@@ -379,10 +399,10 @@ void D2DRenderTarget::DrawHighlight(texture_handle srcCanvas, float highlight, f
 	}
 }
 
-void D2DRenderTarget::DrawChromakey(texture_handle srcCanvas, ColorRGB clrKey, float tolerance, bool invertAlpha,
-				    bool smooth)
+void D2DRenderTarget::DrawChromakey(texture_handle srcCanvas, ColorRGB clrKey, float tolerance,
+				    bool invertAlpha, bool smooth)
 {
-	CHECK_GRAPHIC_OBJECT_VALID(m_graphicSession, srcCanvas, DX11Texture2D, srcTex, return );
+	CHECK_GRAPHIC_OBJECT_VALID(m_graphicSession, srcCanvas, DX11Texture2D, srcTex, return);
 
 	if (!IsInterfaceValid() || !srcTex->IsInterfaceValid()) {
 		assert(false);
@@ -454,9 +474,11 @@ bool D2DRenderTarget::BuildD2DFromDXGI(ComPtr<IDXGISurface1> sfc, DXGI_FORMAT fo
 	}
 
 	D2D1_BITMAP_PROPERTIES1 prt = D2D1::BitmapProperties1(options, pixelFormat);
-	auto hr = m_graphicSession.D2DDeviceContext()->CreateBitmapFromDxgiSurface(sfc, &prt, &m_pD2DBitmapOnDXGI);
+	auto hr = m_graphicSession.D2DDeviceContext()->CreateBitmapFromDxgiSurface(
+		sfc, &prt, &m_pD2DBitmapOnDXGI);
 	if (FAILED(hr)) {
-		LOG_WARN("CreateBitmapFromDxgiSurface failed with 0x%x, format:%d, %X", hr, format, this);
+		LOG_WARN("CreateBitmapFromDxgiSurface failed with 0x%x, format:%d, %X", hr, format,
+			 this);
 		assert(false);
 		return false;
 	}
@@ -465,11 +487,13 @@ bool D2DRenderTarget::BuildD2DFromDXGI(ComPtr<IDXGISurface1> sfc, DXGI_FORMAT fo
 	* Create D2D render target
 	--------------------------------------------------------------------------------------------*/
 	auto dsProps = D2D1::RenderTargetProperties(
-		D2D1_RENDER_TARGET_TYPE_DEFAULT, D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED));
+		D2D1_RENDER_TARGET_TYPE_DEFAULT,
+		D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED));
 	hr = m_graphicSession.D2DFactory()->CreateDxgiSurfaceRenderTarget(sfc.Get(), &dsProps,
 									  m_pRenderTarget.Assign());
 	if (FAILED(hr)) {
-		LOG_WARN("CreateDxgiSurfaceRenderTarget failed with 0x%x, D2DRenderTarget: %X", hr, this);
+		LOG_WARN("CreateDxgiSurfaceRenderTarget failed with 0x%x, D2DRenderTarget: %X", hr,
+			 this);
 		assert(false);
 		return false;
 	}

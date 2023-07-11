@@ -54,7 +54,8 @@ void DX11SwapChain::ReleaseGraphic(bool isForRebuild)
 bool DX11SwapChain::IsBuilt()
 {
 	CHECK_GRAPHIC_CONTEXT_EX(DX11GraphicBase::m_graphicSession);
-	return m_pSwapChain && m_pSwapBackTexture2D && m_pRenderTargetView && m_pRenderTargetViewLinear;
+	return m_pSwapChain && m_pSwapBackTexture2D && m_pRenderTargetView &&
+	       m_pRenderTargetViewLinear;
 }
 
 void DX11SwapChain::SetDisplaySize(uint32_t width, uint32_t height)
@@ -74,14 +75,16 @@ HRESULT DX11SwapChain::TestResizeSwapChain()
 		D2DRenderTarget::ReleaseD2D();
 
 		ID3D11RenderTargetView *pRenderView = NULL;
-		DX11GraphicBase::m_graphicSession.D3DContext()->OMSetRenderTargets(1, &pRenderView, NULL);
+		DX11GraphicBase::m_graphicSession.D3DContext()->OMSetRenderTargets(1, &pRenderView,
+										   NULL);
 
 		m_pRenderTargetViewLinear = nullptr;
 		m_pRenderTargetView = nullptr;
 		m_pSwapBackTexture2D = nullptr;
 		ZeroMemory(&m_descTexture, sizeof(D3D11_TEXTURE2D_DESC));
 
-		HRESULT hr = m_pSwapChain->ResizeBuffers(1, m_dwWidth, m_dwHeight, m_dxgiFormatTexture, 0);
+		HRESULT hr = m_pSwapChain->ResizeBuffers(1, m_dwWidth, m_dwHeight,
+							 m_dxgiFormatTexture, 0);
 		if (FAILED(hr)) {
 			CHECK_DX_ERROR(hr, "ResizeBuffers %ux%u %X", m_dwWidth, m_dwHeight, this);
 			assert(false && "m_pSwapChain->ResizeBuffers failed");
@@ -126,8 +129,9 @@ HRESULT DX11SwapChain::InitSwapChain()
 
 HRESULT DX11SwapChain::CreateTargetView()
 {
-	HRESULT hr = m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
-					     reinterpret_cast<void **>(m_pSwapBackTexture2D.Assign()));
+	HRESULT hr =
+		m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
+					reinterpret_cast<void **>(m_pSwapBackTexture2D.Assign()));
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "m_pSwapChain->GetBuffer %X", this);
 		assert(false);
@@ -136,7 +140,8 @@ HRESULT DX11SwapChain::CreateTargetView()
 	m_pSwapBackTexture2D->GetDesc(&m_descTexture);
 
 	ComPtr<IDXGISurface1> sfc;
-	hr = m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface1), reinterpret_cast<void **>(sfc.Assign()));
+	hr = m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface1),
+				     reinterpret_cast<void **>(sfc.Assign()));
 	assert(SUCCEEDED(hr));
 	if (SUCCEEDED(hr)) {
 		// Here we ignore the result of building shared D2D, because we can not ensure it is valid on different format.
@@ -149,8 +154,8 @@ HRESULT DX11SwapChain::CreateTargetView()
 	rtv.Texture2D.MipSlice = 0;
 
 	rtv.Format = m_dxgiFormatView;
-	hr = DX11GraphicBase::m_graphicSession.D3DDevice()->CreateRenderTargetView(m_pSwapBackTexture2D, &rtv,
-										   m_pRenderTargetView.Assign());
+	hr = DX11GraphicBase::m_graphicSession.D3DDevice()->CreateRenderTargetView(
+		m_pSwapBackTexture2D, &rtv, m_pRenderTargetView.Assign());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateRenderTargetView %X", this);
 		assert(false);
@@ -158,8 +163,8 @@ HRESULT DX11SwapChain::CreateTargetView()
 	}
 
 	rtv.Format = m_dxgiFormatViewLinear;
-	hr = DX11GraphicBase::m_graphicSession.D3DDevice()->CreateRenderTargetView(m_pSwapBackTexture2D, &rtv,
-										   m_pRenderTargetViewLinear.Assign());
+	hr = DX11GraphicBase::m_graphicSession.D3DDevice()->CreateRenderTargetView(
+		m_pSwapBackTexture2D, &rtv, m_pRenderTargetViewLinear.Assign());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateRenderTargetView SRGB %X", this);
 		assert(false);

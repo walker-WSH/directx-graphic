@@ -225,8 +225,8 @@ void InitShader()
 	}
 }
 
-void FillTextureVertex(float left, float top, float right, float bottom, bool flipH, bool flipV, float cropLeft,
-		       float cropTop, float cropRight, float cropBtm,
+void FillTextureVertex(float left, float top, float right, float bottom, bool flipH, bool flipV,
+		       float cropLeft, float cropTop, float cropRight, float cropBtm,
 		       TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT])
 {
 	// 纹理采样的区域
@@ -269,8 +269,8 @@ VIDEO_SHADER_TYPE getDefaultTextureShader()
 	}
 }
 
-void RenderTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest, VIDEO_SHADER_TYPE shaderType,
-		   const MosaicParam *mosaic)
+void RenderTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest,
+		   VIDEO_SHADER_TYPE shaderType, const MosaicParam *mosaic)
 {
 	AUTO_GRAPHIC_CONTEXT(pGraphic);
 
@@ -340,8 +340,9 @@ void RenderTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest,
 	TransposedOrthoMatrixWVP(canvas, true, nullptr, matrixWVP);
 
 	TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT];
-	FillTextureVertex((float)realDrawDest.left, (float)realDrawDest.top, (float)realDrawDest.right,
-			  (float)realDrawDest.bottom, false, false, cropL, cropT, cropR, cropB, outputVertex);
+	FillTextureVertex((float)realDrawDest.left, (float)realDrawDest.top,
+			  (float)realDrawDest.right, (float)realDrawDest.bottom, false, false,
+			  cropL, cropT, cropR, cropB, outputVertex);
 
 	pGraphic->SetVertexBuffer(shader, outputVertex, sizeof(outputVertex));
 	pGraphic->SetVSConstBuffer(shader, &matrixWVP, sizeof(matrixWVP));
@@ -358,13 +359,14 @@ void RenderTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest,
 }
 
 extern bool g_bReduce;
-void RenderBulgeTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest, const BulgeParam *psParam)
+void RenderBulgeTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest,
+			const BulgeParam *psParam)
 {
 	AUTO_GRAPHIC_CONTEXT(pGraphic);
 
 	TextureInformation texInfo = pGraphic->GetTextureInfo(texs.at(0));
-	shader_handle shader =
-		shaders[g_bReduce ? VIDEO_SHADER_TYPE::SHADER_TEXTURE_REDUCE : VIDEO_SHADER_TYPE::SHADER_TEXTURE_BULGE];
+	shader_handle shader = shaders[g_bReduce ? VIDEO_SHADER_TYPE::SHADER_TEXTURE_REDUCE
+						 : VIDEO_SHADER_TYPE::SHADER_TEXTURE_BULGE];
 
 	RECT realDrawDest = drawDest;
 
@@ -372,8 +374,9 @@ void RenderBulgeTexture(std::vector<texture_handle> texs, SIZE canvas, RECT draw
 	TransposedOrthoMatrixWVP(canvas, true, nullptr, matrixWVP);
 
 	TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT];
-	FillTextureVertex((float)realDrawDest.left, (float)realDrawDest.top, (float)realDrawDest.right,
-			  (float)realDrawDest.bottom, false, false, 0.f, 0.f, 0.f, 0.f, outputVertex);
+	FillTextureVertex((float)realDrawDest.left, (float)realDrawDest.top,
+			  (float)realDrawDest.right, (float)realDrawDest.bottom, false, false, 0.f,
+			  0.f, 0.f, 0.f, outputVertex);
 
 	pGraphic->SetVertexBuffer(shader, outputVertex, sizeof(outputVertex));
 	pGraphic->SetVSConstBuffer(shader, &matrixWVP, sizeof(matrixWVP));
@@ -382,7 +385,8 @@ void RenderBulgeTexture(std::vector<texture_handle> texs, SIZE canvas, RECT draw
 	pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, texs);
 }
 
-void RenderShiftTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest, const ShiftParam *psParam)
+void RenderShiftTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest,
+			const ShiftParam *psParam)
 {
 	AUTO_GRAPHIC_CONTEXT(pGraphic);
 
@@ -395,8 +399,9 @@ void RenderShiftTexture(std::vector<texture_handle> texs, SIZE canvas, RECT draw
 	TransposedOrthoMatrixWVP(canvas, true, nullptr, matrixWVP);
 
 	TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT];
-	FillTextureVertex((float)realDrawDest.left, (float)realDrawDest.top, (float)realDrawDest.right,
-			  (float)realDrawDest.bottom, false, false, 0.f, 0.f, 0.f, 0.f, outputVertex);
+	FillTextureVertex((float)realDrawDest.left, (float)realDrawDest.top,
+			  (float)realDrawDest.right, (float)realDrawDest.bottom, false, false, 0.f,
+			  0.f, 0.f, 0.f, outputVertex);
 
 	pGraphic->SetVertexBuffer(shader, outputVertex, sizeof(outputVertex));
 	pGraphic->SetVSConstBuffer(shader, &matrixWVP, sizeof(matrixWVP));
@@ -433,8 +438,9 @@ texture_handle getRotatedTexture(texture_handle tex, texture_handle &canvasTex)
 		SIZE canvas(canvasInfo.width, canvasInfo.height);
 
 		TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT];
-		FillTextureVertex(-(float)oldInfo.width / 2, (float)oldInfo.height / 2, (float)oldInfo.width / 2,
-				  -(float)oldInfo.height / 2, false, false, 0.f, 0.f, 0.f, 0.f, outputVertex);
+		FillTextureVertex(-(float)oldInfo.width / 2, (float)oldInfo.height / 2,
+				  (float)oldInfo.width / 2, -(float)oldInfo.height / 2, false,
+				  false, 0.f, 0.f, 0.f, 0.f, outputVertex);
 
 		const auto temp = (float)(GetTickCount64() % g_rotatePeriod);
 
@@ -450,7 +456,8 @@ texture_handle getRotatedTexture(texture_handle tex, texture_handle &canvasTex)
 
 		pGraphic->SetVertexBuffer(shader, outputVertex, sizeof(outputVertex));
 		pGraphic->SetVSConstBuffer(shader, &matrixWVP, sizeof(matrixWVP));
-		pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, std::vector{tex});
+		pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR,
+				      std::vector{tex});
 
 		pGraphic->EndRender();
 	}
@@ -467,8 +474,8 @@ void FillRectangleByDX11(SIZE canvas, RECT drawDest, ColorRGBA clr)
 	TransposedOrthoMatrixWVP(canvas, true, nullptr, matrixWVP);
 
 	ColorVertexDesc outputVertex[TEXTURE_VERTEX_COUNT];
-	FillColorVertex((float)drawDest.left, (float)drawDest.top, (float)drawDest.right, (float)drawDest.bottom,
-			outputVertex);
+	FillColorVertex((float)drawDest.left, (float)drawDest.top, (float)drawDest.right,
+			(float)drawDest.bottom, outputVertex);
 
 	pGraphic->SetVertexBuffer(shaders[type], outputVertex, sizeof(outputVertex));
 	pGraphic->SetVSConstBuffer(shaders[type], &matrixWVP, sizeof(matrixWVP));

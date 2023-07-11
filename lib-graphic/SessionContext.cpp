@@ -19,7 +19,8 @@ private:
 	DX11GraphicSession *m_pGraphic = nullptr;
 };
 
-IAutoGraphicContext::IAutoGraphicContext(IGraphicSession *graphic, const std::source_location &location)
+IAutoGraphicContext::IAutoGraphicContext(IGraphicSession *graphic,
+					 const std::source_location &location)
 {
 	self = new impl(graphic, location);
 }

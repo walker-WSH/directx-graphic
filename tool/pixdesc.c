@@ -31,8 +31,9 @@
 #include "intreadwrite.h"
 #include "version.h"
 
-void av_read_image_line(uint16_t *dst, const uint8_t *data[4], const int linesize[4], const AVPixFmtDescriptor *desc,
-			int x, int y, int c, int w, int read_pal_component)
+void av_read_image_line(uint16_t *dst, const uint8_t *data[4], const int linesize[4],
+			const AVPixFmtDescriptor *desc, int x, int y, int c, int w,
+			int read_pal_component)
 {
 	AVComponentDescriptor comp = desc->comp[c];
 	int plane = comp.plane;
@@ -64,7 +65,9 @@ void av_read_image_line(uint16_t *dst, const uint8_t *data[4], const int linesiz
 			p += !!(flags & AV_PIX_FMT_FLAG_BE);
 
 		while (w--) {
-			int val = is_8bit ? *p : flags & AV_PIX_FMT_FLAG_BE ? AV_RB16(p) : AV_RL16(p);
+			int val = is_8bit                      ? *p
+				  : flags & AV_PIX_FMT_FLAG_BE ? AV_RB16(p)
+							       : AV_RL16(p);
 			val = (val >> shift) & mask;
 			if (read_pal_component)
 				val = data[1][4 * val + c];
@@ -74,8 +77,8 @@ void av_read_image_line(uint16_t *dst, const uint8_t *data[4], const int linesiz
 	}
 }
 
-void av_write_image_line(const uint16_t *src, uint8_t *data[4], const int linesize[4], const AVPixFmtDescriptor *desc,
-			 int x, int y, int c, int w)
+void av_write_image_line(const uint16_t *src, uint8_t *data[4], const int linesize[4],
+			 const AVPixFmtDescriptor *desc, int x, int y, int c, int w)
 {
 	AVComponentDescriptor comp = desc->comp[c];
 	int plane = comp.plane;
@@ -2241,10 +2244,12 @@ static const char *const color_range_names[] = {
 };
 
 static const char *const color_primaries_names[AVCOL_PRI_NB] = {
-	[AVCOL_PRI_RESERVED0] = "reserved",  [AVCOL_PRI_BT709] = "bt709",         [AVCOL_PRI_UNSPECIFIED] = "unknown",
-	[AVCOL_PRI_RESERVED] = "reserved",   [AVCOL_PRI_BT470M] = "bt470m",       [AVCOL_PRI_BT470BG] = "bt470bg",
-	[AVCOL_PRI_SMPTE170M] = "smpte170m", [AVCOL_PRI_SMPTE240M] = "smpte240m", [AVCOL_PRI_FILM] = "film",
-	[AVCOL_PRI_BT2020] = "bt2020",       [AVCOL_PRI_SMPTE428] = "smpte428",   [AVCOL_PRI_SMPTE431] = "smpte431",
+	[AVCOL_PRI_RESERVED0] = "reserved",  [AVCOL_PRI_BT709] = "bt709",
+	[AVCOL_PRI_UNSPECIFIED] = "unknown", [AVCOL_PRI_RESERVED] = "reserved",
+	[AVCOL_PRI_BT470M] = "bt470m",       [AVCOL_PRI_BT470BG] = "bt470bg",
+	[AVCOL_PRI_SMPTE170M] = "smpte170m", [AVCOL_PRI_SMPTE240M] = "smpte240m",
+	[AVCOL_PRI_FILM] = "film",           [AVCOL_PRI_BT2020] = "bt2020",
+	[AVCOL_PRI_SMPTE428] = "smpte428",   [AVCOL_PRI_SMPTE431] = "smpte431",
 	[AVCOL_PRI_SMPTE432] = "smpte432",   [AVCOL_PRI_JEDEC_P22] = "jedec-p22",
 };
 
@@ -2417,7 +2422,8 @@ const AVPixFmtDescriptor *av_pix_fmt_desc_next(const AVPixFmtDescriptor *prev)
 
 enum AVPixelFormat av_pix_fmt_desc_get_id(const AVPixFmtDescriptor *desc)
 {
-	if (desc < av_pix_fmt_descriptors || desc >= av_pix_fmt_descriptors + FF_ARRAY_ELEMS(av_pix_fmt_descriptors))
+	if (desc < av_pix_fmt_descriptors ||
+	    desc >= av_pix_fmt_descriptors + FF_ARRAY_ELEMS(av_pix_fmt_descriptors))
 		return AV_PIX_FMT_NONE;
 
 	return desc - av_pix_fmt_descriptors;
@@ -2460,20 +2466,23 @@ void ff_check_pixfmt_descriptors(void)
 		int linesize[4] = {0, 0, 0, 0};
 		uint16_t tmp[2];
 
-		if (!d->name && !d->nb_components && !d->log2_chroma_w && !d->log2_chroma_h && !d->flags)
+		if (!d->name && !d->nb_components && !d->log2_chroma_w && !d->log2_chroma_h &&
+		    !d->flags)
 			continue;
 		//         av_log(NULL, AV_LOG_DEBUG, "Checking: %s\n", d->name);
 		av_assert0(d->log2_chroma_w <= 3);
 		av_assert0(d->log2_chroma_h <= 3);
 		av_assert0(d->nb_components <= 4);
 		av_assert0(d->name && d->name[0]);
-		av_assert0((d->nb_components == 4 || d->nb_components == 2) == !!(d->flags & AV_PIX_FMT_FLAG_ALPHA));
+		av_assert0((d->nb_components == 4 || d->nb_components == 2) ==
+			   !!(d->flags & AV_PIX_FMT_FLAG_ALPHA));
 		av_assert2(av_get_pix_fmt(d->name) == i);
 
 		for (j = 0; j < FF_ARRAY_ELEMS(d->comp); j++) {
 			const AVComponentDescriptor *c = &d->comp[j];
 			if (j >= d->nb_components) {
-				av_assert0(!c->plane && !c->step && !c->offset && !c->shift && !c->depth);
+				av_assert0(!c->plane && !c->step && !c->offset && !c->shift &&
+					   !c->depth);
 				continue;
 			}
 			if (d->flags & AV_PIX_FMT_FLAG_BITSTREAM) {
@@ -2516,8 +2525,9 @@ enum AVPixelFormat av_pix_fmt_swap_endianness(enum AVPixelFormat pix_fmt)
 #define FF_COLOR_YUV_JPEG 3 /**< YUV color space. 0 <= Y <= 255, 0 <= U, V <= 255 */
 #define FF_COLOR_XYZ 4
 
-#define pixdesc_has_alpha(pixdesc) \
-	((pixdesc)->nb_components == 2 || (pixdesc)->nb_components == 4 || (pixdesc)->flags & AV_PIX_FMT_FLAG_PAL)
+#define pixdesc_has_alpha(pixdesc)                                         \
+	((pixdesc)->nb_components == 2 || (pixdesc)->nb_components == 4 || \
+	 (pixdesc)->flags & AV_PIX_FMT_FLAG_PAL)
 
 static int get_color_type(const AVPixFmtDescriptor *desc)
 {
@@ -2560,8 +2570,8 @@ static int get_pix_fmt_depth(int *min, int *max, enum AVPixelFormat pix_fmt)
 	return 0;
 }
 
-static int get_pix_fmt_score(enum AVPixelFormat dst_pix_fmt, enum AVPixelFormat src_pix_fmt, unsigned *lossp,
-			     unsigned consider)
+static int get_pix_fmt_score(enum AVPixelFormat dst_pix_fmt, enum AVPixelFormat src_pix_fmt,
+			     unsigned *lossp, unsigned consider)
 {
 	const AVPixFmtDescriptor *src_desc = av_pix_fmt_desc_get(src_pix_fmt);
 	const AVPixFmtDescriptor *dst_desc = av_pix_fmt_desc_get(dst_pix_fmt);
@@ -2573,7 +2583,8 @@ static int get_pix_fmt_score(enum AVPixelFormat dst_pix_fmt, enum AVPixelFormat 
 	if (!src_desc || !dst_desc)
 		return -4;
 
-	if ((src_desc->flags & AV_PIX_FMT_FLAG_HWACCEL) || (dst_desc->flags & AV_PIX_FMT_FLAG_HWACCEL)) {
+	if ((src_desc->flags & AV_PIX_FMT_FLAG_HWACCEL) ||
+	    (dst_desc->flags & AV_PIX_FMT_FLAG_HWACCEL)) {
 		if (dst_pix_fmt == src_pix_fmt)
 			return -1;
 		else
@@ -2599,7 +2610,8 @@ static int get_pix_fmt_score(enum AVPixelFormat dst_pix_fmt, enum AVPixelFormat 
 		nb_components = FFMIN(src_desc->nb_components, dst_desc->nb_components);
 
 	for (i = 0; i < nb_components; i++) {
-		int depth_minus1 = (dst_pix_fmt == AV_PIX_FMT_PAL8) ? 7 / nb_components : (dst_desc->comp[i].depth - 1);
+		int depth_minus1 = (dst_pix_fmt == AV_PIX_FMT_PAL8) ? 7 / nb_components
+								    : (dst_desc->comp[i].depth - 1);
 		if (src_desc->comp[i].depth - 1 > depth_minus1 && (consider & FF_LOSS_DEPTH)) {
 			loss |= FF_LOSS_DEPTH;
 			score -= 65536 >> depth_minus1;
@@ -2616,8 +2628,8 @@ static int get_pix_fmt_score(enum AVPixelFormat dst_pix_fmt, enum AVPixelFormat 
 			score -= 256 << dst_desc->log2_chroma_h;
 		}
 		// don't favor 422 over 420 if downsampling is needed, because 420 has much better support on the decoder side
-		if (dst_desc->log2_chroma_w == 1 && src_desc->log2_chroma_w == 0 && dst_desc->log2_chroma_h == 1 &&
-		    src_desc->log2_chroma_h == 0) {
+		if (dst_desc->log2_chroma_w == 1 && src_desc->log2_chroma_w == 0 &&
+		    dst_desc->log2_chroma_h == 1 && src_desc->log2_chroma_h == 0) {
 			score += 512;
 		}
 	}
@@ -2637,7 +2649,8 @@ static int get_pix_fmt_score(enum AVPixelFormat dst_pix_fmt, enum AVPixelFormat 
 				loss |= FF_LOSS_COLORSPACE;
 			break;
 		case FF_COLOR_YUV_JPEG:
-			if (src_color != FF_COLOR_YUV_JPEG && src_color != FF_COLOR_YUV && src_color != FF_COLOR_GRAY)
+			if (src_color != FF_COLOR_YUV_JPEG && src_color != FF_COLOR_YUV &&
+			    src_color != FF_COLOR_GRAY)
 				loss |= FF_LOSS_COLORSPACE;
 			break;
 		default:
@@ -2647,19 +2660,23 @@ static int get_pix_fmt_score(enum AVPixelFormat dst_pix_fmt, enum AVPixelFormat 
 			break;
 		}
 	if (loss & FF_LOSS_COLORSPACE)
-		score -= (nb_components * 65536) >> FFMIN(dst_desc->comp[0].depth - 1, src_desc->comp[0].depth - 1);
+		score -= (nb_components * 65536) >>
+			 FFMIN(dst_desc->comp[0].depth - 1, src_desc->comp[0].depth - 1);
 
-	if (dst_color == FF_COLOR_GRAY && src_color != FF_COLOR_GRAY && (consider & FF_LOSS_CHROMA)) {
+	if (dst_color == FF_COLOR_GRAY && src_color != FF_COLOR_GRAY &&
+	    (consider & FF_LOSS_CHROMA)) {
 		loss |= FF_LOSS_CHROMA;
 		score -= 2 * 65536;
 	}
-	if (!pixdesc_has_alpha(dst_desc) && (pixdesc_has_alpha(src_desc) && (consider & FF_LOSS_ALPHA))) {
+	if (!pixdesc_has_alpha(dst_desc) &&
+	    (pixdesc_has_alpha(src_desc) && (consider & FF_LOSS_ALPHA))) {
 		loss |= FF_LOSS_ALPHA;
 		score -= 65536;
 	}
 	if (dst_pix_fmt == AV_PIX_FMT_PAL8 && (consider & FF_LOSS_COLORQUANT) &&
 	    (src_pix_fmt != AV_PIX_FMT_PAL8 &&
-	     (src_color != FF_COLOR_GRAY || (pixdesc_has_alpha(src_desc) && (consider & FF_LOSS_ALPHA))))) {
+	     (src_color != FF_COLOR_GRAY ||
+	      (pixdesc_has_alpha(src_desc) && (consider & FF_LOSS_ALPHA))))) {
 		loss |= FF_LOSS_COLORQUANT;
 		score -= 65536;
 	}
@@ -2668,17 +2685,21 @@ static int get_pix_fmt_score(enum AVPixelFormat dst_pix_fmt, enum AVPixelFormat 
 	return score;
 }
 
-int av_get_pix_fmt_loss(enum AVPixelFormat dst_pix_fmt, enum AVPixelFormat src_pix_fmt, int has_alpha)
+int av_get_pix_fmt_loss(enum AVPixelFormat dst_pix_fmt, enum AVPixelFormat src_pix_fmt,
+			int has_alpha)
 {
 	int loss;
-	int ret = get_pix_fmt_score(dst_pix_fmt, src_pix_fmt, &loss, has_alpha ? ~0 : ~FF_LOSS_ALPHA);
+	int ret =
+		get_pix_fmt_score(dst_pix_fmt, src_pix_fmt, &loss, has_alpha ? ~0 : ~FF_LOSS_ALPHA);
 	if (ret < 0)
 		return ret;
 	return loss;
 }
 
-enum AVPixelFormat av_find_best_pix_fmt_of_2(enum AVPixelFormat dst_pix_fmt1, enum AVPixelFormat dst_pix_fmt2,
-					     enum AVPixelFormat src_pix_fmt, int has_alpha, int *loss_ptr)
+enum AVPixelFormat av_find_best_pix_fmt_of_2(enum AVPixelFormat dst_pix_fmt1,
+					     enum AVPixelFormat dst_pix_fmt2,
+					     enum AVPixelFormat src_pix_fmt, int has_alpha,
+					     int *loss_ptr)
 {
 	enum AVPixelFormat dst_pix_fmt;
 	int loss1, loss2, loss_mask;
@@ -2699,12 +2720,16 @@ enum AVPixelFormat av_find_best_pix_fmt_of_2(enum AVPixelFormat dst_pix_fmt1, en
 		score2 = get_pix_fmt_score(dst_pix_fmt2, src_pix_fmt, &loss2, loss_mask);
 
 		if (score1 == score2) {
-			if (av_get_padded_bits_per_pixel(desc2) != av_get_padded_bits_per_pixel(desc1)) {
-				dst_pix_fmt = av_get_padded_bits_per_pixel(desc2) < av_get_padded_bits_per_pixel(desc1)
+			if (av_get_padded_bits_per_pixel(desc2) !=
+			    av_get_padded_bits_per_pixel(desc1)) {
+				dst_pix_fmt = av_get_padded_bits_per_pixel(desc2) <
+							      av_get_padded_bits_per_pixel(desc1)
 						      ? dst_pix_fmt2
 						      : dst_pix_fmt1;
 			} else {
-				dst_pix_fmt = desc2->nb_components < desc1->nb_components ? dst_pix_fmt2 : dst_pix_fmt1;
+				dst_pix_fmt = desc2->nb_components < desc1->nb_components
+						      ? dst_pix_fmt2
+						      : dst_pix_fmt1;
 			}
 		} else {
 			dst_pix_fmt = score1 < score2 ? dst_pix_fmt2 : dst_pix_fmt1;

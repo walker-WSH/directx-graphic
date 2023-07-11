@@ -90,8 +90,8 @@ extern IGraphicSession *pGraphic;
 extern std::map<VIDEO_SHADER_TYPE, shader_handle> shaders;
 void InitShader();
 
-void FillTextureVertex(float left, float top, float right, float bottom, bool flipH, bool flipV, float cropLeft,
-		       float cropTop, float cropRight, float cropBtm,
+void FillTextureVertex(float left, float top, float right, float bottom, bool flipH, bool flipV,
+		       float cropLeft, float cropTop, float cropRight, float cropBtm,
 		       TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT]);
 void FillColorVertex(float left, float top, float right, float bottom,
 		     ColorVertexDesc outputVertex[TEXTURE_VERTEX_COUNT]);
@@ -100,11 +100,14 @@ texture_handle getRotatedTexture(texture_handle tex, texture_handle &cv);
 
 VIDEO_SHADER_TYPE getDefaultTextureShader();
 void RenderTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest,
-		   VIDEO_SHADER_TYPE shader = getDefaultTextureShader(), const MosaicParam *mosaic = nullptr);
+		   VIDEO_SHADER_TYPE shader = getDefaultTextureShader(),
+		   const MosaicParam *mosaic = nullptr);
 
-void RenderBulgeTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest, const BulgeParam *psParam);
+void RenderBulgeTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest,
+			const BulgeParam *psParam);
 
-void RenderShiftTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest, const ShiftParam *psParam);
+void RenderShiftTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest,
+			const ShiftParam *psParam);
 
 // 这个渲染border的方法 性能太低 应该优化
 // 方法1：连续性渲染若干个三角形 一次性渲染整个border

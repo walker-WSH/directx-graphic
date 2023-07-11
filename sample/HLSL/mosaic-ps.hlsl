@@ -20,8 +20,8 @@ float4 main(PixelInputType input) : SV_TARGET
 	float2 intXY = float2(input.tex.x * texWidth, input.tex.y * texHeight);
 
 	//根据马赛克块大小进行取整。
-	float2 XYMosaic =
-		float2(int(intXY.x / mosaicSizeCX) * mosaicSizeCX, int(intXY.y / mosaicSizeCY) * mosaicSizeCY);
+	float2 XYMosaic = float2(int(intXY.x / mosaicSizeCX) * mosaicSizeCX,
+				 int(intXY.y / mosaicSizeCY) * mosaicSizeCY);
 
 	//把整数坐标转换回纹理采样坐标
 	float2 UVMosaic = float2(XYMosaic.x / texWidth, XYMosaic.y / texHeight);

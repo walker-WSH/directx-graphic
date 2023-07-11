@@ -6,9 +6,12 @@ namespace graphic {
 
 static const auto MIN_POINTS_NUM = 2;
 
-D2DGeometry::D2DGeometry(DX11GraphicSession &graphic, const std::vector<D2D1_POINT_2F> &points, GEOMETRY_TYPE type,
-			 GEOMETRY_FRONT_END_STYLE style)
-	: DX11GraphicBase(graphic, "D2D Geometry"), m_listPoints(points), m_pathType(type), m_frontEndStyle(style)
+D2DGeometry::D2DGeometry(DX11GraphicSession &graphic, const std::vector<D2D1_POINT_2F> &points,
+			 GEOMETRY_TYPE type, GEOMETRY_FRONT_END_STYLE style)
+	: DX11GraphicBase(graphic, "D2D Geometry"),
+	  m_listPoints(points),
+	  m_pathType(type),
+	  m_frontEndStyle(style)
 {
 	BuildGraphic();
 }

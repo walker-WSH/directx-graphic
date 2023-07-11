@@ -10,8 +10,9 @@ DX11GraphicSession::DX11GraphicSession()
 	AUTO_GRAPHIC_CONTEXT(this);
 
 	std::vector<LINE_DASH_STYLE> temp = {
-		LINE_DASH_STYLE::LINE_SOLID,    LINE_DASH_STYLE::LINE_DASH,         LINE_DASH_STYLE::LINE_DOT,
-		LINE_DASH_STYLE::LINE_DASH_DOT, LINE_DASH_STYLE::LINE_DASH_DOT_DOT,
+		LINE_DASH_STYLE::LINE_SOLID,        LINE_DASH_STYLE::LINE_DASH,
+		LINE_DASH_STYLE::LINE_DOT,          LINE_DASH_STYLE::LINE_DASH_DOT,
+		LINE_DASH_STYLE::LINE_DASH_DOT_DOT,
 	};
 
 	for (auto &item : temp) {
@@ -165,8 +166,9 @@ texture_handle DX11GraphicSession::CreateTexture(const TextureInformation &info,
 
 	DX11Texture2D *tex = new DX11Texture2D(*this, info, flags);
 	if (!tex->IsBuilt()) {
-		LOG_WARN("failed to create texture %X %dx%d format:%d usage:%s", tex, info.width, info.height,
-			 (int)info.format, DX11Texture2D::mapTextureUsage[info.usage].c_str());
+		LOG_WARN("failed to create texture %X %dx%d format:%d usage:%s", tex, info.width,
+			 info.height, (int)info.format,
+			 DX11Texture2D::mapTextureUsage[info.usage].c_str());
 
 		delete tex;
 		assert(false);
@@ -181,8 +183,8 @@ TextureInformation DX11GraphicSession::GetTextureInfo(texture_handle hdl)
 	CHECK_GRAPHIC_CONTEXT;
 	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Texture2D, obj, return TextureInformation());
 
-	return TextureInformation(obj->m_descTexture.Width, obj->m_descTexture.Height, obj->m_descTexture.Format,
-				  obj->m_textureInfo.usage);
+	return TextureInformation(obj->m_descTexture.Width, obj->m_descTexture.Height,
+				  obj->m_descTexture.Format, obj->m_textureInfo.usage);
 }
 
 HANDLE DX11GraphicSession::GetSharedHandle(texture_handle hdl)
@@ -193,7 +195,8 @@ HANDLE DX11GraphicSession::GetSharedHandle(texture_handle hdl)
 	return obj->m_hSharedHandle;
 }
 
-bool DX11GraphicSession::CopyTexture(texture_handle dest, texture_handle src, TextureCopyRegion *region)
+bool DX11GraphicSession::CopyTexture(texture_handle dest, texture_handle src,
+				     TextureCopyRegion *region)
 {
 	CHECK_GRAPHIC_CONTEXT;
 	CHECK_GRAPHIC_OBJECT_VALID((*this), dest, DX11Texture2D, destTex, return false);
@@ -222,7 +225,8 @@ bool DX11GraphicSession::CopyTexture(texture_handle dest, texture_handle src, Te
 	return true;
 }
 
-bool DX11GraphicSession::CopyDisplay(texture_handle dest, display_handle src, TextureCopyRegion *region)
+bool DX11GraphicSession::CopyDisplay(texture_handle dest, display_handle src,
+				     TextureCopyRegion *region)
 {
 	CHECK_GRAPHIC_CONTEXT;
 	CHECK_GRAPHIC_OBJECT_VALID((*this), dest, DX11Texture2D, destTex, return false);
@@ -234,7 +238,8 @@ bool DX11GraphicSession::CopyDisplay(texture_handle dest, display_handle src, Te
 	}
 
 	std::string reason;
-	if (!IsTextureInfoSame(&destTex->m_descTexture, &(srcDisplay->m_descTexture), region, reason)) {
+	if (!IsTextureInfoSame(&destTex->m_descTexture, &(srcDisplay->m_descTexture), region,
+			       reason)) {
 		LOG_WARN("failed to copy display because %s", reason.c_str());
 		assert(false);
 		return false;
@@ -247,7 +252,8 @@ bool DX11GraphicSession::CopyDisplay(texture_handle dest, display_handle src, Te
 	return true;
 }
 
-bool DX11GraphicSession::MapTexture(texture_handle hdl, MAP_TEXTURE_FEATURE type, D3D11_MAPPED_SUBRESOURCE *mapData)
+bool DX11GraphicSession::MapTexture(texture_handle hdl, MAP_TEXTURE_FEATURE type,
+				    D3D11_MAPPED_SUBRESOURCE *mapData)
 {
 	CHECK_GRAPHIC_CONTEXT;
 	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Texture2D, obj, return false);
@@ -293,7 +299,8 @@ font_handle DX11GraphicSession::CreateTextFont(const TextFormatDesc &desc)
 	return ret;
 }
 
-geometry_handle DX11GraphicSession::CreateGeometry(const std::vector<D2D1_POINT_2F> &points, GEOMETRY_TYPE type,
+geometry_handle DX11GraphicSession::CreateGeometry(const std::vector<D2D1_POINT_2F> &points,
+						   GEOMETRY_TYPE type,
 						   GEOMETRY_FRONT_END_STYLE style)
 {
 	CHECK_GRAPHIC_CONTEXT;
@@ -311,7 +318,8 @@ geometry_handle DX11GraphicSession::CreateGeometry(const std::vector<D2D1_POINT_
 D2D1_SIZE_F DX11GraphicSession::CalcTextSize(const wchar_t *text, font_handle font)
 {
 	CHECK_GRAPHIC_CONTEXT;
-	CHECK_GRAPHIC_OBJECT_VALID((*this), font, D2DTextFormat, pTextFormat, return D2D1_SIZE_F(0.f, 0.f));
+	CHECK_GRAPHIC_OBJECT_VALID((*this), font, D2DTextFormat, pTextFormat,
+				   return D2D1_SIZE_F(0.f, 0.f));
 
 	if (!m_bBuildSuccessed) {
 		LOG_WARN("DX is not built");
@@ -319,8 +327,10 @@ D2D1_SIZE_F DX11GraphicSession::CalcTextSize(const wchar_t *text, font_handle fo
 	}
 
 	ComPtr<IDWriteTextLayout> pTextLayout;
-	auto hr = m_pDWriteFactory->CreateTextLayout(text, (UINT32)wcslen(text), pTextFormat->m_pTextFormat,
-						     (float)m_uMaxTextureSize, (float)m_uMaxTextureSize, &pTextLayout);
+	auto hr = m_pDWriteFactory->CreateTextLayout(text, (UINT32)wcslen(text),
+						     pTextFormat->m_pTextFormat,
+						     (float)m_uMaxTextureSize,
+						     (float)m_uMaxTextureSize, &pTextLayout);
 	if (FAILED(hr)) {
 		assert(false);
 		return D2D1_SIZE_F{0.f, 0.f};
@@ -507,8 +517,9 @@ void DX11GraphicSession::ReleaseAllDX(bool isForRebuild)
 
 	if (m_bDuringRendering) {
 		assert(false && "invalid calling, you must fix your code");
-		LOG_WARN("release DX during render loop. CurrentRenderTarget:%X CurrentSwapChain:%X",
-			 (void *)m_pCurrentRenderTarget, (void *)m_pCurrentSwapChain);
+		LOG_WARN(
+			"release DX during render loop. CurrentRenderTarget:%X CurrentSwapChain:%X",
+			(void *)m_pCurrentRenderTarget, (void *)m_pCurrentSwapChain);
 
 		m_bDuringRendering = false;
 		m_pD3DTarget = nullptr;
@@ -558,8 +569,9 @@ bool DX11GraphicSession::BuildAllDX()
 	m_pAdapter->GetDesc(&descAdapter);
 
 	D3D_FEATURE_LEVEL levelUsed = D3D_FEATURE_LEVEL_10_0;
-	hr = D3D11CreateDevice(m_pAdapter, D3D_DRIVER_TYPE_UNKNOWN, nullptr, D3D11_CREATE_DEVICE_BGRA_SUPPORT,
-			       featureLevels.data(), (uint32_t)featureLevels.size(), D3D11_SDK_VERSION,
+	hr = D3D11CreateDevice(m_pAdapter, D3D_DRIVER_TYPE_UNKNOWN, nullptr,
+			       D3D11_CREATE_DEVICE_BGRA_SUPPORT, featureLevels.data(),
+			       (uint32_t)featureLevels.size(), D3D11_SDK_VERSION,
 			       m_pDX11Device.Assign(), &levelUsed, m_pDeviceContext.Assign());
 
 	if (FAILED(hr)) {
@@ -618,10 +630,11 @@ bool DX11GraphicSession::BuildAllDX()
 		 "\t DedicatedVideoMemory: %llu MB \n"
 		 "\t DedicatedSystemMemory: %llu MB \n"
 		 "\t SharedSystemMemory: %llu MB \n",
-		 str::w2u(descAdapter.Description).c_str(), DXGraphic::GetAdapterDriverVersion(m_pAdapter).c_str(),
-		 levelUsed, descAdapter.AdapterLuid.HighPart, descAdapter.AdapterLuid.LowPart, descAdapter.VendorId,
-		 descAdapter.DeviceId, descAdapter.SubSysId, descAdapter.Revision,
-		 (DWORD64)descAdapter.DedicatedVideoMemory / ONE_MB_BYTES,
+		 str::w2u(descAdapter.Description).c_str(),
+		 DXGraphic::GetAdapterDriverVersion(m_pAdapter).c_str(), levelUsed,
+		 descAdapter.AdapterLuid.HighPart, descAdapter.AdapterLuid.LowPart,
+		 descAdapter.VendorId, descAdapter.DeviceId, descAdapter.SubSysId,
+		 descAdapter.Revision, (DWORD64)descAdapter.DedicatedVideoMemory / ONE_MB_BYTES,
 		 (DWORD64)descAdapter.DedicatedSystemMemory / ONE_MB_BYTES,
 		 (DWORD64)descAdapter.SharedSystemMemory / ONE_MB_BYTES);
 
@@ -642,7 +655,8 @@ bool DX11GraphicSession::InitBlendState()
 	blendStateDescription.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	blendStateDescription.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
-	HRESULT hr = m_pDX11Device->CreateBlendState(&blendStateDescription, m_pBlendStateNormal.Assign());
+	HRESULT hr = m_pDX11Device->CreateBlendState(&blendStateDescription,
+						     m_pBlendStateNormal.Assign());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateBlendState failed for normal blend");
 		assert(false);
@@ -650,7 +664,8 @@ bool DX11GraphicSession::InitBlendState()
 	}
 
 	blendStateDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
-	hr = m_pDX11Device->CreateBlendState(&blendStateDescription, m_pBlendStatePreMultAlpha.Assign());
+	hr = m_pDX11Device->CreateBlendState(&blendStateDescription,
+					     m_pBlendStatePreMultAlpha.Assign());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateBlendState failed for preMultAlpha");
 		assert(false);
@@ -674,7 +689,8 @@ bool DX11GraphicSession::InitSamplerState()
 	//------------------------------------------------------------------------------------------
 	samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
 	samplerDesc.MaxAnisotropy = 16;
-	HRESULT hr = m_pDX11Device->CreateSamplerState(&samplerDesc, m_pSampleStateAnisotropic.Assign());
+	HRESULT hr =
+		m_pDX11Device->CreateSamplerState(&samplerDesc, m_pSampleStateAnisotropic.Assign());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateSamplerState D3D11_FILTER_ANISOTROPIC");
 		assert(false);
@@ -768,7 +784,8 @@ void DX11GraphicSession::SetRenderContext(ID3DRenderTarget *target, uint32_t wid
 	EnterContext(std::source_location::current());
 }
 
-void DX11GraphicSession::UpdateShaderBuffer(ComPtr<ID3D11Buffer> buffer, const void *data, size_t size)
+void DX11GraphicSession::UpdateShaderBuffer(ComPtr<ID3D11Buffer> buffer, const void *data,
+					    size_t size)
 {
 	CHECK_GRAPHIC_CONTEXT;
 
@@ -779,8 +796,9 @@ void DX11GraphicSession::UpdateShaderBuffer(ComPtr<ID3D11Buffer> buffer, const v
 		m_pDeviceContext->UpdateSubresource(buffer, 0, nullptr, data, 0, 0);
 	else {
 		assert(false);
-		LOG_WARN("failed to update shader buffer because of invalid buffer size. expect:%d real:%d",
-			 (int)desc.ByteWidth, (int)size);
+		LOG_WARN(
+			"failed to update shader buffer because of invalid buffer size. expect:%d real:%d",
+			(int)desc.ByteWidth, (int)size);
 	}
 }
 
@@ -833,7 +851,8 @@ bool DX11GraphicSession::ApplyShader(DX11Shader *shader, long indexId)
 	return true;
 }
 
-bool DX11GraphicSession::BeginRenderCanvas(texture_handle hdl, IGeometryInterface **geometryInterface)
+bool DX11GraphicSession::BeginRenderCanvas(texture_handle hdl,
+					   IGeometryInterface **geometryInterface)
 {
 	if (geometryInterface)
 		*geometryInterface = nullptr;
@@ -842,8 +861,9 @@ bool DX11GraphicSession::BeginRenderCanvas(texture_handle hdl, IGeometryInterfac
 	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Texture2D, obj, return false);
 
 	if (m_bDuringRendering) {
-		LOG_WARN("trying to render during another loop. CurrentRenderTarget:%X CurrentSwapChain:%X",
-			 (void *)m_pCurrentRenderTarget, (void *)m_pCurrentSwapChain);
+		LOG_WARN(
+			"trying to render during another loop. CurrentRenderTarget:%X CurrentSwapChain:%X",
+			(void *)m_pCurrentRenderTarget, (void *)m_pCurrentSwapChain);
 		assert(false);
 		return false;
 	}
@@ -870,7 +890,8 @@ bool DX11GraphicSession::BeginRenderCanvas(texture_handle hdl, IGeometryInterfac
 	return true;
 }
 
-bool DX11GraphicSession::BeginRenderWindow(display_handle hdl, IGeometryInterface **geometryInterface)
+bool DX11GraphicSession::BeginRenderWindow(display_handle hdl,
+					   IGeometryInterface **geometryInterface)
 {
 	if (geometryInterface)
 		*geometryInterface = nullptr;
@@ -879,8 +900,9 @@ bool DX11GraphicSession::BeginRenderWindow(display_handle hdl, IGeometryInterfac
 	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11SwapChain, obj, return false);
 
 	if (m_bDuringRendering) {
-		LOG_WARN("trying to render during another loop. CurrentRenderTarget:%X CurrentSwapChain:%X",
-			 (void *)m_pCurrentRenderTarget, (void *)m_pCurrentSwapChain);
+		LOG_WARN(
+			"trying to render during another loop. CurrentRenderTarget:%X CurrentSwapChain:%X",
+			(void *)m_pCurrentRenderTarget, (void *)m_pCurrentSwapChain);
 		assert(false);
 		return false;
 	}
@@ -982,7 +1004,8 @@ void DX11GraphicSession::SetVertexBuffer(shader_handle hdl, const void *buffer, 
 		UpdateShaderBuffer(shader->m_pVertexBuffer, buffer, size);
 	else {
 		assert(false);
-		LOG_WARN("invalid size for vertex buffer. expect:%d, real:%d", (int)expectLen, (int)size);
+		LOG_WARN("invalid size for vertex buffer. expect:%d, real:%d", (int)expectLen,
+			 (int)size);
 	}
 }
 
@@ -996,7 +1019,8 @@ void DX11GraphicSession::SetVSConstBuffer(shader_handle hdl, const void *vsBuffe
 		UpdateShaderBuffer(shader->m_pVSConstBuffer, vsBuffer, vsSize);
 	else {
 		assert(false);
-		LOG_WARN("invalid size for vs const buffer. expect:%d, real:%d", (int)expectLen, (int)vsSize);
+		LOG_WARN("invalid size for vs const buffer. expect:%d, real:%d", (int)expectLen,
+			 (int)vsSize);
 	}
 }
 
@@ -1010,11 +1034,13 @@ void DX11GraphicSession::SetPSConstBuffer(shader_handle hdl, const void *psBuffe
 		UpdateShaderBuffer(shader->m_pPSConstBuffer, psBuffer, psSize);
 	else {
 		assert(false);
-		LOG_WARN("invalid size for ps const buffer. expect:%d, real:%d", (int)expectLen, (int)psSize);
+		LOG_WARN("invalid size for ps const buffer. expect:%d, real:%d", (int)expectLen,
+			 (int)psSize);
 	}
 }
 
-void DX11GraphicSession::SetIndexBuffer(shader_handle hdl, long index_id, const void *data, size_t size)
+void DX11GraphicSession::SetIndexBuffer(shader_handle hdl, long index_id, const void *data,
+					size_t size)
 {
 	CHECK_GRAPHIC_CONTEXT;
 	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Shader, shader, return);
@@ -1022,7 +1048,8 @@ void DX11GraphicSession::SetIndexBuffer(shader_handle hdl, long index_id, const 
 	shader->SetIndexValue(index_id, data, size);
 }
 
-void DX11GraphicSession::DrawTopplogy(shader_handle hdl, D3D11_PRIMITIVE_TOPOLOGY type, long indexId)
+void DX11GraphicSession::DrawTopplogy(shader_handle hdl, D3D11_PRIMITIVE_TOPOLOGY type,
+				      long indexId)
 {
 	CHECK_GRAPHIC_CONTEXT;
 	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Shader, shader, return);
@@ -1043,8 +1070,8 @@ void DX11GraphicSession::DrawTopplogy(shader_handle hdl, D3D11_PRIMITIVE_TOPOLOG
 }
 
 void DX11GraphicSession::DrawTexture(shader_handle hdl, VIDEO_FILTER_TYPE flt,
-				     const std::vector<texture_handle> &textures, D3D11_PRIMITIVE_TOPOLOGY type,
-				     long indexId)
+				     const std::vector<texture_handle> &textures,
+				     D3D11_PRIMITIVE_TOPOLOGY type, long indexId)
 {
 	CHECK_GRAPHIC_CONTEXT;
 	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Shader, shader, return);
@@ -1138,7 +1165,8 @@ void DX11GraphicSession::HandleDirectResult(HRESULT hr, std::source_location loc
 		bool rebuild = (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET ||
 				hr == D2DERR_RECREATE_TARGET);
 
-		LOG_WARN("Device Error %X from %s, rebuild: %s", hr, location.function_name(), rebuild ? "yes" : "no");
+		LOG_WARN("Device Error %X from %s, rebuild: %s", hr, location.function_name(),
+			 rebuild ? "yes" : "no");
 
 		for (auto &item : m_pGraphicCallbacks) {
 			auto cb = item.lock();
@@ -1166,19 +1194,21 @@ bool DX11GraphicSession::IsGraphicObjectAlive(IGraphicObject *obj)
 	return FindItemInMap(m_listObject, temp);
 }
 
-bool DX11GraphicSession::IsTextureInfoSame(const D3D11_TEXTURE2D_DESC *dest, const D3D11_TEXTURE2D_DESC *src,
+bool DX11GraphicSession::IsTextureInfoSame(const D3D11_TEXTURE2D_DESC *dest,
+					   const D3D11_TEXTURE2D_DESC *src,
 					   TextureCopyRegion *region, std::string &reason)
 {
 	if (region) {
-		if (region->srcLeft < region->srcRight && region->srcLeft >= 0 && region->srcRight <= src->Width &&
-		    region->srcTop < region->srcBottom && region->srcTop >= 0 && region->srcBottom <= src->Height) {
+		if (region->srcLeft < region->srcRight && region->srcLeft >= 0 &&
+		    region->srcRight <= src->Width && region->srcTop < region->srcBottom &&
+		    region->srcTop >= 0 && region->srcBottom <= src->Height) {
 		} else {
 			reason = "invalid src region";
 			return false;
 		}
 
-		if (region->destLeft >= 0 && region->destLeft < dest->Width && region->destTop >= 0 &&
-		    region->destTop < dest->Height) {
+		if (region->destLeft >= 0 && region->destLeft < dest->Width &&
+		    region->destTop >= 0 && region->destTop < dest->Height) {
 		} else {
 			reason = "invalid dest region";
 			return false;
@@ -1233,25 +1263,27 @@ void DX11GraphicSession::CopyTextureInner(ComPtr<ID3D11Texture2D> dest, ComPtr<I
 			sourceRegion.bottom = srcDesc.Height;
 		}
 
-		if (region->destArraySliceIndex < 0 || region->destArraySliceIndex >= destDesc.ArraySize) {
-			LOG_WARN("invalid dest array slice index: %d on %d", region->destArraySliceIndex,
-				 destDesc.ArraySize);
+		if (region->destArraySliceIndex < 0 ||
+		    region->destArraySliceIndex >= destDesc.ArraySize) {
+			LOG_WARN("invalid dest array slice index: %d on %d",
+				 region->destArraySliceIndex, destDesc.ArraySize);
 			assert(false);
 		}
 
 		m_pDeviceContext->CopySubresourceRegion(
-			dest, D3D11CalcSubresource(0, region->destArraySliceIndex, destDesc.MipLevels),
-			region->destLeft, region->destTop, 0, src, D3D11CalcSubresource(0, 0, srcDesc.MipLevels),
-			&sourceRegion);
+			dest,
+			D3D11CalcSubresource(0, region->destArraySliceIndex, destDesc.MipLevels),
+			region->destLeft, region->destTop, 0, src,
+			D3D11CalcSubresource(0, 0, srcDesc.MipLevels), &sourceRegion);
 
 	} else {
 		if (srcDesc.MipLevels == destDesc.MipLevels) {
 			m_pDeviceContext->CopyResource(dest, src);
 
 		} else {
-			m_pDeviceContext->CopySubresourceRegion(dest, D3D11CalcSubresource(0, 0, destDesc.MipLevels), 0,
-								0, 0, src,
-								D3D11CalcSubresource(0, 0, srcDesc.MipLevels), nullptr);
+			m_pDeviceContext->CopySubresourceRegion(
+				dest, D3D11CalcSubresource(0, 0, destDesc.MipLevels), 0, 0, 0, src,
+				D3D11CalcSubresource(0, 0, srcDesc.MipLevels), nullptr);
 		}
 	}
 }
@@ -1293,7 +1325,8 @@ bool DX11GraphicSession::BuildD2D()
 		return false;
 	}
 
-	hr = pD2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &m_pD2DDeviceContext);
+	hr = pD2DDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
+					     &m_pD2DDeviceContext);
 	if (FAILED(hr)) {
 		LOG_WARN("CreateDeviceContext D2D failed 0x%x", hr);
 		assert(false);

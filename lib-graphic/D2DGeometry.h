@@ -11,8 +11,8 @@ struct D2DGeometry : public DX11GraphicBase {
 	friend class D2DRenderTarget;
 
 public:
-	D2DGeometry(DX11GraphicSession &graphic, const std::vector<D2D1_POINT_2F> &points, GEOMETRY_TYPE type,
-		    GEOMETRY_FRONT_END_STYLE style);
+	D2DGeometry(DX11GraphicSession &graphic, const std::vector<D2D1_POINT_2F> &points,
+		    GEOMETRY_TYPE type, GEOMETRY_FRONT_END_STYLE style);
 
 	virtual bool BuildGraphic();
 	virtual void ReleaseGraphic(bool isForRebuild);

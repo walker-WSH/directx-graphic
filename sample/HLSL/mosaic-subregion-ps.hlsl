@@ -18,8 +18,8 @@ struct PixelInputType {
 float4 main(PixelInputType input) : SV_TARGET
 {
 	float2 intXY = float2(input.tex.x * texWidth, input.tex.y * texHeight);
-	float2 XYMosaic =
-		float2(int(intXY.x / mosaicSizeCX) * mosaicSizeCX, int(intXY.y / mosaicSizeCY) * mosaicSizeCY);
+	float2 XYMosaic = float2(int(intXY.x / mosaicSizeCX) * mosaicSizeCX,
+				 int(intXY.y / mosaicSizeCY) * mosaicSizeCY);
 	float2 UVMosaic = float2(XYMosaic.x / texWidth, XYMosaic.y / texHeight);
 
 	float4 clrMosaic = image0.Sample(sampleType, UVMosaic);

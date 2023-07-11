@@ -86,7 +86,8 @@ float3 ps_yuy2_to_rgb(VertexOut pIn)
 	float4 yuyv = image0.Sample(gSampler, pIn.uv);
 	float real_offset = pIn.uv.x * width_d2;
 	float leftover = frac(real_offset);
-	float y = leftover < 0.5 ? yuyv.z : yuyv.x; // note the format of source texture for SamplerState
+	float y = leftover < 0.5 ? yuyv.z
+				 : yuyv.x; // note the format of source texture for SamplerState
 	float3 yuv = float3(y, yuyv.yw);
 	float3 rgb = YUV_to_RGB(yuv);
 	return rgb;

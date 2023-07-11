@@ -1,3 +1,4 @@
 3rd\
-sample\resource.h
-sample\Resource.h
+lib-graphic\dxsdk\
+*\resource.h
+*\Resource.h

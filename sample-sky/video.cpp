@@ -106,11 +106,11 @@ void initShader()
 
 	pGraphic->SetVertexBuffer(shader, vertices, sizeof(vertices));
 
-	WORD indices[] = {3, 0,  1,  2, 3, 1, // 图像0
+	WORD indices[] = {3,  0,  1,  2,  3,  1, // 图像0
 
-			  7, 5,  4,  6, 5, 7, // 图像1
+			  7,  5,  4,  6,  5,  7, // 图像1
 
-			  11, 8, 9, 10, 11, 9, // 图像4
+			  11, 8,  9,  10, 11, 9, // 图像4
 
 			  15, 12, 13, 14, 15, 13, // 图像2
 
@@ -118,7 +118,8 @@ void initShader()
 
 			  22, 21, 20, 23, 22, 20}; // 图像3
 
-	pGraphic->SetIndexBuffer(shader, indexId, indices, indexDesc.sizePerIndex * indexDesc.indexCount);
+	pGraphic->SetIndexBuffer(shader, indexId, indices,
+				 indexDesc.sizePerIndex * indexDesc.indexCount);
 }
 
 void Csample1Dlg::initGraphic(HWND hWnd)
@@ -138,7 +139,8 @@ void Csample1Dlg::initGraphic(HWND hWnd)
 
 	RECT rcWindow;
 	::GetClientRect(hWnd, &rcWindow);
-	pGraphic->SetDisplaySize(display, rcWindow.right - rcWindow.left, rcWindow.bottom - rcWindow.top);
+	pGraphic->SetDisplaySize(display, rcWindow.right - rcWindow.left,
+				 rcWindow.bottom - rcWindow.top);
 }
 
 void Csample1Dlg::uninitGraphic()
@@ -190,7 +192,8 @@ void Csample1Dlg::render()
 	RECT rcWindow;
 	::GetClientRect(m_hWnd, &rcWindow);
 
-	pGraphic->SetDisplaySize(display, rcWindow.right - rcWindow.left, rcWindow.bottom - rcWindow.top);
+	pGraphic->SetDisplaySize(display, rcWindow.right - rcWindow.left,
+				 rcWindow.bottom - rcWindow.top);
 
 	if (!pGraphic->IsGraphicBuilt()) {
 		if (!pGraphic->ReBuildGraphic())
@@ -200,7 +203,8 @@ void Csample1Dlg::render()
 	if (pGraphic->BeginRenderWindow(display)) {
 		pGraphic->ClearBackground(&clrBlue);
 		pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_DISABLED);
-		pGraphic->SetRasterizerState(D3D11_CULL_MODE::D3D11_CULL_BACK); // 剔除三角形背面的画面
+		pGraphic->SetRasterizerState(
+			D3D11_CULL_MODE::D3D11_CULL_BACK); // 剔除三角形背面的画面
 
 		RenderTexture(texImg, SIZE(rcWindow.right, rcWindow.bottom), rcWindow);
 

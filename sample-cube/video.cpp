@@ -86,7 +86,8 @@ void initShader()
 		6, 4, 5, 7, 4, 6,
 	};
 
-	pGraphic->SetIndexBuffer(shader, indexId, indices, indexDesc.sizePerIndex * indexDesc.indexCount);
+	pGraphic->SetIndexBuffer(shader, indexId, indices,
+				 indexDesc.sizePerIndex * indexDesc.indexCount);
 }
 
 void Csample1Dlg::initGraphic(HWND hWnd)
@@ -104,7 +105,8 @@ void Csample1Dlg::initGraphic(HWND hWnd)
 
 	RECT rcWindow;
 	::GetClientRect(hWnd, &rcWindow);
-	pGraphic->SetDisplaySize(display, rcWindow.right - rcWindow.left, rcWindow.bottom - rcWindow.top);
+	pGraphic->SetDisplaySize(display, rcWindow.right - rcWindow.left,
+				 rcWindow.bottom - rcWindow.top);
 }
 
 void Csample1Dlg::uninitGraphic()
@@ -144,7 +146,8 @@ void Csample1Dlg::RenderTexture(SIZE canvas, RECT drawDest)
 
 	pGraphic->SetVSConstBuffer(shader, &matrixWVP, sizeof(matrixWVP));
 
-	pGraphic->DrawTopplogy(shader, D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, indexId);
+	pGraphic->DrawTopplogy(
+		shader, D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, indexId);
 }
 
 void Csample1Dlg::render()
@@ -154,7 +157,8 @@ void Csample1Dlg::render()
 	RECT rcWindow;
 	::GetClientRect(m_hWnd, &rcWindow);
 
-	pGraphic->SetDisplaySize(display, rcWindow.right - rcWindow.left, rcWindow.bottom - rcWindow.top);
+	pGraphic->SetDisplaySize(display, rcWindow.right - rcWindow.left,
+				 rcWindow.bottom - rcWindow.top);
 
 	if (!pGraphic->IsGraphicBuilt()) {
 		if (!pGraphic->ReBuildGraphic())

@@ -196,10 +196,13 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncNormalRender(void *pParam)
 					mosaic.mosaicSizeCX = 20;
 					mosaic.mosaicSizeCY = 20;
 
-					RenderTexture(std::vector<texture_handle>{item.tex}, canvasSize, item.region,
-						      VIDEO_SHADER_TYPE::SHADER_TEXTURE_MOSAIC, &mosaic);
+					RenderTexture(std::vector<texture_handle>{item.tex},
+						      canvasSize, item.region,
+						      VIDEO_SHADER_TYPE::SHADER_TEXTURE_MOSAIC,
+						      &mosaic);
 				} else {
-					RenderTexture(std::vector<texture_handle>{item.tex}, canvasSize, item.region);
+					RenderTexture(std::vector<texture_handle>{item.tex},
+						      canvasSize, item.region);
 				}
 			}
 
@@ -235,8 +238,10 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncNormalRender(void *pParam)
 						textRegion.bottom = temp.bottom;
 
 					d2dDisplay->FillRectangle(textRegion, &clrBlackAlpha);
-					d2dDisplay->DrawString(text, 0, fontFormat, &clrWhite, &textRegion);
-					d2dDisplay->DrawRectangle(temp, &clrGreen, 1.f, LINE_DASH_STYLE::LINE_SOLID);
+					d2dDisplay->DrawString(text, 0, fontFormat, &clrWhite,
+							       &textRegion);
+					d2dDisplay->DrawRectangle(temp, &clrGreen, 1.f,
+								  LINE_DASH_STYLE::LINE_SOLID);
 				}
 
 				if (rcSelected.right > 0 && rcSelected.bottom > 0) {
@@ -256,10 +261,12 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncNormalRender(void *pParam)
 				pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_NORMAL);
 				pGraphic->SwitchRenderTarget(g_checkboxPreMultAlpha);
 				if (g_checkboxPreMultAlpha) {
-					RenderTexture(std::vector<texture_handle>{fullTex}, canvasSize, rc,
+					RenderTexture(std::vector<texture_handle>{fullTex},
+						      canvasSize, rc,
 						      VIDEO_SHADER_TYPE::SHADER_TEXTURE_SRGB);
 				} else {
-					RenderTexture(std::vector<texture_handle>{fullTex}, canvasSize, rc);
+					RenderTexture(std::vector<texture_handle>{fullTex},
+						      canvasSize, rc);
 				}
 			}
 
@@ -269,12 +276,14 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncNormalRender(void *pParam)
 			if (d2dDisplay) {
 				auto crtTime = GetTickCount64();
 				ColorRGBA clrLine = {1.f, 0, 0, 1.f};
-				for (auto itr = finishedPathList.begin(); itr != finishedPathList.end();) {
+				for (auto itr = finishedPathList.begin();
+				     itr != finishedPathList.end();) {
 					auto item = *itr;
 					bool remove = false;
 
 					auto startTime = (DWORD64)item->GetUserData();
-					auto percent = double(crtTime - startTime) / double(DRAW_LINE_DISPLAY_DURATION);
+					auto percent = double(crtTime - startTime) /
+						       double(DRAW_LINE_DISPLAY_DURATION);
 					if (percent > 1.0) {
 						percent = 1.0;
 						remove = true;
@@ -296,11 +305,13 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncNormalRender(void *pParam)
 				}
 
 				if (drawingPath) {
-					d2dDisplay->DrawGeometry(drawingPath, &clrBlack, g_lineStride,
+					d2dDisplay->DrawGeometry(drawingPath, &clrBlack,
+								 g_lineStride,
 								 LINE_DASH_STYLE::LINE_SOLID);
 				}
 
-				d2dDisplay->DrawString(testStr, wcslen(testStr), fontFormat2, &clrGreen);
+				d2dDisplay->DrawString(testStr, wcslen(testStr), fontFormat2,
+						       &clrGreen);
 			}
 
 			pGraphic->EndRender(d2dDisplay);
@@ -435,7 +446,8 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForSubRegionMosic(void *pParam)
 			RenderTexture(std::vector<texture_handle>{texGrid}, wndSize, right);
 
 			if (drawingPath) {
-				d2d->DrawGeometry(drawingPath, &clrRed, g_lineStride, LINE_DASH_STYLE::LINE_SOLID);
+				d2d->DrawGeometry(drawingPath, &clrRed, g_lineStride,
+						  LINE_DASH_STYLE::LINE_SOLID);
 			}
 
 			pGraphic->EndRender(d2d);
@@ -450,8 +462,8 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForSubRegionMosic(void *pParam)
 			mosaic.texHeight = rc.bottom;
 			mosaic.mosaicSizeCX = 20;
 			mosaic.mosaicSizeCY = 20;
-			RenderTexture(std::vector<texture_handle>{canvasTex, canvasPath}, wndSize, rc,
-				      VIDEO_SHADER_TYPE::SHADER_TEXTURE_MOSAIC_SUB, &mosaic);
+			RenderTexture(std::vector<texture_handle>{canvasTex, canvasPath}, wndSize,
+				      rc, VIDEO_SHADER_TYPE::SHADER_TEXTURE_MOSAIC_SUB, &mosaic);
 
 			pGraphic->EndRender();
 		}
@@ -536,7 +548,8 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForBulge(void *pParam)
 			pGraphic->ClearBackground(&clr);
 			pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_NORMAL);
 
-			RenderBulgeTexture(std::vector<texture_handle>{texGrid}, SIZE(info.width, info.height),
+			RenderBulgeTexture(std::vector<texture_handle>{texGrid},
+					   SIZE(info.width, info.height),
 					   RECT(0, 0, info.width, info.height), &psParam);
 
 			pGraphic->EndRender();
@@ -618,11 +631,13 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncRender(void *pParam)
 
 			pGraphic->SwitchRenderTarget(g_checkboxPreMultAlpha);
 
-			RenderTexture(std::vector<texture_handle>{texAlpha}, SIZE(rc.right, rc.bottom),
-				      RECT(0, 0, rc.right, rc.bottom), shader);
+			RenderTexture(std::vector<texture_handle>{texAlpha},
+				      SIZE(rc.right, rc.bottom), RECT(0, 0, rc.right, rc.bottom),
+				      shader);
 
-			RenderTexture(std::vector<texture_handle>{texForWrite}, SIZE(rc.right, rc.bottom),
-				      RECT(0, 0, rc.right, rc.bottom), shader);
+			RenderTexture(std::vector<texture_handle>{texForWrite},
+				      SIZE(rc.right, rc.bottom), RECT(0, 0, rc.right, rc.bottom),
+				      shader);
 
 			pGraphic->EndRender();
 		}
@@ -816,15 +831,18 @@ bool RenderCustomYUV(SIZE canvasSize, RECT rc)
 		fopen_s(&fp, "yuv", "wb+");
 		if (fp) {
 			for (auto i = 0; i < preFrame->height; i++) {
-				fwrite(preFrame->data[0] + i * preFrame->linesize[0], preFrame->width, 1, fp);
+				fwrite(preFrame->data[0] + i * preFrame->linesize[0],
+				       preFrame->width, 1, fp);
 			}
 
 			for (auto i = 0; i < preFrame->height / 2; i++) {
-				fwrite(preFrame->data[1] + i * preFrame->linesize[1], preFrame->width / 2, 1, fp);
+				fwrite(preFrame->data[1] + i * preFrame->linesize[1],
+				       preFrame->width / 2, 1, fp);
 			}
 
 			for (auto i = 0; i < preFrame->height / 2; i++) {
-				fwrite(preFrame->data[2] + i * preFrame->linesize[2], preFrame->width / 2, 1, fp);
+				fwrite(preFrame->data[2] + i * preFrame->linesize[2],
+				       preFrame->width / 2, 1, fp);
 			}
 
 			fclose(fp);
@@ -894,8 +912,8 @@ void TestCopyTexture(texture_handle tex)
 
 	D3D11_MAPPED_SUBRESOURCE data;
 	if (pGraphic->MapTexture(dest, MAP_TEXTURE_FEATURE::FOR_READ_TEXTURE, &data)) {
-		SaveBitmapFile(L"d:/copyTexture.bmp", (const uint8_t *)data.pData, data.RowPitch, destinfo.width,
-			       destinfo.height, 4, true);
+		SaveBitmapFile(L"d:/copyTexture.bmp", (const uint8_t *)data.pData, data.RowPitch,
+			       destinfo.width, destinfo.height, 4, true);
 		pGraphic->UnmapTexture(dest);
 	}
 
@@ -926,8 +944,8 @@ void TestCopyDisplay(display_handle display)
 
 	D3D11_MAPPED_SUBRESOURCE data;
 	if (pGraphic->MapTexture(dest, MAP_TEXTURE_FEATURE::FOR_READ_TEXTURE, &data)) {
-		SaveBitmapFile(L"d:/copyDisplay.bmp", (const uint8_t *)data.pData, data.RowPitch, destinfo.width,
-			       destinfo.height, 4, true);
+		SaveBitmapFile(L"d:/copyDisplay.bmp", (const uint8_t *)data.pData, data.RowPitch,
+			       destinfo.width, destinfo.height, 4, true);
 		pGraphic->UnmapTexture(dest);
 	}
 
@@ -948,9 +966,11 @@ void UpdatePath(std::vector<CPoint> pt, bool finished)
 		for (auto &item : pt)
 			points.push_back(D2D1_POINT_2F(float(item.x), float(item.y)));
 
-		GEOMETRY_TYPE type = g_bSmooth ? GEOMETRY_TYPE::BEZIER_CURVE : GEOMETRY_TYPE::MULP_POINTS;
-		GEOMETRY_FRONT_END_STYLE style = g_bEndClosed ? GEOMETRY_FRONT_END_STYLE::FRONT_END_CLOSE
-							      : GEOMETRY_FRONT_END_STYLE::FRONT_END_OPEN;
+		GEOMETRY_TYPE type = g_bSmooth ? GEOMETRY_TYPE::BEZIER_CURVE
+					       : GEOMETRY_TYPE::MULP_POINTS;
+		GEOMETRY_FRONT_END_STYLE style = g_bEndClosed
+							 ? GEOMETRY_FRONT_END_STYLE::FRONT_END_CLOSE
+							 : GEOMETRY_FRONT_END_STYLE::FRONT_END_OPEN;
 		auto temp = pGraphic->CreateGeometry(points, type, style);
 
 		if (finished) {
@@ -1027,7 +1047,8 @@ void CMFCDemoDlg::OnLButtonDown(UINT nFlags, CPoint point)
 
 	for (auto &item : texRegions) {
 		auto rc = item.region;
-		if (point.x > rc.left && point.x < rc.right && point.y > rc.top && point.y < rc.bottom) {
+		if (point.x > rc.left && point.x < rc.right && point.y > rc.top &&
+		    point.y < rc.bottom) {
 			item.selected = true;
 		} else {
 			item.selected = false;

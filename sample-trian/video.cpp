@@ -66,15 +66,11 @@ void initShader()
 	XMFLOAT4 black = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 
 	TextureVertexDesc vertices[] = {
-		{XMFLOAT3(-1.0f, 1.0f, 1.0f), red},
-		{XMFLOAT3(1.0f, 1.0f, 1.0f), green},
-		{XMFLOAT3(1.0f, -1.0f, 1.0f), blue},
-		{XMFLOAT3(-1.0f, -1.0f, 1.0f), white},
+		{XMFLOAT3(-1.0f, 1.0f, 1.0f), red},    {XMFLOAT3(1.0f, 1.0f, 1.0f), green},
+		{XMFLOAT3(1.0f, -1.0f, 1.0f), blue},   {XMFLOAT3(-1.0f, -1.0f, 1.0f), white},
 
-		{XMFLOAT3(-1.0f, 1.0f, -1.0f), white}, 
-		{XMFLOAT3(1.0f, 1.0f, -1.0f), red},
-		{XMFLOAT3(1.0f, -1.0f, -1.0f), black},
-		{XMFLOAT3(-1.0f, -1.0f, -1.0f), green},
+		{XMFLOAT3(-1.0f, 1.0f, -1.0f), white}, {XMFLOAT3(1.0f, 1.0f, -1.0f), red},
+		{XMFLOAT3(1.0f, -1.0f, -1.0f), black}, {XMFLOAT3(-1.0f, -1.0f, -1.0f), green},
 	};
 
 	pGraphic->SetVertexBuffer(shader, vertices, sizeof(vertices));
@@ -82,11 +78,11 @@ void initShader()
 	//---------------------------------------------------------------------------------------
 	// 以下三角形 立方体外侧是正面
 	WORD indices[] = {
-		0, 1, 3, 1, 2, 3,
-		4, 5, 7, 5, 6, 7,
+		0, 1, 3, 1, 2, 3, 4, 5, 7, 5, 6, 7,
 	};
 
-	pGraphic->SetIndexBuffer(shader, indexId, indices, indexDesc.sizePerIndex * indexDesc.indexCount);
+	pGraphic->SetIndexBuffer(shader, indexId, indices,
+				 indexDesc.sizePerIndex * indexDesc.indexCount);
 }
 
 void Csample1Dlg::initGraphic(HWND hWnd)
@@ -104,7 +100,8 @@ void Csample1Dlg::initGraphic(HWND hWnd)
 
 	RECT rcWindow;
 	::GetClientRect(hWnd, &rcWindow);
-	pGraphic->SetDisplaySize(display, rcWindow.right - rcWindow.left, rcWindow.bottom - rcWindow.top);
+	pGraphic->SetDisplaySize(display, rcWindow.right - rcWindow.left,
+				 rcWindow.bottom - rcWindow.top);
 }
 
 void Csample1Dlg::uninitGraphic()
@@ -143,7 +140,8 @@ void Csample1Dlg::RenderTexture(SIZE canvas, RECT drawDest)
 
 	pGraphic->SetVSConstBuffer(shader, &matrixWVP, sizeof(matrixWVP));
 
-	pGraphic->DrawTopplogy(shader, D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, indexId);
+	pGraphic->DrawTopplogy(
+		shader, D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, indexId);
 }
 
 void Csample1Dlg::render()
@@ -153,7 +151,8 @@ void Csample1Dlg::render()
 	RECT rcWindow;
 	::GetClientRect(m_hWnd, &rcWindow);
 
-	pGraphic->SetDisplaySize(display, rcWindow.right - rcWindow.left, rcWindow.bottom - rcWindow.top);
+	pGraphic->SetDisplaySize(display, rcWindow.right - rcWindow.left,
+				 rcWindow.bottom - rcWindow.top);
 
 	if (!pGraphic->IsGraphicBuilt()) {
 		if (!pGraphic->ReBuildGraphic())

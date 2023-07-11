@@ -10,7 +10,8 @@ std::wstring a2w(const char *str)
 		return L"";
 
 	auto n = MultiByteToWideChar(CP_ACP, 0, str, -1, NULL, 0);
-	std::shared_ptr<wchar_t> pBuffer(new wchar_t[(size_t)n + 1], [](wchar_t *p) { delete[] p; });
+	std::shared_ptr<wchar_t> pBuffer(new wchar_t[(size_t)n + 1],
+					 [](wchar_t *p) { delete[] p; });
 
 	n = MultiByteToWideChar(CP_ACP, 0, str, -1, pBuffer.get(), n);
 	pBuffer.get()[n] = 0;
@@ -52,7 +53,8 @@ std::wstring u2w(const char *str)
 		return L"";
 
 	auto n = MultiByteToWideChar(CP_UTF8, 0, str, -1, NULL, 0);
-	std::shared_ptr<wchar_t> pBuffer(new wchar_t[(size_t)n + 1], [](wchar_t *p) { delete[] p; });
+	std::shared_ptr<wchar_t> pBuffer(new wchar_t[(size_t)n + 1],
+					 [](wchar_t *p) { delete[] p; });
 
 	n = MultiByteToWideChar(CP_UTF8, 0, str, -1, pBuffer.get(), n);
 	pBuffer.get()[n] = 0;
