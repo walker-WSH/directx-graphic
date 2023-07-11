@@ -14,11 +14,13 @@
 // http://go.microsoft.com/fwlink/?LinkId=248929
 //--------------------------------------------------------------------------------------
 
+#include "DXUT.h"
 #include "DDSTextureLoader.h"
 
 #include <algorithm>
 #include <cassert>
 #include <memory>
+#include <new>
 
 #ifdef __clang__
 #pragma clang diagnostic ignored "-Wcovered-switch-default"
