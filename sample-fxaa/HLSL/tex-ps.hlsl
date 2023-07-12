@@ -149,7 +149,7 @@ float4 main(PixelInputType input) : SV_TARGET
     uint NumberOfLevels;
     g_TextureInput.GetDimensions(0,  Width, Height, NumberOfLevels);
     
-    float2 g_TexelSize = float2((float)Width, (float)Height);
+    float2 g_TexelSize = float2(1.f / (float)Width, 1.f / (float)Height);
     float g_QualitySubPix = 1.f;
     float g_QualityEdgeThreshold = 0.063;
     float g_QualityEdgeThresholdMin = 0.0833;

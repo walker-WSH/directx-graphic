@@ -12,8 +12,8 @@ ColorRGBA clrBlack = {0, 0, 0, 1.f};
 ColorRGBA clrBlue = {0, 0, 1, 1.f};
 ColorRGBA clrTrans = {0, 0, 0, 0};
 
-static const auto TEXTURE_VERTEX_COUNT = 8;
-static const auto TEXTURE_INDEX_COUNT = 12;
+static const auto TEXTURE_VERTEX_COUNT = 4;
+static const auto TEXTURE_INDEX_COUNT = 6;
 struct TriangleVertexDesc {
 	XMFLOAT3 Pos;
 	XMFLOAT4 Color;
@@ -99,9 +99,6 @@ void initShader()
 	XMFLOAT4 black = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
 
 	TriangleVertexDesc vertices[] = {
-		{XMFLOAT3(-1.0f, 1.0f, 1.0f), red},    {XMFLOAT3(1.0f, 1.0f, 1.0f), green},
-		{XMFLOAT3(1.0f, -1.0f, 1.0f), blue},   {XMFLOAT3(-1.0f, -1.0f, 1.0f), white},
-
 		{XMFLOAT3(-1.0f, 1.0f, -1.0f), white}, {XMFLOAT3(1.0f, 1.0f, -1.0f), red},
 		{XMFLOAT3(1.0f, -1.0f, -1.0f), black}, {XMFLOAT3(-1.0f, -1.0f, -1.0f), green},
 	};
@@ -111,7 +108,7 @@ void initShader()
 	//---------------------------------------------------------------------------------------
 	// 以下三角形 立方体外侧是正面
 	WORD indices[] = {
-		0, 1, 3, 1, 2, 3, 4, 5, 7, 5, 6, 7,
+		0, 1, 3, 1, 2, 3
 	};
 
 	pGraphic->SetIndexBuffer(shader, indexId, indices,
