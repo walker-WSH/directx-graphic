@@ -147,12 +147,6 @@ void Csample1Dlg::uninitGraphic()
 	graphic::DestroyGraphicSession(pGraphic);
 }
 
-float Csample1Dlg::getRotate()
-{
-	auto ret = (float)m_sliderRotate.GetPos();
-	return ret;
-}
-
 void Csample1Dlg::RenderTexture(SIZE canvas, RECT drawDest, texture_handle tex)
 {
 	AUTO_GRAPHIC_CONTEXT(pGraphic);
@@ -187,7 +181,7 @@ void Csample1Dlg::RenderTexture(SIZE canvas, RECT drawDest, texture_handle tex)
 		pGraphic->DrawTexture(shaderTex, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, textures);
 
 	} else {
-		auto ret = (float)m_sliderRotate.GetPos();
+		auto ret = (float)eyePos;
 		auto percent = ret / 100.f;
 
 		CameraDesc camera;

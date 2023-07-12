@@ -67,6 +67,7 @@ ON_WM_QUERYDRAGICON()
 ON_WM_DESTROY()
 ON_WM_TIMER()
 ON_WM_ERASEBKGND()
+ON_WM_MOUSEWHEEL()
 END_MESSAGE_MAP()
 
 // Csample1Dlg 消息处理程序
@@ -99,6 +100,8 @@ BOOL Csample1Dlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE); // 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
+	MoveWindow(0, 0, 1280, 720);
+	CenterWindow();
 	ModifyStyle(0, WS_CLIPCHILDREN | WS_CLIPSIBLINGS);
 
 	initGraphic(m_hWnd);
@@ -174,4 +177,16 @@ void Csample1Dlg::OnTimer(UINT_PTR nIDEvent)
 BOOL Csample1Dlg::OnEraseBkgnd(CDC *pDC)
 {
 	return TRUE;
+}
+
+BOOL Csample1Dlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	if (zDelta > 0) {
+		eyePos += 10;
+	} else {
+		eyePos -= 10;
+	}
+
+	return CDialogEx::OnMouseWheel(nFlags, zDelta, pt);
 }

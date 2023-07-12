@@ -3,8 +3,8 @@
 #endif
 
 // TODO : 外部传入
-#define TEXTURE_WIDTH 1460
-#define TEXTURE_HEIGHT 831
+#define TEXTURE_WIDTH 1280
+#define TEXTURE_HEIGHT 720
 
 SamplerState sampleType : register(s0);
 Texture2DMS<float4, MSAA_SAMPLES> image0 : register(t0); // only supported from ps-5.0

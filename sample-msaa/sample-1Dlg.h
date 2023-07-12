@@ -29,11 +29,11 @@ protected:
 	void render();
 
 	void RenderTexture(SIZE canvas, RECT drawDest, texture_handle tex);
-	float getRotate();
 
 	// 实现
 protected:
 	HICON m_hIcon;
+	int eyePos = 0;
 
 	// 生成的消息映射函数
 	virtual BOOL OnInitDialog();
@@ -46,4 +46,5 @@ public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	CSliderCtrl m_sliderRotate;
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 };
