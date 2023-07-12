@@ -206,7 +206,7 @@ bool DX11Texture2D::InitTargetTexture(bool cube)
 	desc.Format = m_textureInfo.format;
 	desc.MipLevels = 1;
 	desc.ArraySize = cube ? 6 : 1;
-	desc.SampleDesc.Count = 1;
+	desc.SampleDesc.Count = m_textureInfo.sampleCount;
 	desc.Usage = D3D11_USAGE_DEFAULT;
 	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
 
@@ -379,10 +379,15 @@ bool DX11Texture2D::InitResourceView()
 	D3D11_SHADER_RESOURCE_VIEW_DESC viewDesc{};
 	viewDesc.Format = resourceFormat;
 	viewDesc.Texture2D.MipLevels = 1;
+
 	if (desc.MiscFlags & D3D11_RESOURCE_MISC_TEXTURECUBE) {
 		viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
 	} else {
-		viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		if (m_textureInfo.sampleCount > 1) {
+			viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DMS;
+		} else {
+			viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		}
 	}
 
 	HRESULT hr = DX11GraphicBase::m_graphicSession.D3DDevice()->CreateShaderResourceView(

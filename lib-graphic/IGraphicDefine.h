@@ -186,6 +186,7 @@ struct TextureInformation {
 	uint32_t height = 0;
 	enum DXGI_FORMAT format = DXGI_FORMAT_UNKNOWN;
 	enum TEXTURE_USAGE usage = TEXTURE_USAGE::UNKNOWN;
+	UINT sampleCount = 1;
 };
 
 struct DisplayInformation {
