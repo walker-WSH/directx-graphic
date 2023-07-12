@@ -35,7 +35,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sample-trian", "sample-tria
 		{5CC7C82D-26F3-4F27-81C0-868BC61B9962} = {5CC7C82D-26F3-4F27-81C0-868BC61B9962}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "msaa-trian", "sample-msaa\msaa-trian.vcxproj", "{39DFCBF6-18DD-429A-BA3A-E35819D12B42}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sample-msaa", "sample-msaa\msaa-trian.vcxproj", "{39DFCBF6-18DD-429A-BA3A-E35819D12B42}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5CC7C82D-26F3-4F27-81C0-868BC61B9962} = {5CC7C82D-26F3-4F27-81C0-868BC61B9962}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sample-fxaa", "sample-fxaa\fxaa-trian.vcxproj", "{EA9B4670-8675-42FB-A955-2652E7B14BB2}"
 	ProjectSection(ProjectDependencies) = postProject
 		{5CC7C82D-26F3-4F27-81C0-868BC61B9962} = {5CC7C82D-26F3-4F27-81C0-868BC61B9962}
 	EndProjectSection
@@ -112,6 +117,14 @@ Global
 		{39DFCBF6-18DD-429A-BA3A-E35819D12B42}.Release|x64.Build.0 = Release|x64
 		{39DFCBF6-18DD-429A-BA3A-E35819D12B42}.Release|x86.ActiveCfg = Release|Win32
 		{39DFCBF6-18DD-429A-BA3A-E35819D12B42}.Release|x86.Build.0 = Release|Win32
+		{EA9B4670-8675-42FB-A955-2652E7B14BB2}.Debug|x64.ActiveCfg = Debug|x64
+		{EA9B4670-8675-42FB-A955-2652E7B14BB2}.Debug|x64.Build.0 = Debug|x64
+		{EA9B4670-8675-42FB-A955-2652E7B14BB2}.Debug|x86.ActiveCfg = Debug|Win32
+		{EA9B4670-8675-42FB-A955-2652E7B14BB2}.Debug|x86.Build.0 = Debug|Win32
+		{EA9B4670-8675-42FB-A955-2652E7B14BB2}.Release|x64.ActiveCfg = Release|x64
+		{EA9B4670-8675-42FB-A955-2652E7B14BB2}.Release|x64.Build.0 = Release|x64
+		{EA9B4670-8675-42FB-A955-2652E7B14BB2}.Release|x86.ActiveCfg = Release|Win32
+		{EA9B4670-8675-42FB-A955-2652E7B14BB2}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
