@@ -330,8 +330,8 @@ ComPtr<ID3D11Texture2D> DX11Texture2D::LoadImageTexture()
 	ComPtr<ID3D11Texture2D> pTexture2D = nullptr;
 
 	HRESULT hr = D3DX11CreateShaderResourceViewFromFile(
-		DX11GraphicBase::m_graphicSession.D3DDevice(), m_strImagePath.c_str(), NULL, NULL,
-		pTextureResView.Assign(), NULL);
+		DX11GraphicBase::m_graphicSession.D3DDevice(), m_strImagePath.c_str(), nullptr,
+		nullptr, pTextureResView.Assign(), nullptr);
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "D3DX11CreateShaderResourceViewFromFile %X", this);
 		assert(false);

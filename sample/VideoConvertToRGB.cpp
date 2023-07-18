@@ -51,15 +51,15 @@ void VideoConvertToRGB::ConvertVideo(const AVFrame *src_frame, SIZE canvas, RECT
 	FillTextureVertex(0.f, 0.f, ps_const_buffer.width, ps_const_buffer.height, false, false, 0,
 			  0, 0, 0, outputVertex);
 
-	original_video_info.graphic->SetVertexBuffer(convert_shader, outputVertex,
-						     sizeof(outputVertex));
+	original_video_info.graphic->SetGraphicBuffer(vertex_buf, outputVertex,
+						      sizeof(outputVertex));
 	original_video_info.graphic->SetVSConstBuffer(convert_shader, &matrixWVP,
 						      sizeof(matrixWVP));
 	original_video_info.graphic->SetPSConstBuffer(convert_shader, &ps_const_buffer,
 						      sizeof(ShaderConstBufferForToRGB));
 
-	original_video_info.graphic->DrawTexture(convert_shader,
-						 VIDEO_FILTER_TYPE::VIDEO_FILTER_POINT, texs);
+	original_video_info.graphic->DrawTexture(texs, VIDEO_FILTER_TYPE::VIDEO_FILTER_POINT,
+						 convert_shader, vertex_buf);
 }
 
 void VideoConvertToRGB::UpdateVideo(const AVFrame *av_frame)
@@ -199,8 +199,9 @@ bool VideoConvertToRGB::InitPlane()
 
 void VideoConvertToRGB::SetPlanarI420()
 {
-	convert_shader = shaders[VIDEO_SHADER_TYPE::SHADER_I420_TO_RGB];
-	assert(convert_shader);
+	auto shader_info = shaders[VIDEO_SHADER_TYPE::SHADER_I420_TO_RGB];
+	convert_shader = shader_info.shader;
+	vertex_buf = shader_info.vertexBuf;
 
 	video_plane_list.push_back(video_plane_info());
 	video_plane_list.push_back(video_plane_info());
@@ -221,8 +222,9 @@ void VideoConvertToRGB::SetPlanarI420()
 
 void VideoConvertToRGB::SetPlanarNV12()
 {
-	convert_shader = shaders[VIDEO_SHADER_TYPE::SHADER_NV12_TO_RGB];
-	assert(convert_shader);
+	auto shader_info = shaders[VIDEO_SHADER_TYPE::SHADER_NV12_TO_RGB];
+	convert_shader = shader_info.shader;
+	vertex_buf = shader_info.vertexBuf;
 
 	video_plane_list.push_back(video_plane_info());
 	video_plane_list.push_back(video_plane_info());
@@ -239,13 +241,20 @@ void VideoConvertToRGB::SetPlanarNV12()
 void VideoConvertToRGB::SetPacked422Info(enum AVPixelFormat fmt)
 {
 	switch (fmt) {
-	case AV_PIX_FMT_YUYV422:
-		convert_shader = shaders[VIDEO_SHADER_TYPE::SHADER_YUYV_TO_RGB];
+	case AV_PIX_FMT_YUYV422: {
+		auto shader_info = shaders[VIDEO_SHADER_TYPE::SHADER_YUYV_TO_RGB];
+		convert_shader = shader_info.shader;
+		vertex_buf = shader_info.vertexBuf;
 		break;
+	}
 
-	case AV_PIX_FMT_UYVY422:
-		convert_shader = shaders[VIDEO_SHADER_TYPE::SHADER_UYVY_TO_RGB];
+	case AV_PIX_FMT_UYVY422: {
+		auto shader_info = shaders[VIDEO_SHADER_TYPE::SHADER_UYVY_TO_RGB];
+		convert_shader = shader_info.shader;
+		vertex_buf = shader_info.vertexBuf;
 		break;
+	}
+
 	default:
 		assert(false);
 		break;

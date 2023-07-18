@@ -74,7 +74,7 @@ extern int gridX;
 extern int gridY;
 unsigned __stdcall CMFCDemoDlg::ThreadFuncNormalRender(void *pParam)
 {
-	HRESULT hr = CoInitialize(NULL);
+	HRESULT hr = CoInitialize(nullptr);
 
 	CMFCDemoDlg *self = reinterpret_cast<CMFCDemoDlg *>(pParam);
 
@@ -333,7 +333,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncNormalRender(void *pParam)
 
 unsigned __stdcall CMFCDemoDlg::ThreadFuncForSubRegionMosic(void *pParam)
 {
-	HRESULT hr = CoInitialize(NULL);
+	HRESULT hr = CoInitialize(nullptr);
 
 	CMFCDemoDlg *self = reinterpret_cast<CMFCDemoDlg *>(pParam);
 
@@ -485,7 +485,7 @@ extern float g_nMoveCurve; // default 1
 
 unsigned __stdcall CMFCDemoDlg::ThreadFuncForBulge(void *pParam)
 {
-	HRESULT hr = CoInitialize(NULL);
+	HRESULT hr = CoInitialize(nullptr);
 
 	CMFCDemoDlg *self = reinterpret_cast<CMFCDemoDlg *>(pParam);
 
@@ -579,7 +579,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForBulge(void *pParam)
 
 unsigned __stdcall CMFCDemoDlg::ThreadFuncRender(void *pParam)
 {
-	HRESULT hr = CoInitialize(NULL);
+	HRESULT hr = CoInitialize(nullptr);
 	CMFCDemoDlg *self = reinterpret_cast<CMFCDemoDlg *>(pParam);
 
 	int64_t frameInterval = 1000 / 30;

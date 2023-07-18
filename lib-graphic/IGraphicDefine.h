@@ -37,11 +37,10 @@ class IAutoGraphicContext;
 using texture_handle = IGraphicObject *;
 using display_handle = IGraphicObject *;
 using shader_handle = IGraphicObject *;
+using buffer_handle = IGraphicObject *;
 using font_handle = IGraphicObject *;
 using geometry_handle = IGraphicObject *;
 using graphic_cb = long;
-
-static long INVALID_INDEX_ID = -1;
 
 static auto CREATE_TEXTURE_FLAG_SHARED_MUTEX = 1 << 0;
 static auto CREATE_TEXTURE_FLAG_GDI_SHARED = 1 << 1;
@@ -209,9 +208,10 @@ struct ColorRGBA {
 	float alpha = 1.0; // [0.0, 1.0]
 };
 
-struct IndexItemDesc {
-	UINT sizePerIndex = 0;
-	UINT indexCount = 0;
+struct BufferDesc {
+	uint32_t itemCount = 0;
+	uint32_t sizePerItem = 0;
+	D3D11_BIND_FLAG bufferType;
 };
 
 struct VertexInputDesc {
@@ -235,8 +235,6 @@ struct ShaderInformation {
 	std::wstring psFile;
 
 	std::vector<VertexInputDesc> vertexDesc;
-	uint32_t perVertexSize = 0;
-	uint32_t vertexCount = 0;
 
 	uint32_t vsBufferSize = 0;
 	uint32_t psBufferSize = 0;

@@ -79,22 +79,22 @@ BOOL CMFCDemoDlg::OnSetCursor(CWnd *pWnd, UINT nHitTest, UINT message)
 	switch (nHitTest) {
 	case HTTOP:
 	case HTBOTTOM:
-		SetCursor(LoadCursor(NULL, MAKEINTRESOURCE(IDC_SIZENS)));
+		SetCursor(LoadCursor(nullptr, MAKEINTRESOURCE(IDC_SIZENS)));
 		return TRUE;
 
 	case HTLEFT:
 	case HTRIGHT:
-		SetCursor(LoadCursor(NULL, MAKEINTRESOURCE(IDC_SIZEWE)));
+		SetCursor(LoadCursor(nullptr, MAKEINTRESOURCE(IDC_SIZEWE)));
 		return TRUE;
 
 	case HTTOPLEFT:
 	case HTBOTTOMRIGHT:
-		SetCursor(LoadCursor(NULL, MAKEINTRESOURCE(IDC_SIZENWSE)));
+		SetCursor(LoadCursor(nullptr, MAKEINTRESOURCE(IDC_SIZENWSE)));
 		return TRUE;
 
 	case HTTOPRIGHT:
 	case HTBOTTOMLEFT:
-		SetCursor(LoadCursor(NULL, MAKEINTRESOURCE(IDC_SIZENESW)));
+		SetCursor(LoadCursor(nullptr, MAKEINTRESOURCE(IDC_SIZENESW)));
 		return TRUE;
 
 	default:

@@ -74,9 +74,9 @@ HRESULT DX11SwapChain::TestResizeSwapChain()
 	if (m_descTexture.Width != m_dwWidth || m_descTexture.Height != m_dwHeight) {
 		D2DRenderTarget::ReleaseD2D();
 
-		ID3D11RenderTargetView *pRenderView = NULL;
+		ID3D11RenderTargetView *pRenderView = nullptr;
 		DX11GraphicBase::m_graphicSession.D3DContext()->OMSetRenderTargets(1, &pRenderView,
-										   NULL);
+										   nullptr);
 
 		m_pRenderTargetViewLinear = nullptr;
 		m_pRenderTargetView = nullptr;

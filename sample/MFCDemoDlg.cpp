@@ -37,7 +37,7 @@ enum class RUN_TEST_FOR {
 RUN_TEST_FOR InitCmdParams()
 {
 	RUN_TEST_FOR ret = RUN_TEST_FOR::RUN_NORMAL;
-	LPWSTR *szArgList = NULL;
+	LPWSTR *szArgList = nullptr;
 
 	do {
 		int argCount = 0;
@@ -108,7 +108,7 @@ CMFCDemoDlg::CMFCDemoDlg(CWnd *pParent /*=nullptr*/) : CDialogEx(IDD_MFCDEMO_DIA
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
-	CoInitialize(NULL);
+	CoInitialize(nullptr);
 	m_pGraphic = graphic::CreateGraphicSession();
 }
 
@@ -406,8 +406,8 @@ void RunChildProcess(const wchar_t *param)
 	si.dwFlags = STARTF_FORCEOFFFEEDBACK;
 	si.wShowWindow = SW_HIDE;
 
-	BOOL bOK =
-		CreateProcessW(path, cmd, NULL, NULL, TRUE, CREATE_NO_WINDOW, NULL, NULL, &si, &pi);
+	BOOL bOK = CreateProcessW(path, cmd, nullptr, nullptr, TRUE, CREATE_NO_WINDOW, nullptr,
+				  nullptr, &si, &pi);
 	if (!bOK) {
 		assert(false);
 		return;

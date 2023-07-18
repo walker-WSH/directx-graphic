@@ -7,7 +7,8 @@ const auto IMAGE_COUNT = 6;
 
 IGraphicSession *pGraphic = nullptr;
 shader_handle shader = nullptr;
-long indexId = INVALID_INDEX_ID;
+buffer_handle vertexBuf = nullptr;
+buffer_handle indexId = nullptr;
 display_handle display = nullptr;
 texture_handle texCube = nullptr;
 
@@ -48,16 +49,19 @@ void initShader()
 	shaderInfo.vsBufferSize = sizeof(matrixWVP);
 	shaderInfo.psBufferSize = 0;
 
-	shaderInfo.vertexCount = TEXTURE_VERTEX_COUNT;
-	shaderInfo.perVertexSize = sizeof(TextureVertexDesc);
-
 	shader = pGraphic->CreateShader(shaderInfo);
 	assert(shader);
 
-	IndexItemDesc indexDesc;
-	indexDesc.sizePerIndex = sizeof(WORD);
-	indexDesc.indexCount = TEXTURE_INDEX_COUNT;
-	indexId = pGraphic->CreateIndexBuffer(shader, indexDesc);
+	BufferDesc bufDesc;
+	bufDesc.bufferType = D3D11_BIND_VERTEX_BUFFER;
+	bufDesc.itemCount = TEXTURE_VERTEX_COUNT;
+	bufDesc.sizePerItem = sizeof(TextureVertexDesc);
+	vertexBuf = pGraphic->CreateGraphicBuffer(bufDesc);
+
+	bufDesc.bufferType = D3D11_BIND_INDEX_BUFFER;
+	bufDesc.sizePerItem = sizeof(WORD);
+	bufDesc.itemCount = TEXTURE_INDEX_COUNT;
+	indexId = pGraphic->CreateGraphicBuffer(bufDesc);
 
 	//---------------------------------------------------------------------------------------
 	TextureVertexDesc vertices[TEXTURE_VERTEX_COUNT];
@@ -94,7 +98,7 @@ void initShader()
 	vertices[22].Pos = XMFLOAT3(w2, h2, -d2);
 	vertices[23].Pos = XMFLOAT3(w2, -h2, -d2);
 
-	pGraphic->SetVertexBuffer(shader, vertices, sizeof(vertices));
+	pGraphic->SetGraphicBuffer(vertexBuf, vertices, sizeof(vertices));
 
 	WORD indices[] = {
 		0,  1,  2,  2,  3,  0,  // 右面(+X面)
@@ -105,8 +109,7 @@ void initShader()
 		20, 21, 22, 22, 23, 20  // 正面(-Z面)
 	};
 
-	pGraphic->SetIndexBuffer(shader, indexId, indices,
-				 indexDesc.sizePerIndex * indexDesc.indexCount);
+	pGraphic->SetGraphicBuffer(indexId, indices, sizeof(indices));
 }
 
 void Csample1Dlg::initGraphic(HWND hWnd)
@@ -194,8 +197,8 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 	pGraphic->SetVSConstBuffer(shader, &matrixWVP, sizeof(matrixWVP));
 
 	std::vector<texture_handle> textures = {tex};
-	pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_ANISOTROPIC, textures,
-			      D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, indexId);
+	pGraphic->DrawTexture(textures, VIDEO_FILTER_TYPE::VIDEO_FILTER_ANISOTROPIC, shader,
+			      vertexBuf, indexId, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void Csample1Dlg::render()

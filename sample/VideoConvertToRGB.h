@@ -45,7 +45,8 @@ private:
 	};
 
 	const VideoConvertSettings original_video_info;
-	shader_handle convert_shader = 0; // does not need to free
+	shader_handle convert_shader = nullptr; // does not need to free
+	buffer_handle vertex_buf = nullptr;
 	std::vector<video_plane_info> video_plane_list;
 	ShaderConstBufferForToRGB ps_const_buffer;
 };

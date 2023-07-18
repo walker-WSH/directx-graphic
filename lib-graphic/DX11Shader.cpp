@@ -13,10 +13,8 @@ DX11Shader::DX11Shader(DX11GraphicSession &graphic, const ShaderInformation *inf
 	LOG_INFO("shader object is created: %X. \n"
 		 "\t vs:%s \n"
 		 "\t ps:%s \n"
-		 "\t perVertexSize:%d vertexCount:%d \n"
 		 "\t vsBufferSize:%d psBufferSize:%d \n",
-		 this, vsFile.c_str(), psFile.c_str(), info->perVertexSize, info->vertexCount,
-		 info->vsBufferSize, info->psBufferSize);
+		 this, vsFile.c_str(), psFile.c_str(), info->vsBufferSize, info->psBufferSize);
 
 	BuildGraphic();
 }
@@ -43,8 +41,8 @@ bool DX11Shader::BuildGraphic()
 	}
 
 	hr = m_graphicSession.D3DDevice()->CreateVertexShader(
-		vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL,
-		m_pVertexShader.Assign());
+		vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(),
+		nullptr, m_pVertexShader.Assign());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateVertexShader %X", this);
 		assert(false);
@@ -53,7 +51,7 @@ bool DX11Shader::BuildGraphic()
 
 	hr = m_graphicSession.D3DDevice()->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(),
 							     pixelShaderBuffer->GetBufferSize(),
-							     NULL, m_pPixelShader.Assign());
+							     nullptr, m_pPixelShader.Assign());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreatePixelShader %X", this);
 		assert(false);
@@ -72,24 +70,12 @@ bool DX11Shader::BuildGraphic()
 		return false;
 	}
 
-	D3D11_BUFFER_DESC vertexBufferDesc = {};
-	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = m_shaderInfo.vertexCount * m_shaderInfo.perVertexSize;
-	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	hr = m_graphicSession.D3DDevice()->CreateBuffer(&vertexBufferDesc, NULL,
-							m_pVertexBuffer.Assign());
-	if (FAILED(hr)) {
-		CHECK_DX_ERROR(hr, "DX-CreateBuffer size:%u %X", vertexBufferDesc.ByteWidth, this);
-		assert(false);
-		return false;
-	}
-
 	if (m_shaderInfo.vsBufferSize > 0) {
 		D3D11_BUFFER_DESC CBufferDesc = {};
 		CBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 		CBufferDesc.ByteWidth = m_shaderInfo.vsBufferSize;
 		CBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		hr = m_graphicSession.D3DDevice()->CreateBuffer(&CBufferDesc, NULL,
+		hr = m_graphicSession.D3DDevice()->CreateBuffer(&CBufferDesc, nullptr,
 								m_pVSConstBuffer.Assign());
 		if (FAILED(hr)) {
 			CHECK_DX_ERROR(hr, "DX-CreateBuffer size:%u %X", CBufferDesc.ByteWidth,
@@ -104,7 +90,7 @@ bool DX11Shader::BuildGraphic()
 		CBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 		CBufferDesc.ByteWidth = m_shaderInfo.psBufferSize;
 		CBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		hr = m_graphicSession.D3DDevice()->CreateBuffer(&CBufferDesc, NULL,
+		hr = m_graphicSession.D3DDevice()->CreateBuffer(&CBufferDesc, nullptr,
 								m_pPSConstBuffer.Assign());
 		if (FAILED(hr)) {
 			CHECK_DX_ERROR(hr, "DX-CreateBuffer size:%u %X", CBufferDesc.ByteWidth,
@@ -112,12 +98,6 @@ bool DX11Shader::BuildGraphic()
 			assert(false);
 			return false;
 		}
-	}
-
-	for (const auto &item : m_mapIndexParams) {
-		auto id = item.first;
-		auto desc = item.second;
-		CreateIndexBuffer(desc, id);
 	}
 
 	NotifyRebuildEvent();
@@ -128,16 +108,13 @@ void DX11Shader::ReleaseGraphic(bool isForRebuild)
 {
 	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
 
+	m_pInputLayout = nullptr;
+
 	m_pVertexShader = nullptr;
 	m_pVSConstBuffer = nullptr;
 
 	m_pPixelShader = nullptr;
 	m_pPSConstBuffer = nullptr;
-
-	m_pInputLayout = nullptr;
-	m_pVertexBuffer = nullptr;
-
-	m_mapIndexBuffer.clear();
 
 	NotifyReleaseEvent(isForRebuild);
 }
@@ -145,113 +122,7 @@ void DX11Shader::ReleaseGraphic(bool isForRebuild)
 bool DX11Shader::IsBuilt()
 {
 	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
-	return m_pVertexShader && m_pPixelShader && m_pInputLayout && m_pVertexBuffer;
-}
-
-long DX11Shader::CreateIndexBuffer(const IndexItemDesc &desc, long id)
-{
-	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
-
-	bool validSize = (desc.sizePerIndex == sizeof(WORD) || desc.sizePerIndex == sizeof(DWORD));
-	if (!validSize) {
-		assert(false);
-		return 0;
-	}
-
-	UINT byteWidth = desc.indexCount * desc.sizePerIndex;
-
-	D3D11_BUFFER_DESC bd = {};
-	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = byteWidth;
-	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	bd.CPUAccessFlags = 0;
-
-	std::shared_ptr<BYTE> temp(new BYTE[byteWidth]);
-	memset(temp.get(), 0, byteWidth);
-
-	D3D11_SUBRESOURCE_DATA initData = {};
-	initData.pSysMem = temp.get();
-
-	ComPtr<ID3D11Buffer> buf = nullptr;
-	auto hr = m_graphicSession.D3DDevice()->CreateBuffer(&bd, &initData, &buf);
-	if (FAILED(hr)) {
-		CHECK_DX_ERROR(hr, "DX-CreateBuffer for index, size:%u %X", byteWidth, this);
-		assert(false);
-		return 0;
-	}
-
-	if (id <= 0) {
-		static long s_indexBufferCount = 1000;
-		id = InterlockedIncrement(&s_indexBufferCount);
-		m_mapIndexParams[id] = desc;
-	}
-
-	m_mapIndexBuffer[id] = buf;
-	return id;
-}
-
-bool DX11Shader::SetIndexValue(long id, const void *data, size_t size)
-{
-	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
-
-	assert(id > 0);
-
-	auto itrDesc = m_mapIndexParams.find(id);
-	if (itrDesc == m_mapIndexParams.end()) {
-		assert(false);
-		return false;
-	}
-
-	auto itr = m_mapIndexBuffer.find(id);
-	if (itr == m_mapIndexBuffer.end()) {
-		assert(false);
-		return false;
-	}
-
-	auto desc = itrDesc->second;
-	auto buf = itr->second;
-	auto expectLen = desc.indexCount * desc.sizePerIndex;
-	if (expectLen == size) {
-		m_graphicSession.UpdateShaderBuffer(buf, data, size);
-
-	} else {
-		assert(false);
-		LOG_WARN("invalid size for index buffer. expect:%d, real:%d", (int)expectLen,
-			 (int)size);
-	}
-
-	return true;
-}
-
-bool DX11Shader::ApplyIndexBuffer(long id)
-{
-	CHECK_GRAPHIC_CONTEXT_EX(m_graphicSession);
-
-	assert(id > 0);
-
-	auto itrDesc = m_mapIndexParams.find(id);
-	if (itrDesc == m_mapIndexParams.end()) {
-		assert(false);
-		return false;
-	}
-
-	auto itr = m_mapIndexBuffer.find(id);
-	if (itr == m_mapIndexBuffer.end()) {
-		assert(false);
-		return false;
-	}
-
-	auto desc = itrDesc->second;
-	auto buf = itr->second;
-
-	if (desc.sizePerIndex == sizeof(WORD)) {
-		m_graphicSession.D3DContext()->IASetIndexBuffer(buf, DXGI_FORMAT_R16_UINT, 0);
-
-	} else if (desc.sizePerIndex == sizeof(DWORD)) {
-		m_graphicSession.D3DContext()->IASetIndexBuffer(buf, DXGI_FORMAT_R32_UINT, 0);
-	}
-
-	return true;
+	return m_pVertexShader && m_pPixelShader && m_pInputLayout;
 }
 
 void DX11Shader::GetSemanticName(VERTEX_INPUT_TYPE type, D3D11_INPUT_ELEMENT_DESC &desc)

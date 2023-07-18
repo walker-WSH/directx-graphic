@@ -15,6 +15,7 @@
 #include "D2DTextFormat.h"
 #include "D2DGeometry.h"
 #include "D2DLineStyle.h"
+#include "DX11Buffer.h"
 
 namespace graphic {
 
@@ -39,9 +40,9 @@ public:
 	virtual bool InitializeGraphic(uint32_t adapterIdx = 0);
 	virtual void UnInitializeGraphic();
 
-	virtual uint32_t MaxVideoSize();
 	virtual bool IsGraphicBuilt();
 	virtual bool ReBuildGraphic();
+	virtual uint32_t MaxVideoSize();
 
 	virtual void DestroyGraphicObject(IGraphicObject *&hdl);
 	virtual void DestroyAllGraphicObject();
@@ -61,12 +62,13 @@ public:
 
 	// shader
 	virtual shader_handle CreateShader(const ShaderInformation &info);
-	virtual long CreateIndexBuffer(shader_handle hdl, const IndexItemDesc &desc);
-	virtual void SetVertexBuffer(shader_handle hdl, const void *buffer, size_t size);
 	virtual void SetVSConstBuffer(shader_handle hdl, const void *vsBuffer, size_t vsSize);
 	virtual void SetPSConstBuffer(shader_handle hdl, const void *psBuffer, size_t psSize);
-	virtual void SetIndexBuffer(shader_handle hdl, long index_id, const void *data,
-				    size_t size);
+
+	// buffer
+	virtual buffer_handle CreateGraphicBuffer(const BufferDesc &desc,
+						  const void *data = nullptr);
+	virtual void SetGraphicBuffer(buffer_handle hdl, const void *data, size_t size);
 
 	// texture
 	virtual texture_handle OpenSharedTexture(HANDLE hSharedHanle);
@@ -91,13 +93,14 @@ public:
 	virtual void ClearBackground(const ColorRGBA *bkClr);
 	virtual void SetBlendState(VIDEO_BLEND_TYPE type);
 	virtual void SetRasterizerState(D3D11_CULL_MODE mode);
-	virtual void DrawTopplogy(shader_handle hdl, D3D11_PRIMITIVE_TOPOLOGY type,
-				  long indexId = INVALID_INDEX_ID);
 	virtual void
-	DrawTexture(shader_handle hdl, VIDEO_FILTER_TYPE flt,
-		    const std::vector<texture_handle> &textures,
-		    D3D11_PRIMITIVE_TOPOLOGY type = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,
-		    long indexId = INVALID_INDEX_ID);
+	DrawTopplogy(shader_handle hdl, buffer_handle vertex, buffer_handle index = nullptr,
+		     D3D11_PRIMITIVE_TOPOLOGY type = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	virtual void
+	DrawTexture(const std::vector<texture_handle> &textures, VIDEO_FILTER_TYPE flt,
+		    shader_handle hdl, buffer_handle vertex, buffer_handle index = nullptr,
+		    D3D11_PRIMITIVE_TOPOLOGY type = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+
 	virtual void EndRender(IGeometryInterface *geometryInterface = nullptr);
 
 	//---------------------------------------------------------------------------
@@ -135,7 +138,7 @@ protected:
 			      ComPtr<IDXGISwapChain> swapChain);
 	bool GetResource(const std::vector<texture_handle> &textures,
 			 std::vector<ID3D11ShaderResourceView *> &resources);
-	bool ApplyShader(DX11Shader *shader, long indexId);
+	bool ApplyShader(DX11Shader *shader, buffer_handle index);
 
 	bool IsTextureInfoSame(const D3D11_TEXTURE2D_DESC *dest, const D3D11_TEXTURE2D_DESC *src,
 			       TextureCopyRegion *region, std::string &reason);

@@ -3,6 +3,7 @@
 
 IGraphicSession *pGraphic = nullptr;
 shader_handle shader = nullptr;
+buffer_handle vertexBuf = nullptr;
 display_handle display = nullptr;
 texture_handle texImg = nullptr;
 
@@ -45,11 +46,14 @@ void initShader()
 	shaderInfo.vsBufferSize = sizeof(matrixWVP);
 	shaderInfo.psBufferSize = 0;
 
-	shaderInfo.vertexCount = TEXTURE_VERTEX_COUNT;
-	shaderInfo.perVertexSize = sizeof(TextureVertexDesc);
-
 	shader = pGraphic->CreateShader(shaderInfo);
 	assert(shader);
+
+	BufferDesc bufDesc;
+	bufDesc.bufferType = D3D11_BIND_VERTEX_BUFFER;
+	bufDesc.itemCount = TEXTURE_VERTEX_COUNT;
+	bufDesc.sizePerItem = sizeof(TextureVertexDesc);
+	vertexBuf = pGraphic->CreateGraphicBuffer(bufDesc);
 }
 
 void Csample1Dlg::initGraphic(HWND hWnd)
@@ -177,9 +181,9 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 		TransposedOrthoMatrixWVP(canvas, false, &worldList, matrixWVP);
 	}
 
-	pGraphic->SetVertexBuffer(shader, outputVertex, sizeof(outputVertex));
+	pGraphic->SetGraphicBuffer(vertexBuf, outputVertex, sizeof(outputVertex));
 	pGraphic->SetVSConstBuffer(shader, &matrixWVP, sizeof(matrixWVP));
-	pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, textures);
+	pGraphic->DrawTexture(textures, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, shader, vertexBuf);
 }
 
 void Csample1Dlg::render()

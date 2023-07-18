@@ -45,7 +45,7 @@ END_MESSAGE_MAP()
 
 Csample1Dlg::Csample1Dlg(CWnd *pParent /*=nullptr*/) : CDialogEx(IDD_SAMPLE1_DIALOG, pParent)
 {
-	CoInitialize(NULL);
+	CoInitialize(nullptr);
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 

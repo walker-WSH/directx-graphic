@@ -71,8 +71,8 @@ bool VideoConvertToYUV::ConvertVideo(texture_handle src_tex)
 		FillTextureVertex(0.f, 0.f, (float)item.width, (float)item.height, false, false, 0,
 				  0, 0, 0, outputVertex);
 
-		original_video_info.graphic->SetVertexBuffer(item.shader, outputVertex,
-							     sizeof(outputVertex));
+		original_video_info.graphic->SetGraphicBuffer(item.vertex_buf, outputVertex,
+							      sizeof(outputVertex));
 
 		original_video_info.graphic->SetVSConstBuffer(item.shader, &matrixWVP,
 							      sizeof(matrixWVP));
@@ -80,8 +80,9 @@ bool VideoConvertToYUV::ConvertVideo(texture_handle src_tex)
 		original_video_info.graphic->SetPSConstBuffer(item.shader, &item.ps_const_buffer,
 							      sizeof(ShaderConstBufferForToYUV));
 
-		original_video_info.graphic->DrawTexture(
-			item.shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_POINT, textures);
+		original_video_info.graphic->DrawTexture(textures,
+							 VIDEO_FILTER_TYPE::VIDEO_FILTER_POINT,
+							 item.shader, item.vertex_buf);
 		original_video_info.graphic->EndRender();
 
 		// copy it to read video
@@ -234,21 +235,24 @@ void VideoConvertToYUV::SetPlanarI420()
 	video_plane_list[0].width = original_video_info.width;
 	video_plane_list[0].height = original_video_info.height;
 	video_plane_list[0].format = DXGI_FORMAT_R8_UNORM;
-	video_plane_list[0].shader = shaders[VIDEO_SHADER_TYPE::SHADER_TO_Y_PLANE];
+	video_plane_list[0].shader = shaders[VIDEO_SHADER_TYPE::SHADER_TO_Y_PLANE].shader;
+	video_plane_list[0].vertex_buf = shaders[VIDEO_SHADER_TYPE::SHADER_TO_Y_PLANE].vertexBuf;
 	video_plane_list[0].ps_const_buffer.color_vec0 = color_vec_y;
 	video_plane_list[0].expect_linesize = video_plane_list[0].width * 1;
 
 	video_plane_list[1].width = (original_video_info.width + 1) / 2;
 	video_plane_list[1].height = (original_video_info.height + 1) / 2;
 	video_plane_list[1].format = DXGI_FORMAT_R8_UNORM;
-	video_plane_list[1].shader = shaders[VIDEO_SHADER_TYPE::SHADER_TO_Y_PLANE];
+	video_plane_list[1].shader = shaders[VIDEO_SHADER_TYPE::SHADER_TO_Y_PLANE].shader;
+	video_plane_list[0].vertex_buf = shaders[VIDEO_SHADER_TYPE::SHADER_TO_Y_PLANE].vertexBuf;
 	video_plane_list[1].ps_const_buffer.color_vec0 = color_vec_u;
 	video_plane_list[1].expect_linesize = video_plane_list[1].width * 1;
 
 	video_plane_list[2].width = (original_video_info.width + 1) / 2;
 	video_plane_list[2].height = (original_video_info.height + 1) / 2;
 	video_plane_list[2].format = DXGI_FORMAT_R8_UNORM;
-	video_plane_list[2].shader = shaders[VIDEO_SHADER_TYPE::SHADER_TO_Y_PLANE];
+	video_plane_list[2].shader = shaders[VIDEO_SHADER_TYPE::SHADER_TO_Y_PLANE].shader;
+	video_plane_list[0].vertex_buf = shaders[VIDEO_SHADER_TYPE::SHADER_TO_Y_PLANE].vertexBuf;
 	video_plane_list[2].ps_const_buffer.color_vec0 = color_vec_v;
 	video_plane_list[2].expect_linesize = video_plane_list[2].width * 1;
 }
@@ -261,14 +265,16 @@ void VideoConvertToYUV::SetPlanarNV12()
 	video_plane_list[0].width = original_video_info.width;
 	video_plane_list[0].height = original_video_info.height;
 	video_plane_list[0].format = DXGI_FORMAT_R8_UNORM;
-	video_plane_list[0].shader = shaders[VIDEO_SHADER_TYPE::SHADER_TO_Y_PLANE];
+	video_plane_list[0].shader = shaders[VIDEO_SHADER_TYPE::SHADER_TO_Y_PLANE].shader;
+	video_plane_list[0].vertex_buf = shaders[VIDEO_SHADER_TYPE::SHADER_TO_Y_PLANE].vertexBuf;
 	video_plane_list[0].ps_const_buffer.color_vec0 = color_vec_y;
 	video_plane_list[0].expect_linesize = video_plane_list[0].width * 1;
 
 	video_plane_list[1].width = (original_video_info.width + 1) / 2;
 	video_plane_list[1].height = (original_video_info.height + 1) / 2;
 	video_plane_list[1].format = DXGI_FORMAT_R8G8_UNORM;
-	video_plane_list[1].shader = shaders[VIDEO_SHADER_TYPE::SHADER_TO_UV_PLANE];
+	video_plane_list[1].shader = shaders[VIDEO_SHADER_TYPE::SHADER_TO_UV_PLANE].shader;
+	video_plane_list[0].vertex_buf = shaders[VIDEO_SHADER_TYPE::SHADER_TO_UV_PLANE].vertexBuf;
 	video_plane_list[1].ps_const_buffer.color_vec0 = color_vec_u;
 	video_plane_list[1].ps_const_buffer.color_vec1 = color_vec_v;
 	video_plane_list[1].expect_linesize = video_plane_list[1].width * 2;

@@ -3,7 +3,8 @@
 
 IGraphicSession *pGraphic = nullptr;
 shader_handle shader = nullptr;
-long indexId = INVALID_INDEX_ID;
+buffer_handle vertexBuf = nullptr;
+buffer_handle indexId = nullptr;
 display_handle display = nullptr;
 texture_handle texImg = nullptr;
 
@@ -49,16 +50,19 @@ void initShader()
 	shaderInfo.vsBufferSize = sizeof(matrixWVP);
 	shaderInfo.psBufferSize = 0;
 
-	shaderInfo.vertexCount = TEXTURE_VERTEX_COUNT;
-	shaderInfo.perVertexSize = sizeof(TextureVertexDesc);
-
 	shader = pGraphic->CreateShader(shaderInfo);
 	assert(shader);
 
-	IndexItemDesc indexDesc;
-	indexDesc.sizePerIndex = sizeof(WORD);
-	indexDesc.indexCount = TEXTURE_INDEX_COUNT;
-	indexId = pGraphic->CreateIndexBuffer(shader, indexDesc);
+	BufferDesc bufDesc;
+	bufDesc.bufferType = D3D11_BIND_VERTEX_BUFFER;
+	bufDesc.itemCount = TEXTURE_VERTEX_COUNT;
+	bufDesc.sizePerItem = sizeof(TextureVertexDesc);
+	vertexBuf = pGraphic->CreateGraphicBuffer(bufDesc);
+
+	bufDesc.bufferType = D3D11_BIND_INDEX_BUFFER;
+	bufDesc.sizePerItem = sizeof(WORD);
+	bufDesc.itemCount = TEXTURE_INDEX_COUNT;
+	indexId = pGraphic->CreateGraphicBuffer(bufDesc);
 
 	//---------------------------------------------------------------------------------------
 	float stepY = 1.f / 3.f;
@@ -104,7 +108,7 @@ void initShader()
 
 	};
 
-	pGraphic->SetVertexBuffer(shader, vertices, sizeof(vertices));
+	pGraphic->SetGraphicBuffer(vertexBuf, vertices, sizeof(vertices));
 
 	WORD indices[] = {3,  0,  1,  2,  3,  1, // 图像0
 
@@ -118,8 +122,7 @@ void initShader()
 
 			  22, 21, 20, 23, 22, 20}; // 图像3
 
-	pGraphic->SetIndexBuffer(shader, indexId, indices,
-				 indexDesc.sizePerIndex * indexDesc.indexCount);
+	pGraphic->SetGraphicBuffer(indexId, indices, sizeof(indices));
 }
 
 void Csample1Dlg::initGraphic(HWND hWnd)
@@ -181,8 +184,8 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 	pGraphic->SetVSConstBuffer(shader, &matrixWVP, sizeof(matrixWVP));
 
 	// 如果使用别的采样 会有明显的两面接缝
-	pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_POINT, textures,
-			      D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, indexId);
+	pGraphic->DrawTexture(textures, VIDEO_FILTER_TYPE::VIDEO_FILTER_POINT, shader, vertexBuf,
+			      indexId, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void Csample1Dlg::render()

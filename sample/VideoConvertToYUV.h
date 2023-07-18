@@ -40,7 +40,8 @@ private:
 		texture_handle canvas_tex = 0;
 		texture_handle read_tex = 0;
 
-		shader_handle shader = 0; // does not need to free
+		shader_handle shader = nullptr; // does not need to free
+		buffer_handle vertex_buf = nullptr;
 		ShaderConstBufferForToYUV ps_const_buffer;
 	};
 

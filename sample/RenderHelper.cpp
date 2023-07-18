@@ -6,15 +6,16 @@
 #include <math.h>
 
 IGraphicSession *pGraphic = nullptr;
-std::map<VIDEO_SHADER_TYPE, shader_handle> shaders;
+std::map<VIDEO_SHADER_TYPE, ShaderInfo> shaders;
 
 std::wstring GetShaderDirectory();
 void InitShader()
 {
 	float matrixWVP[4][4];
 	ShaderInformation shaderInfo;
-
+	BufferDesc bufDesc;
 	VertexInputDesc desc;
+
 	desc.type = VERTEX_INPUT_TYPE::SV_POSITION;
 	desc.size = 16;
 	shaderInfo.vertexDesc.push_back(desc);
@@ -25,16 +26,21 @@ void InitShader()
 
 	std::wstring dir = GetShaderDirectory();
 
+	bufDesc.bufferType = D3D11_BIND_VERTEX_BUFFER;
+	bufDesc.itemCount = TEXTURE_VERTEX_COUNT;
+	bufDesc.sizePerItem = sizeof(TextureVertexDesc);
+	buffer_handle textureVertexBuf = pGraphic->CreateGraphicBuffer(bufDesc);
+
 	{
 		shaderInfo.vsFile = dir + L"default-vs.cso";
 		shaderInfo.psFile = dir + L"default-ps.cso";
 		shaderInfo.vsBufferSize = sizeof(matrixWVP);
 		shaderInfo.psBufferSize = 0;
-		shaderInfo.vertexCount = TEXTURE_VERTEX_COUNT;
-		shaderInfo.perVertexSize = sizeof(TextureVertexDesc);
 		shader_handle shader = pGraphic->CreateShader(shaderInfo);
 		assert(shader);
-		shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE] = shader;
+
+		shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE] =
+			ShaderInfo(shader, textureVertexBuf, nullptr);
 	}
 
 	{
@@ -42,11 +48,11 @@ void InitShader()
 		shaderInfo.psFile = dir + L"srgb-ps.cso";
 		shaderInfo.vsBufferSize = sizeof(matrixWVP);
 		shaderInfo.psBufferSize = 0;
-		shaderInfo.vertexCount = TEXTURE_VERTEX_COUNT;
-		shaderInfo.perVertexSize = sizeof(TextureVertexDesc);
 		shader_handle shader = pGraphic->CreateShader(shaderInfo);
 		assert(shader);
-		shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_SRGB] = shader;
+
+		shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_SRGB] =
+			ShaderInfo(shader, textureVertexBuf, nullptr);
 	}
 
 	{
@@ -54,11 +60,11 @@ void InitShader()
 		shaderInfo.psFile = dir + L"output-ps.cso";
 		shaderInfo.vsBufferSize = sizeof(matrixWVP);
 		shaderInfo.psBufferSize = 0;
-		shaderInfo.vertexCount = TEXTURE_VERTEX_COUNT;
-		shaderInfo.perVertexSize = sizeof(TextureVertexDesc);
 		shader_handle shader = pGraphic->CreateShader(shaderInfo);
 		assert(shader);
-		shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_OUTPUT] = shader;
+
+		shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_OUTPUT] =
+			ShaderInfo(shader, textureVertexBuf, nullptr);
 	}
 
 	{
@@ -66,11 +72,10 @@ void InitShader()
 		shaderInfo.psFile = dir + L"white-ps.cso";
 		shaderInfo.vsBufferSize = sizeof(matrixWVP);
 		shaderInfo.psBufferSize = sizeof(WhiteParam);
-		shaderInfo.vertexCount = TEXTURE_VERTEX_COUNT;
-		shaderInfo.perVertexSize = sizeof(TextureVertexDesc);
 		shader_handle shader = pGraphic->CreateShader(shaderInfo);
 		assert(shader);
-		shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_WHITE] = shader;
+		shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_WHITE] =
+			ShaderInfo(shader, textureVertexBuf, nullptr);
 	}
 
 	{
@@ -78,11 +83,10 @@ void InitShader()
 		shaderInfo.psFile = dir + L"mosaic-ps.cso";
 		shaderInfo.vsBufferSize = sizeof(matrixWVP);
 		shaderInfo.psBufferSize = sizeof(MosaicParam);
-		shaderInfo.vertexCount = TEXTURE_VERTEX_COUNT;
-		shaderInfo.perVertexSize = sizeof(TextureVertexDesc);
 		shader_handle shader = pGraphic->CreateShader(shaderInfo);
 		assert(shader);
-		shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_MOSAIC] = shader;
+		shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_MOSAIC] =
+			ShaderInfo(shader, textureVertexBuf, nullptr);
 	}
 
 	{
@@ -90,11 +94,10 @@ void InitShader()
 		shaderInfo.psFile = dir + L"mosaic-subregion-ps.cso";
 		shaderInfo.vsBufferSize = sizeof(matrixWVP);
 		shaderInfo.psBufferSize = sizeof(MosaicParam);
-		shaderInfo.vertexCount = TEXTURE_VERTEX_COUNT;
-		shaderInfo.perVertexSize = sizeof(TextureVertexDesc);
 		shader_handle shader = pGraphic->CreateShader(shaderInfo);
 		assert(shader);
-		shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_MOSAIC_SUB] = shader;
+		shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_MOSAIC_SUB] =
+			ShaderInfo(shader, textureVertexBuf, nullptr);
 	}
 
 	{
@@ -102,11 +105,10 @@ void InitShader()
 		shaderInfo.psFile = dir + L"bulge-ps.cso";
 		shaderInfo.vsBufferSize = sizeof(matrixWVP);
 		shaderInfo.psBufferSize = sizeof(BulgeParam);
-		shaderInfo.vertexCount = TEXTURE_VERTEX_COUNT;
-		shaderInfo.perVertexSize = sizeof(TextureVertexDesc);
 		shader_handle shader = pGraphic->CreateShader(shaderInfo);
 		assert(shader);
-		shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_BULGE] = shader;
+		shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_BULGE] =
+			ShaderInfo(shader, textureVertexBuf, nullptr);
 	}
 
 	{
@@ -114,11 +116,10 @@ void InitShader()
 		shaderInfo.psFile = dir + L"reduce-ps.cso";
 		shaderInfo.vsBufferSize = sizeof(matrixWVP);
 		shaderInfo.psBufferSize = sizeof(BulgeParam);
-		shaderInfo.vertexCount = TEXTURE_VERTEX_COUNT;
-		shaderInfo.perVertexSize = sizeof(TextureVertexDesc);
 		shader_handle shader = pGraphic->CreateShader(shaderInfo);
 		assert(shader);
-		shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_REDUCE] = shader;
+		shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_REDUCE] =
+			ShaderInfo(shader, textureVertexBuf, nullptr);
 	}
 
 	{
@@ -126,11 +127,10 @@ void InitShader()
 		shaderInfo.psFile = dir + L"shift-ps.cso";
 		shaderInfo.vsBufferSize = sizeof(matrixWVP);
 		shaderInfo.psBufferSize = sizeof(ShiftParam);
-		shaderInfo.vertexCount = TEXTURE_VERTEX_COUNT;
-		shaderInfo.perVertexSize = sizeof(TextureVertexDesc);
 		shader_handle shader = pGraphic->CreateShader(shaderInfo);
 		assert(shader);
-		shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_SHIFT] = shader;
+		shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_SHIFT] =
+			ShaderInfo(shader, textureVertexBuf, nullptr);
 	}
 
 	{
@@ -145,11 +145,17 @@ void InitShader()
 		shaderInfo.psFile = dir + L"fill-rect-ps.cso";
 		shaderInfo.vsBufferSize = sizeof(matrixWVP);
 		shaderInfo.psBufferSize = sizeof(ColorRGBA);
-		shaderInfo.vertexCount = TEXTURE_VERTEX_COUNT;
-		shaderInfo.perVertexSize = sizeof(ColorVertexDesc);
 		shader_handle shader = pGraphic->CreateShader(shaderInfo);
 		assert(shader);
-		shaders[VIDEO_SHADER_TYPE::SHADER_FILL_RECT] = shader;
+
+		BufferDesc bufDesc;
+		bufDesc.bufferType = D3D11_BIND_VERTEX_BUFFER;
+		bufDesc.itemCount = TEXTURE_VERTEX_COUNT;
+		bufDesc.sizePerItem = sizeof(ColorVertexDesc);
+		auto vertexBuf = pGraphic->CreateGraphicBuffer(bufDesc);
+
+		shaders[VIDEO_SHADER_TYPE::SHADER_FILL_RECT] =
+			ShaderInfo(shader, vertexBuf, nullptr);
 	}
 
 	{
@@ -157,11 +163,10 @@ void InitShader()
 		shaderInfo.psFile = dir + L"ps-rgb-to-y.cso";
 		shaderInfo.vsBufferSize = sizeof(matrixWVP);
 		shaderInfo.psBufferSize = sizeof(VideoConvertToYUV::ShaderConstBufferForToYUV);
-		shaderInfo.vertexCount = TEXTURE_VERTEX_COUNT;
-		shaderInfo.perVertexSize = sizeof(TextureVertexDesc);
 		shader_handle shader = pGraphic->CreateShader(shaderInfo);
 		assert(shader);
-		shaders[VIDEO_SHADER_TYPE::SHADER_TO_Y_PLANE] = shader;
+		shaders[VIDEO_SHADER_TYPE::SHADER_TO_Y_PLANE] =
+			ShaderInfo(shader, textureVertexBuf, nullptr);
 	}
 
 	{
@@ -169,11 +174,10 @@ void InitShader()
 		shaderInfo.psFile = dir + L"ps-rgb-to-uv.cso";
 		shaderInfo.vsBufferSize = sizeof(matrixWVP);
 		shaderInfo.psBufferSize = sizeof(VideoConvertToYUV::ShaderConstBufferForToYUV);
-		shaderInfo.vertexCount = TEXTURE_VERTEX_COUNT;
-		shaderInfo.perVertexSize = sizeof(TextureVertexDesc);
 		shader_handle shader = pGraphic->CreateShader(shaderInfo);
 		assert(shader);
-		shaders[VIDEO_SHADER_TYPE::SHADER_TO_UV_PLANE] = shader;
+		shaders[VIDEO_SHADER_TYPE::SHADER_TO_UV_PLANE] =
+			ShaderInfo(shader, textureVertexBuf, nullptr);
 	}
 
 	{
@@ -181,11 +185,10 @@ void InitShader()
 		shaderInfo.psFile = dir + L"ps-to-rgb-i420.cso";
 		shaderInfo.vsBufferSize = sizeof(matrixWVP);
 		shaderInfo.psBufferSize = sizeof(VideoConvertToRGB::ShaderConstBufferForToRGB);
-		shaderInfo.vertexCount = TEXTURE_VERTEX_COUNT;
-		shaderInfo.perVertexSize = sizeof(TextureVertexDesc);
 		shader_handle shader = pGraphic->CreateShader(shaderInfo);
 		assert(shader);
-		shaders[VIDEO_SHADER_TYPE::SHADER_I420_TO_RGB] = shader;
+		shaders[VIDEO_SHADER_TYPE::SHADER_I420_TO_RGB] =
+			ShaderInfo(shader, textureVertexBuf, nullptr);
 	}
 
 	{
@@ -193,11 +196,10 @@ void InitShader()
 		shaderInfo.psFile = dir + L"ps-to-rgb-nv12.cso";
 		shaderInfo.vsBufferSize = sizeof(matrixWVP);
 		shaderInfo.psBufferSize = sizeof(VideoConvertToRGB::ShaderConstBufferForToRGB);
-		shaderInfo.vertexCount = TEXTURE_VERTEX_COUNT;
-		shaderInfo.perVertexSize = sizeof(TextureVertexDesc);
 		shader_handle shader = pGraphic->CreateShader(shaderInfo);
 		assert(shader);
-		shaders[VIDEO_SHADER_TYPE::SHADER_NV12_TO_RGB] = shader;
+		shaders[VIDEO_SHADER_TYPE::SHADER_NV12_TO_RGB] =
+			ShaderInfo(shader, textureVertexBuf, nullptr);
 	}
 
 	{
@@ -205,11 +207,10 @@ void InitShader()
 		shaderInfo.psFile = dir + L"ps-to-rgb-yuy2.cso";
 		shaderInfo.vsBufferSize = sizeof(matrixWVP);
 		shaderInfo.psBufferSize = sizeof(VideoConvertToRGB::ShaderConstBufferForToRGB);
-		shaderInfo.vertexCount = TEXTURE_VERTEX_COUNT;
-		shaderInfo.perVertexSize = sizeof(TextureVertexDesc);
 		shader_handle shader = pGraphic->CreateShader(shaderInfo);
 		assert(shader);
-		shaders[VIDEO_SHADER_TYPE::SHADER_YUYV_TO_RGB] = shader;
+		shaders[VIDEO_SHADER_TYPE::SHADER_YUYV_TO_RGB] =
+			ShaderInfo(shader, textureVertexBuf, nullptr);
 	}
 
 	{
@@ -217,11 +218,10 @@ void InitShader()
 		shaderInfo.psFile = dir + L"ps-to-rgb-uyvy.cso";
 		shaderInfo.vsBufferSize = sizeof(matrixWVP);
 		shaderInfo.psBufferSize = sizeof(VideoConvertToRGB::ShaderConstBufferForToRGB);
-		shaderInfo.vertexCount = TEXTURE_VERTEX_COUNT;
-		shaderInfo.perVertexSize = sizeof(TextureVertexDesc);
 		shader_handle shader = pGraphic->CreateShader(shaderInfo);
 		assert(shader);
-		shaders[VIDEO_SHADER_TYPE::SHADER_UYVY_TO_RGB] = shader;
+		shaders[VIDEO_SHADER_TYPE::SHADER_UYVY_TO_RGB] =
+			ShaderInfo(shader, textureVertexBuf, nullptr);
 	}
 }
 
@@ -275,7 +275,8 @@ void RenderTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest,
 	AUTO_GRAPHIC_CONTEXT(pGraphic);
 
 	TextureInformation texInfo = pGraphic->GetTextureInfo(texs.at(0));
-	shader_handle shader = shaders[shaderType];
+	auto shaderInfo = shaders[shaderType];
+	auto shader = shaderInfo.shader;
 
 	RECT realDrawDest = drawDest;
 	float cropL = 0;
@@ -344,7 +345,7 @@ void RenderTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest,
 			  (float)realDrawDest.right, (float)realDrawDest.bottom, false, false,
 			  cropL, cropT, cropR, cropB, outputVertex);
 
-	pGraphic->SetVertexBuffer(shader, outputVertex, sizeof(outputVertex));
+	pGraphic->SetGraphicBuffer(shaderInfo.vertexBuf, outputVertex, sizeof(outputVertex));
 	pGraphic->SetVSConstBuffer(shader, &matrixWVP, sizeof(matrixWVP));
 	if (mosaic) {
 		pGraphic->SetPSConstBuffer(shader, mosaic, sizeof(MosaicParam));
@@ -355,7 +356,8 @@ void RenderTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest,
 		pGraphic->SetPSConstBuffer(shader, &prm, sizeof(WhiteParam));
 	}
 
-	pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, texs);
+	pGraphic->DrawTexture(texs, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, shader,
+			      shaderInfo.vertexBuf);
 }
 
 extern bool g_bReduce;
@@ -365,8 +367,9 @@ void RenderBulgeTexture(std::vector<texture_handle> texs, SIZE canvas, RECT draw
 	AUTO_GRAPHIC_CONTEXT(pGraphic);
 
 	TextureInformation texInfo = pGraphic->GetTextureInfo(texs.at(0));
-	shader_handle shader = shaders[g_bReduce ? VIDEO_SHADER_TYPE::SHADER_TEXTURE_REDUCE
-						 : VIDEO_SHADER_TYPE::SHADER_TEXTURE_BULGE];
+	auto shaderInfo = shaders[g_bReduce ? VIDEO_SHADER_TYPE::SHADER_TEXTURE_REDUCE
+					    : VIDEO_SHADER_TYPE::SHADER_TEXTURE_BULGE];
+	auto shader = shaderInfo.shader;
 
 	RECT realDrawDest = drawDest;
 
@@ -378,11 +381,12 @@ void RenderBulgeTexture(std::vector<texture_handle> texs, SIZE canvas, RECT draw
 			  (float)realDrawDest.right, (float)realDrawDest.bottom, false, false, 0.f,
 			  0.f, 0.f, 0.f, outputVertex);
 
-	pGraphic->SetVertexBuffer(shader, outputVertex, sizeof(outputVertex));
+	pGraphic->SetGraphicBuffer(shaderInfo.vertexBuf, outputVertex, sizeof(outputVertex));
 	pGraphic->SetVSConstBuffer(shader, &matrixWVP, sizeof(matrixWVP));
 	pGraphic->SetPSConstBuffer(shader, psParam, sizeof(BulgeParam));
 
-	pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, texs);
+	pGraphic->DrawTexture(texs, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, shader,
+			      shaderInfo.vertexBuf);
 }
 
 void RenderShiftTexture(std::vector<texture_handle> texs, SIZE canvas, RECT drawDest,
@@ -391,7 +395,8 @@ void RenderShiftTexture(std::vector<texture_handle> texs, SIZE canvas, RECT draw
 	AUTO_GRAPHIC_CONTEXT(pGraphic);
 
 	TextureInformation texInfo = pGraphic->GetTextureInfo(texs.at(0));
-	shader_handle shader = shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_SHIFT];
+	auto shaderInfo = shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE_SHIFT];
+	auto shader = shaderInfo.shader;
 
 	RECT realDrawDest = drawDest;
 
@@ -403,11 +408,12 @@ void RenderShiftTexture(std::vector<texture_handle> texs, SIZE canvas, RECT draw
 			  (float)realDrawDest.right, (float)realDrawDest.bottom, false, false, 0.f,
 			  0.f, 0.f, 0.f, outputVertex);
 
-	pGraphic->SetVertexBuffer(shader, outputVertex, sizeof(outputVertex));
+	pGraphic->SetGraphicBuffer(shaderInfo.vertexBuf, outputVertex, sizeof(outputVertex));
 	pGraphic->SetVSConstBuffer(shader, &matrixWVP, sizeof(matrixWVP));
 	pGraphic->SetPSConstBuffer(shader, psParam, sizeof(ShiftParam));
 
-	pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, texs);
+	pGraphic->DrawTexture(texs, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, shader,
+			      shaderInfo.vertexBuf);
 }
 
 extern int g_rotatePeriod;
@@ -434,7 +440,8 @@ texture_handle getRotatedTexture(texture_handle tex, texture_handle &canvasTex)
 		ColorRGBA clr{0, 0, 0, 0};
 		pGraphic->ClearBackground(&clr);
 
-		shader_handle shader = shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE];
+		auto shaderInfo = shaders[VIDEO_SHADER_TYPE::SHADER_TEXTURE];
+		auto shader = shaderInfo.shader;
 		SIZE canvas(canvasInfo.width, canvasInfo.height);
 
 		TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT];
@@ -454,10 +461,11 @@ texture_handle getRotatedTexture(texture_handle tex, texture_handle &canvasTex)
 		XMMATRIX matrixWVP;
 		TransposedOrthoMatrixWVP(canvas, false, &worldList, matrixWVP);
 
-		pGraphic->SetVertexBuffer(shader, outputVertex, sizeof(outputVertex));
+		pGraphic->SetGraphicBuffer(shaderInfo.vertexBuf, outputVertex,
+					   sizeof(outputVertex));
 		pGraphic->SetVSConstBuffer(shader, &matrixWVP, sizeof(matrixWVP));
-		pGraphic->DrawTexture(shader, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR,
-				      std::vector{tex});
+		pGraphic->DrawTexture(std::vector{tex}, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR,
+				      shader, shaderInfo.vertexBuf);
 
 		pGraphic->EndRender();
 	}
@@ -477,11 +485,14 @@ void FillRectangleByDX11(SIZE canvas, RECT drawDest, ColorRGBA clr)
 	FillColorVertex((float)drawDest.left, (float)drawDest.top, (float)drawDest.right,
 			(float)drawDest.bottom, outputVertex);
 
-	pGraphic->SetVertexBuffer(shaders[type], outputVertex, sizeof(outputVertex));
-	pGraphic->SetVSConstBuffer(shaders[type], &matrixWVP, sizeof(matrixWVP));
-	pGraphic->SetPSConstBuffer(shaders[type], &clr, sizeof(ColorRGBA));
+	auto shaderInfo = shaders[type];
 
-	pGraphic->DrawTopplogy(shaders[type], D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	pGraphic->SetGraphicBuffer(shaderInfo.vertexBuf, outputVertex, sizeof(outputVertex));
+	pGraphic->SetVSConstBuffer(shaderInfo.shader, &matrixWVP, sizeof(matrixWVP));
+	pGraphic->SetPSConstBuffer(shaderInfo.shader, &clr, sizeof(ColorRGBA));
+
+	pGraphic->DrawTopplogy(shaderInfo.shader, shaderInfo.vertexBuf, nullptr,
+			       D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 }
 
 void RenderBorderByDX11(SIZE canvas, RECT drawDest, long borderSize, ColorRGBA clr)

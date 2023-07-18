@@ -11,13 +11,12 @@ public:
 	virtual void RegisterCallback(std::weak_ptr<IGraphicCallback> cb) = 0;
 	virtual void UnRegisterCallback(IGraphicCallback *cb) = 0;
 
-	// graphic : Select graphic automatically if it's null. NVIDIA > AMD > INTEL > BAISC > ANY
 	virtual bool InitializeGraphic(uint32_t adapterIdx = 0) = 0;
 	virtual void UnInitializeGraphic() = 0;
 
-	virtual uint32_t MaxVideoSize() = 0;
 	virtual bool IsGraphicBuilt() = 0;
 	virtual bool ReBuildGraphic() = 0;
+	virtual uint32_t MaxVideoSize() = 0;
 
 	virtual void DestroyGraphicObject(IGraphicObject *&hdl) = 0;
 	virtual void DestroyAllGraphicObject() = 0;
@@ -38,12 +37,13 @@ public:
 
 	// shader
 	virtual shader_handle CreateShader(const ShaderInformation &info) = 0;
-	virtual long CreateIndexBuffer(shader_handle hdl, const IndexItemDesc &desc) = 0;
-	virtual void SetVertexBuffer(shader_handle hdl, const void *buffer, size_t size) = 0;
 	virtual void SetVSConstBuffer(shader_handle hdl, const void *vsBuffer, size_t vsSize) = 0;
 	virtual void SetPSConstBuffer(shader_handle hdl, const void *psBuffer, size_t psSize) = 0;
-	virtual void SetIndexBuffer(shader_handle hdl, long index_id, const void *data,
-				    size_t size) = 0;
+
+	// buffer
+	virtual buffer_handle CreateGraphicBuffer(const BufferDesc &desc,
+						  const void *data = nullptr) = 0;
+	virtual void SetGraphicBuffer(buffer_handle hdl, const void *data, size_t size) = 0;
 
 	// texture
 	virtual texture_handle OpenSharedTexture(HANDLE hSharedHanle) = 0;
@@ -70,12 +70,13 @@ public:
 	virtual void ClearBackground(const ColorRGBA *bkClr) = 0;
 	virtual void SetBlendState(VIDEO_BLEND_TYPE type) = 0;
 	virtual void SetRasterizerState(D3D11_CULL_MODE mode) = 0;
-	virtual void DrawTopplogy(shader_handle hdl, D3D11_PRIMITIVE_TOPOLOGY type,
-				  long indexId = INVALID_INDEX_ID) = 0;
 	virtual void
-	DrawTexture(shader_handle hdl, VIDEO_FILTER_TYPE flt, const std::vector<texture_handle> &,
-		    D3D11_PRIMITIVE_TOPOLOGY type = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,
-		    long indexId = INVALID_INDEX_ID) = 0;
+	DrawTopplogy(shader_handle hdl, buffer_handle vertex, buffer_handle index = nullptr,
+		     D3D11_PRIMITIVE_TOPOLOGY type = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP) = 0;
+	virtual void
+	DrawTexture(const std::vector<texture_handle> &textures, VIDEO_FILTER_TYPE flt,
+		    shader_handle hdl, buffer_handle vertex, buffer_handle index = nullptr,
+		    D3D11_PRIMITIVE_TOPOLOGY type = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP) = 0;
 
 	virtual void EndRender(IGeometryInterface *geometryInterface = nullptr) = 0;
 };

@@ -10,8 +10,8 @@ GRAPHIC_API bool SaveDebugBitmap(const wchar_t *path, const uint8_t *data, int l
 	if (!path || !data)
 		return false;
 
-	HANDLE hWrite = CreateFile(path, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,
-				   FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE hWrite = CreateFile(path, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS,
+				   FILE_ATTRIBUTE_NORMAL, nullptr);
 	if (!hWrite || hWrite == INVALID_HANDLE_VALUE)
 		return false;
 
@@ -34,15 +34,15 @@ GRAPHIC_API bool SaveDebugBitmap(const wchar_t *path, const uint8_t *data, int l
 	infoHead.biCompression = 0;
 	infoHead.biSizeImage = height * dwStride;
 
-	WriteFile(hWrite, &fileHead, sizeof(BITMAPFILEHEADER), &dwNumOfWrite, NULL);
-	WriteFile(hWrite, &infoHead, sizeof(BITMAPINFOHEADER), &dwNumOfWrite, NULL);
+	WriteFile(hWrite, &fileHead, sizeof(BITMAPFILEHEADER), &dwNumOfWrite, nullptr);
+	WriteFile(hWrite, &infoHead, sizeof(BITMAPINFOHEADER), &dwNumOfWrite, nullptr);
 
 	for (int i = 0; i < height; ++i) {
 		if (flip)
 			WriteFile(hWrite, data + (height - 1 - i) * linesize, dwStride,
-				  &dwNumOfWrite, NULL);
+				  &dwNumOfWrite, nullptr);
 		else
-			WriteFile(hWrite, data + i * linesize, dwStride, &dwNumOfWrite, NULL);
+			WriteFile(hWrite, data + i * linesize, dwStride, &dwNumOfWrite, nullptr);
 	}
 
 	CloseHandle(hWrite);

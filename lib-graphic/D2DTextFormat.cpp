@@ -39,7 +39,7 @@ bool D2DTextFormat::BuildGraphic()
 						    : DWRITE_FONT_WEIGHT_NORMAL;
 	DWRITE_FONT_STYLE style = m_textFormat.italic ? DWRITE_FONT_STYLE_ITALIC
 						      : DWRITE_FONT_STYLE_NORMAL;
-	auto hr = wf->CreateTextFormat(m_textFormat.fontName.c_str(), NULL, bold, style,
+	auto hr = wf->CreateTextFormat(m_textFormat.fontName.c_str(), nullptr, bold, style,
 				       m_textFormat.stretchH, m_textFormat.fontSize, L"",
 				       &m_pTextFormat);
 	if (FAILED(hr)) {

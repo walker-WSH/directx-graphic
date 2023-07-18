@@ -4,7 +4,9 @@
 IGraphicSession *pGraphic = nullptr;
 shader_handle shader = nullptr;
 shader_handle shaderTex = nullptr;
-long indexId = INVALID_INDEX_ID;
+buffer_handle vertexBuf = nullptr;
+buffer_handle vertexBufTex = nullptr;
+buffer_handle indexId = nullptr;
 texture_handle texCanvas = nullptr;
 display_handle display = nullptr;
 
@@ -53,10 +55,14 @@ void initShader()
 		shaderInfo.psFile = dir + L"msaa-ps.cso";
 		shaderInfo.vsBufferSize = sizeof(XMMATRIX);
 		shaderInfo.psBufferSize = 0;
-		shaderInfo.vertexCount = TEXTURE_VERTEX_COUNT;
-		shaderInfo.perVertexSize = sizeof(TriangleVertexDesc);
 
 		shader = pGraphic->CreateShader(shaderInfo);
+
+		BufferDesc bufDesc;
+		bufDesc.bufferType = D3D11_BIND_VERTEX_BUFFER;
+		bufDesc.itemCount = TEXTURE_VERTEX_COUNT;
+		bufDesc.sizePerItem = sizeof(TriangleVertexDesc);
+		vertexBuf = pGraphic->CreateGraphicBuffer(bufDesc);
 	}
 
 	{
@@ -75,20 +81,22 @@ void initShader()
 
 		shaderInfo.vsFile = dir + L"tex-vs.cso";
 		shaderInfo.psFile = dir + L"tex-ps.cso";
-
 		shaderInfo.vsBufferSize = sizeof(XMMATRIX);
 		shaderInfo.psBufferSize = 0;
-
-		shaderInfo.vertexCount = CANVAS_VERTEX_COUNT;
-		shaderInfo.perVertexSize = sizeof(TextureVertexDesc);
-
 		shaderTex = pGraphic->CreateShader(shaderInfo);
+
+		BufferDesc bufDesc;
+		bufDesc.bufferType = D3D11_BIND_VERTEX_BUFFER;
+		bufDesc.itemCount = CANVAS_VERTEX_COUNT;
+		bufDesc.sizePerItem = sizeof(TextureVertexDesc);
+		vertexBufTex = pGraphic->CreateGraphicBuffer(bufDesc);
 	}
 
-	IndexItemDesc indexDesc;
-	indexDesc.sizePerIndex = sizeof(WORD);
-	indexDesc.indexCount = TEXTURE_INDEX_COUNT;
-	indexId = pGraphic->CreateIndexBuffer(shader, indexDesc);
+	BufferDesc bufDesc;
+	bufDesc.bufferType = D3D11_BIND_INDEX_BUFFER;
+	bufDesc.sizePerItem = sizeof(WORD);
+	bufDesc.itemCount = TEXTURE_INDEX_COUNT;
+	indexId = pGraphic->CreateGraphicBuffer(bufDesc);
 
 	//---------------------------------------------------------------------------------------
 	XMFLOAT4 red = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
@@ -106,7 +114,7 @@ void initShader()
 		{XMFLOAT3(1.0f, -1.0f, -1.0f), black}, {XMFLOAT3(-1.0f, -1.0f, -1.0f), green},
 	};
 
-	pGraphic->SetVertexBuffer(shader, vertices, sizeof(vertices));
+	pGraphic->SetGraphicBuffer(vertexBuf, vertices, sizeof(vertices));
 
 	//---------------------------------------------------------------------------------------
 	// 以下三角形 立方体外侧是正面
@@ -114,8 +122,7 @@ void initShader()
 		0, 1, 3, 1, 2, 3, 4, 5, 7, 5, 6, 7,
 	};
 
-	pGraphic->SetIndexBuffer(shader, indexId, indices,
-				 indexDesc.sizePerIndex * indexDesc.indexCount);
+	pGraphic->SetGraphicBuffer(indexId, indices, sizeof(indices));
 }
 
 void Csample1Dlg::initGraphic(HWND hWnd)
@@ -175,10 +182,11 @@ void Csample1Dlg::RenderTexture(SIZE canvas, RECT drawDest, texture_handle tex)
 
 		TransposedOrthoMatrixWVP(canvas, false, nullptr, matrixWVP);
 
-		pGraphic->SetVertexBuffer(shaderTex, outputVertex, sizeof(outputVertex));
+		pGraphic->SetGraphicBuffer(vertexBufTex, outputVertex, sizeof(outputVertex));
 		pGraphic->SetVSConstBuffer(shaderTex, &matrixWVP, sizeof(matrixWVP));
 
-		pGraphic->DrawTexture(shaderTex, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, textures);
+		pGraphic->DrawTexture(textures, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, shaderTex,
+				      vertexBufTex);
 
 	} else {
 		auto ret = (float)eyePos;
@@ -193,8 +201,8 @@ void Csample1Dlg::RenderTexture(SIZE canvas, RECT drawDest, texture_handle tex)
 
 		pGraphic->SetVSConstBuffer(shader, &matrixWVP, sizeof(matrixWVP));
 		pGraphic->DrawTopplogy(
-			shader, D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
-			indexId);
+			shader, vertexBuf, indexId,
+			D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
 }
 

@@ -7,7 +7,7 @@ namespace winHelper {
 std::wstring GetExeFullPath()
 {
 	WCHAR szFilePath[MAX_PATH] = {};
-	GetModuleFileNameW(NULL, szFilePath, MAX_PATH);
+	GetModuleFileNameW(nullptr, szFilePath, MAX_PATH);
 	return szFilePath;
 }
 

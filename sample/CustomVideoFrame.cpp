@@ -46,16 +46,16 @@ int open_file()
 	int ret;
 
 	/* open the input file */
-	if (avformat_open_input(&input_ctx, "test.wmv", NULL, NULL) != 0) {
+	if (avformat_open_input(&input_ctx, "test.wmv", nullptr, nullptr) != 0) {
 		return -1;
 	}
 
-	if (avformat_find_stream_info(input_ctx, NULL) < 0) {
+	if (avformat_find_stream_info(input_ctx, nullptr) < 0) {
 		return -1;
 	}
 
 	/* find the video stream information */
-	AVCodec *test = NULL;
+	AVCodec *test = nullptr;
 	ret = av_find_best_stream(input_ctx, AVMEDIA_TYPE_VIDEO, -1, -1, &test, 0);
 	if (ret < 0) {
 		return -1;
@@ -74,7 +74,7 @@ int open_file()
 	if (avcodec_parameters_to_context(decoder_ctx, video->codecpar) < 0)
 		return -1;
 
-	if ((ret = avcodec_open2(decoder_ctx, decoder, NULL)) < 0) {
+	if ((ret = avcodec_open2(decoder_ctx, decoder, nullptr)) < 0) {
 		return -1;
 	}
 
@@ -141,7 +141,7 @@ AVFrame *decode_frame()
 			sws_ctx = sws_getContext(frame->width, frame->height,
 						 (enum AVPixelFormat)frame->format, frame->width,
 						 frame->height, TEST_RENDER_YUV_FORMAT, SWS_BICUBIC,
-						 NULL, NULL, NULL);
+						 nullptr, nullptr, nullptr);
 			assert(sws_ctx);
 		}
 
@@ -174,8 +174,8 @@ bool SaveBitmapFile(const wchar_t *path, const uint8_t *data, int linesize, int 
 	if (!path || !data)
 		return false;
 
-	HANDLE hWrite = CreateFile(path, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,
-				   FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE hWrite = CreateFile(path, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS,
+				   FILE_ATTRIBUTE_NORMAL, nullptr);
 	if (!hWrite || hWrite == INVALID_HANDLE_VALUE)
 		return false;
 
@@ -198,16 +198,16 @@ bool SaveBitmapFile(const wchar_t *path, const uint8_t *data, int linesize, int 
 	infoHead.biCompression = 0;
 	infoHead.biSizeImage = height * dwStride;
 
-	WriteFile(hWrite, &fileHead, sizeof(BITMAPFILEHEADER), &dwNumOfWrite, NULL);
-	WriteFile(hWrite, &infoHead, sizeof(BITMAPINFOHEADER), &dwNumOfWrite, NULL);
+	WriteFile(hWrite, &fileHead, sizeof(BITMAPFILEHEADER), &dwNumOfWrite, nullptr);
+	WriteFile(hWrite, &infoHead, sizeof(BITMAPINFOHEADER), &dwNumOfWrite, nullptr);
 
 	for (size_t i = 0; i < (size_t)height; ++i) {
 		if (flip)
 			WriteFile(hWrite, data + ((size_t)height - 1 - i) * linesize, dwStride,
-				  &dwNumOfWrite, NULL);
+				  &dwNumOfWrite, nullptr);
 		else
 			WriteFile(hWrite, data + i * (size_t)linesize, dwStride, &dwNumOfWrite,
-				  NULL);
+				  nullptr);
 	}
 
 	CloseHandle(hWrite);
@@ -219,12 +219,12 @@ void WritePlaneData(HANDLE hWrite, const void *data, int32_t srcLinesize, int32_
 {
 	DWORD dwCount = 0;
 	if (srcLinesize == dstLinesize) {
-		WriteFile(hWrite, data, dstLinesize * counts, &dwCount, NULL);
+		WriteFile(hWrite, data, dstLinesize * counts, &dwCount, nullptr);
 	} else {
 		assert(srcLinesize >= dstLinesize);
 		for (size_t i = 0; i < (size_t)counts; i++) {
 			WriteFile(hWrite, (uint8_t *)data + i * srcLinesize, dstLinesize, &dwCount,
-				  NULL);
+				  nullptr);
 		}
 	}
 }
@@ -235,8 +235,8 @@ void SaveI420(uint32_t width, uint32_t height, void *data[AV_NUM_DATA_POINTERS],
 	wchar_t path[MAX_PATH];
 	swprintf_s(path, L"d:/%dx%d.yuv420p", width, height);
 
-	HANDLE hWrite = CreateFile(path, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,
-				   FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE hWrite = CreateFile(path, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS,
+				   FILE_ATTRIBUTE_NORMAL, nullptr);
 	if (!hWrite || hWrite == INVALID_HANDLE_VALUE) {
 		assert(false);
 		return;
@@ -255,8 +255,8 @@ void SaveNV12(uint32_t width, uint32_t height, void *data[AV_NUM_DATA_POINTERS],
 	wchar_t path[MAX_PATH];
 	swprintf_s(path, L"d:/%dx%d.nv12", width, height);
 
-	HANDLE hWrite = CreateFile(path, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,
-				   FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE hWrite = CreateFile(path, GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS,
+				   FILE_ATTRIBUTE_NORMAL, nullptr);
 	if (!hWrite || hWrite == INVALID_HANDLE_VALUE) {
 		assert(false);
 		return;

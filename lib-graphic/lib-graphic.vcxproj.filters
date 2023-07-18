@@ -71,6 +71,9 @@
     <ClCompile Include="common\WICTextureLoader.cpp">
       <Filter>common</Filter>
     </ClCompile>
+    <ClCompile Include="DX11Buffer.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common\ComPtr.hpp">
@@ -138,6 +141,9 @@
     </ClInclude>
     <ClInclude Include="common\WICTextureLoader.h">
       <Filter>common</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11Buffer.h">
+      <Filter>source</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

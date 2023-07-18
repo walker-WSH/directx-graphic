@@ -189,6 +189,7 @@
     <ClCompile Include="D2DRenderTarget.cpp" />
     <ClCompile Include="D2DTextFormat.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="DX11Buffer.cpp" />
     <ClCompile Include="DX11Shader.cpp" />
     <ClCompile Include="DX11SwapChain.cpp" />
     <ClCompile Include="DX11Texture2D.cpp" />
@@ -211,6 +212,7 @@
     <ClInclude Include="D2DLineStyle.h" />
     <ClInclude Include="D2DRenderTarget.h" />
     <ClInclude Include="D2DTextFormat.h" />
+    <ClInclude Include="DX11Buffer.h" />
     <ClInclude Include="DX11Shader.h" />
     <ClInclude Include="DX11SwapChain.h" />
     <ClInclude Include="DX11Texture2D.h" />

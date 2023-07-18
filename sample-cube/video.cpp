@@ -3,7 +3,8 @@
 
 IGraphicSession *pGraphic = nullptr;
 shader_handle shader = nullptr;
-long indexId = INVALID_INDEX_ID;
+buffer_handle vertexBuf = nullptr;
+buffer_handle indexId = nullptr;
 display_handle display = nullptr;
 
 ColorRGBA clrBlack = {0, 0, 0, 1.f};
@@ -46,16 +47,19 @@ void initShader()
 	shaderInfo.vsBufferSize = sizeof(matrixWVP);
 	shaderInfo.psBufferSize = 0;
 
-	shaderInfo.vertexCount = TEXTURE_VERTEX_COUNT;
-	shaderInfo.perVertexSize = sizeof(TextureVertexDesc);
-
 	shader = pGraphic->CreateShader(shaderInfo);
 	assert(shader);
 
-	IndexItemDesc indexDesc;
-	indexDesc.sizePerIndex = sizeof(WORD);
-	indexDesc.indexCount = TEXTURE_INDEX_COUNT;
-	indexId = pGraphic->CreateIndexBuffer(shader, indexDesc);
+	BufferDesc bufDesc;
+	bufDesc.bufferType = D3D11_BIND_VERTEX_BUFFER;
+	bufDesc.itemCount = TEXTURE_VERTEX_COUNT;
+	bufDesc.sizePerItem = sizeof(TextureVertexDesc);
+	vertexBuf = pGraphic->CreateGraphicBuffer(bufDesc);
+
+	bufDesc.bufferType = D3D11_BIND_INDEX_BUFFER;
+	bufDesc.sizePerItem = sizeof(WORD);
+	bufDesc.itemCount = TEXTURE_INDEX_COUNT;
+	indexId = pGraphic->CreateGraphicBuffer(bufDesc);
 
 	//---------------------------------------------------------------------------------------
 	TextureVertexDesc vertices[] = {
@@ -69,7 +73,7 @@ void initShader()
 		{XMFLOAT3(-1.0f, -1.0f, 1.0f), XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f)},
 	};
 
-	pGraphic->SetVertexBuffer(shader, vertices, sizeof(vertices));
+	pGraphic->SetGraphicBuffer(vertexBuf, vertices, sizeof(vertices));
 
 	//---------------------------------------------------------------------------------------
 	WORD indices[] = {
@@ -86,8 +90,7 @@ void initShader()
 		6, 4, 5, 7, 4, 6,
 	};
 
-	pGraphic->SetIndexBuffer(shader, indexId, indices,
-				 indexDesc.sizePerIndex * indexDesc.indexCount);
+	pGraphic->SetGraphicBuffer(indexId, indices, sizeof(indices));
 }
 
 void Csample1Dlg::initGraphic(HWND hWnd)
@@ -146,8 +149,8 @@ void Csample1Dlg::RenderTexture(SIZE canvas, RECT drawDest)
 
 	pGraphic->SetVSConstBuffer(shader, &matrixWVP, sizeof(matrixWVP));
 
-	pGraphic->DrawTopplogy(
-		shader, D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST, indexId);
+	pGraphic->DrawTopplogy(shader, vertexBuf, indexId,
+			       D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 }
 
 void Csample1Dlg::render()

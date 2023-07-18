@@ -9,7 +9,7 @@ std::wstring a2w(const char *str)
 	if (!str)
 		return L"";
 
-	auto n = MultiByteToWideChar(CP_ACP, 0, str, -1, NULL, 0);
+	auto n = MultiByteToWideChar(CP_ACP, 0, str, -1, nullptr, 0);
 	std::shared_ptr<wchar_t> pBuffer(new wchar_t[(size_t)n + 1],
 					 [](wchar_t *p) { delete[] p; });
 
@@ -24,10 +24,10 @@ std::string w2a(const wchar_t *str)
 	if (!str)
 		return "";
 
-	auto n = WideCharToMultiByte(CP_ACP, 0, str, -1, NULL, 0, NULL, NULL);
+	auto n = WideCharToMultiByte(CP_ACP, 0, str, -1, nullptr, 0, nullptr, nullptr);
 	std::shared_ptr<char> pBuffer(new char[(size_t)n + 1], [](char *p) { delete[] p; });
 
-	n = WideCharToMultiByte(CP_ACP, 0, str, -1, pBuffer.get(), n, NULL, NULL);
+	n = WideCharToMultiByte(CP_ACP, 0, str, -1, pBuffer.get(), n, nullptr, nullptr);
 	pBuffer.get()[n] = 0;
 
 	return std::string(pBuffer.get());
@@ -38,10 +38,10 @@ std::string w2u(const wchar_t *str)
 	if (!str)
 		return "";
 
-	auto n = WideCharToMultiByte(CP_UTF8, 0, str, -1, NULL, 0, NULL, NULL);
+	auto n = WideCharToMultiByte(CP_UTF8, 0, str, -1, nullptr, 0, nullptr, nullptr);
 	std::shared_ptr<char> pBuffer(new char[(size_t)n + 1], [](char *p) { delete[] p; });
 
-	n = WideCharToMultiByte(CP_UTF8, 0, str, -1, pBuffer.get(), n, NULL, NULL);
+	n = WideCharToMultiByte(CP_UTF8, 0, str, -1, pBuffer.get(), n, nullptr, nullptr);
 	pBuffer.get()[n] = 0;
 
 	return std::string(pBuffer.get());
@@ -52,7 +52,7 @@ std::wstring u2w(const char *str)
 	if (!str)
 		return L"";
 
-	auto n = MultiByteToWideChar(CP_UTF8, 0, str, -1, NULL, 0);
+	auto n = MultiByteToWideChar(CP_UTF8, 0, str, -1, nullptr, 0);
 	std::shared_ptr<wchar_t> pBuffer(new wchar_t[(size_t)n + 1],
 					 [](wchar_t *p) { delete[] p; });
 

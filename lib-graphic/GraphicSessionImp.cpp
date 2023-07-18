@@ -454,14 +454,6 @@ shader_handle DX11GraphicSession::CreateShader(const ShaderInformation &info)
 	return ret;
 }
 
-long DX11GraphicSession::CreateIndexBuffer(shader_handle hdl, const IndexItemDesc &desc)
-{
-	CHECK_GRAPHIC_CONTEXT;
-	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Shader, shader, return INVALID_INDEX_ID);
-
-	return shader->CreateIndexBuffer(desc);
-}
-
 ComPtr<IDXGIFactory1> DX11GraphicSession::D3DFactory()
 {
 	CHECK_GRAPHIC_CONTEXT;
@@ -757,7 +749,7 @@ void DX11GraphicSession::SwitchRenderTarget(bool enableSRGB)
 		auto target = m_pD3DTarget->D3DTarget(enableSRGB);
 		if (target != m_pCurrentRenderTarget) {
 			m_pCurrentRenderTarget = target;
-			m_pDeviceContext->OMSetRenderTargets(1, &m_pCurrentRenderTarget, NULL);
+			m_pDeviceContext->OMSetRenderTargets(1, &m_pCurrentRenderTarget, nullptr);
 		}
 	}
 }
@@ -823,32 +815,30 @@ bool DX11GraphicSession::GetResource(const std::vector<texture_handle> &textures
 	return !resources.empty();
 }
 
-bool DX11GraphicSession::ApplyShader(DX11Shader *shader, long indexId)
+bool DX11GraphicSession::ApplyShader(DX11Shader *shader, buffer_handle index)
 {
 	CHECK_GRAPHIC_CONTEXT;
 
-	uint32_t stride = shader->m_shaderInfo.perVertexSize;
-	uint32_t offset = 0;
 	ID3D11Buffer *buffer[1];
 
-	buffer[0] = shader->m_pVertexBuffer;
-	m_pDeviceContext->IASetVertexBuffers(0, 1, buffer, &stride, &offset);
 	m_pDeviceContext->IASetInputLayout(shader->m_pInputLayout);
 
-	m_pDeviceContext->VSSetShader(shader->m_pVertexShader, NULL, 0);
+	m_pDeviceContext->VSSetShader(shader->m_pVertexShader, nullptr, 0);
 	if (shader->m_pVSConstBuffer) {
 		buffer[0] = shader->m_pVSConstBuffer;
 		m_pDeviceContext->VSSetConstantBuffers(0, 1, buffer);
 	}
 
-	m_pDeviceContext->PSSetShader(shader->m_pPixelShader, NULL, 0);
+	m_pDeviceContext->PSSetShader(shader->m_pPixelShader, nullptr, 0);
 	if (shader->m_pPSConstBuffer) {
 		buffer[0] = shader->m_pPSConstBuffer;
 		m_pDeviceContext->PSSetConstantBuffers(0, 1, buffer);
 	}
 
-	if (indexId != INVALID_INDEX_ID)
-		return shader->ApplyIndexBuffer(indexId);
+	if (index) {
+		CHECK_GRAPHIC_OBJECT_VALID((*this), index, DX11Buffer, indexBuffer, return false);
+		return indexBuffer->ApplyBuffer();
+	}
 
 	return true;
 }
@@ -996,21 +986,6 @@ void DX11GraphicSession::SetRasterizerState(D3D11_CULL_MODE mode)
 	m_pDeviceContext->RSSetState(itr->second);
 }
 
-void DX11GraphicSession::SetVertexBuffer(shader_handle hdl, const void *buffer, size_t size)
-{
-	CHECK_GRAPHIC_CONTEXT;
-	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Shader, shader, return);
-
-	auto expectLen = shader->m_shaderInfo.vertexCount * shader->m_shaderInfo.perVertexSize;
-	if (expectLen == size)
-		UpdateShaderBuffer(shader->m_pVertexBuffer, buffer, size);
-	else {
-		assert(false);
-		LOG_WARN("invalid size for vertex buffer. expect:%d, real:%d", (int)expectLen,
-			 (int)size);
-	}
-}
-
 void DX11GraphicSession::SetVSConstBuffer(shader_handle hdl, const void *vsBuffer, size_t vsSize)
 {
 	CHECK_GRAPHIC_CONTEXT;
@@ -1041,43 +1016,61 @@ void DX11GraphicSession::SetPSConstBuffer(shader_handle hdl, const void *psBuffe
 	}
 }
 
-void DX11GraphicSession::SetIndexBuffer(shader_handle hdl, long index_id, const void *data,
-					size_t size)
+buffer_handle DX11GraphicSession::CreateGraphicBuffer(const BufferDesc &desc, const void *data)
 {
 	CHECK_GRAPHIC_CONTEXT;
-	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Shader, shader, return);
 
-	shader->SetIndexValue(index_id, data, size);
+	auto buffer = new DX11Buffer(*this, &desc, data);
+	if (!buffer->IsBuilt()) {
+		assert(false);
+		LOG_WARN("failed to create buffer. type:%d count:%d size:%d", (int)desc.bufferType,
+			 (int)desc.itemCount, (int)desc.sizePerItem);
+		return nullptr;
+	}
+
+	return buffer;
 }
 
-void DX11GraphicSession::DrawTopplogy(shader_handle hdl, D3D11_PRIMITIVE_TOPOLOGY type,
-				      long indexId)
+void DX11GraphicSession::SetGraphicBuffer(buffer_handle hdl, const void *data, size_t size)
+{
+	CHECK_GRAPHIC_CONTEXT;
+	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Buffer, buffer, return);
+
+	buffer->SetBufferValue(data, size);
+}
+
+void DX11GraphicSession::DrawTopplogy(shader_handle hdl, buffer_handle vertex, buffer_handle index,
+				      D3D11_PRIMITIVE_TOPOLOGY type)
 {
 	CHECK_GRAPHIC_CONTEXT;
 	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Shader, shader, return);
+	CHECK_GRAPHIC_OBJECT_VALID((*this), vertex, DX11Buffer, vertexBuffer, return);
 
-	if (!ApplyShader(shader, indexId)) {
+	if (!ApplyShader(shader, index)) {
 		assert(false);
 		return;
 	}
 
+	vertexBuffer->ApplyBuffer();
 	m_pDeviceContext->IASetPrimitiveTopology(type);
 
-	if (indexId != INVALID_INDEX_ID) {
-		m_pDeviceContext->DrawIndexed(shader->m_mapIndexParams[indexId].indexCount, 0, 0);
+	if (index) {
+		CHECK_GRAPHIC_OBJECT_VALID((*this), index, DX11Buffer, indexBuffer, return);
+		m_pDeviceContext->DrawIndexed(indexBuffer->GetBufferDesc().itemCount, 0, 0);
 
 	} else {
-		m_pDeviceContext->Draw(shader->m_shaderInfo.vertexCount, 0);
+		m_pDeviceContext->Draw(vertexBuffer->GetBufferDesc().itemCount, 0);
 	}
 }
 
-void DX11GraphicSession::DrawTexture(shader_handle hdl, VIDEO_FILTER_TYPE flt,
-				     const std::vector<texture_handle> &textures,
-				     D3D11_PRIMITIVE_TOPOLOGY type, long indexId)
+void DX11GraphicSession::DrawTexture(const std::vector<texture_handle> &textures,
+				     VIDEO_FILTER_TYPE flt, shader_handle hdl, buffer_handle vertex,
+				     buffer_handle index, D3D11_PRIMITIVE_TOPOLOGY type)
 {
 	CHECK_GRAPHIC_CONTEXT;
 	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Shader, shader, return);
 	CHECK_GRAPHIC_OBJECT_VALID((*this), textures[0], DX11Texture2D, resourceTex, return);
+	CHECK_GRAPHIC_OBJECT_VALID((*this), vertex, DX11Buffer, vertexBuffer, return);
 
 	std::vector<ID3D11ShaderResourceView *> resources;
 	if (!GetResource(textures, resources)) {
@@ -1086,7 +1079,7 @@ void DX11GraphicSession::DrawTexture(shader_handle hdl, VIDEO_FILTER_TYPE flt,
 		return;
 	}
 
-	if (!ApplyShader(shader, indexId)) {
+	if (!ApplyShader(shader, index)) {
 		assert(false);
 		return;
 	}
@@ -1113,14 +1106,16 @@ void DX11GraphicSession::DrawTexture(shader_handle hdl, VIDEO_FILTER_TYPE flt,
 	if (resourceTex)
 		resourceTex->LockTexture();
 
-	m_pDeviceContext->PSSetShaderResources(0, (uint32_t)resources.size(), resources.data());
+	vertexBuffer->ApplyBuffer();
 	m_pDeviceContext->IASetPrimitiveTopology(type);
+	m_pDeviceContext->PSSetShaderResources(0, (uint32_t)resources.size(), resources.data());
 
-	if (indexId != INVALID_INDEX_ID) {
-		m_pDeviceContext->DrawIndexed(shader->m_mapIndexParams[indexId].indexCount, 0, 0);
+	if (index) {
+		CHECK_GRAPHIC_OBJECT_VALID((*this), index, DX11Buffer, indexBuffer, return);
+		m_pDeviceContext->DrawIndexed(indexBuffer->GetBufferDesc().itemCount, 0, 0);
 
 	} else {
-		m_pDeviceContext->Draw(shader->m_shaderInfo.vertexCount, 0);
+		m_pDeviceContext->Draw(vertexBuffer->GetBufferDesc().itemCount, 0);
 	}
 
 	if (resourceTex)

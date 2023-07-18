@@ -26,7 +26,7 @@ public:
 	CAutoLoadGDIPlus()
 	{
 		Gdiplus::GdiplusStartupInput StartupInput;
-		GdiplusStartup(&m_GdiplusToken, &StartupInput, NULL);
+		GdiplusStartup(&m_GdiplusToken, &StartupInput, nullptr);
 	}
 
 	virtual ~CAutoLoadGDIPlus() { Gdiplus::GdiplusShutdown(m_GdiplusToken); }
@@ -99,12 +99,12 @@ void *CreateTextFrame()
 	STRING_FORMAT_PTR stringformat = _CreateStringFormat();
 	FontFamily_PTR family = _CreateFontFamily();
 	if (!family.get())
-		return NULL;
+		return nullptr;
 
 	Gdiplus::Font font(family.get(), fontsize, fontStyle);
 	Gdiplus::Status status = font.GetLastStatus();
 	if (status != Gdiplus::Ok) {
-		return NULL;
+		return nullptr;
 	}
 
 	Gdiplus::RectF outLayout;
@@ -114,12 +114,12 @@ void *CreateTextFrame()
 
 	Gdiplus::Bitmap *bmp = new Gdiplus::Bitmap(width, height, getTextFormat());
 	if (!bmp)
-		return NULL;
+		return nullptr;
 
 	GDIP_BMP_PTR pRet(bmp);
 	status = bmp->GetLastStatus();
 	if (status != Gdiplus::Ok) {
-		return NULL;
+		return nullptr;
 	}
 
 	Gdiplus::Graphics graphics(bmp);
@@ -132,7 +132,7 @@ void *CreateTextFrame()
 	status = path.AddString(m_strText.c_str(), -1, family.get(), fontStyle, emSize, outLayout,
 				stringformat.get());
 	if (status != Gdiplus::Ok) {
-		return NULL;
+		return nullptr;
 	}
 
 	Gdiplus::Color clrTextGDIP(255, 0, 0);
@@ -144,7 +144,7 @@ void *CreateTextFrame()
 	status = bmp->LockBits(&rcImage, Gdiplus::ImageLockModeRead, bmp->GetPixelFormat(),
 			       &BitmapData);
 	if (status != Gdiplus::Ok) {
-		return NULL;
+		return nullptr;
 	}
 
 	if (texForWrite) {

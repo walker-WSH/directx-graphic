@@ -7,7 +7,7 @@
 namespace winHelper {
 
 std::wstring GetExeFullPath();
-std::wstring GetFileDirectory(HINSTANCE hInstance = NULL);
+std::wstring GetFileDirectory(HINSTANCE hInstance = nullptr);
 
 std::string ExtractFileName(const char *full_path);
 std::string ExtractExtension(const char *full_path);

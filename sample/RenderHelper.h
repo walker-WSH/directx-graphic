@@ -31,6 +31,12 @@ enum class VIDEO_SHADER_TYPE {
 	SHADER_TO_UV_PLANE,
 };
 
+struct ShaderInfo {
+	shader_handle shader = nullptr;
+	buffer_handle vertexBuf = nullptr;
+	buffer_handle indexId = nullptr;
+};
+
 static const auto TEXTURE_VERTEX_COUNT = 4;
 struct TextureVertexDesc {
 	float x, y, z, w;
@@ -87,7 +93,7 @@ struct WhiteParam {
 };
 
 extern IGraphicSession *pGraphic;
-extern std::map<VIDEO_SHADER_TYPE, shader_handle> shaders;
+extern std::map<VIDEO_SHADER_TYPE, ShaderInfo> shaders;
 void InitShader();
 
 void FillTextureVertex(float left, float top, float right, float bottom, bool flipH, bool flipV,
