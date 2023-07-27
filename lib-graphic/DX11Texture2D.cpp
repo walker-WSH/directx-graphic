@@ -292,9 +292,11 @@ bool DX11Texture2D::InitSharedTexture()
 
 bool DX11Texture2D::InitImageTexture()
 {
+	auto fileName = winHelper::ExtractFileName(str::w2u(m_strImagePath.c_str()).c_str());
+
 	ComPtr<ID3D11Texture2D> pImage = LoadImageTexture();
 	if (!pImage) {
-		LOG_WARN("failed to load input image");
+		LOG_WARN("failed to load input image (%s)", fileName.c_str());
 		assert(false);
 		return false;
 	}
@@ -308,7 +310,7 @@ bool DX11Texture2D::InitImageTexture()
 
 	bool res = InitWriteTexture();
 	if (!res) {
-		LOG_WARN("failed to create write texture for input image");
+		LOG_WARN("failed to create write texture for input image (%s)", fileName.c_str());
 		assert(false);
 		return false;
 	}

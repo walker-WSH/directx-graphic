@@ -617,16 +617,14 @@ bool DX11GraphicSession::BuildAllDX()
 		 "\t LowPart: 0X%X \n"
 		 "\t VendorId: 0X%X \n"
 		 "\t DeviceId: 0X%X \n"
-		 "\t SubSysId: 0X%X \n"
-		 "\t Revision: 0X%X \n"
 		 "\t DedicatedVideoMemory: %llu MB \n"
 		 "\t DedicatedSystemMemory: %llu MB \n"
 		 "\t SharedSystemMemory: %llu MB \n",
 		 str::w2u(descAdapter.Description).c_str(),
 		 DXGraphic::GetAdapterDriverVersion(m_pAdapter).c_str(), levelUsed,
 		 descAdapter.AdapterLuid.HighPart, descAdapter.AdapterLuid.LowPart,
-		 descAdapter.VendorId, descAdapter.DeviceId, descAdapter.SubSysId,
-		 descAdapter.Revision, (DWORD64)descAdapter.DedicatedVideoMemory / ONE_MB_BYTES,
+		 descAdapter.VendorId, descAdapter.DeviceId,
+		 (DWORD64)descAdapter.DedicatedVideoMemory / ONE_MB_BYTES,
 		 (DWORD64)descAdapter.DedicatedSystemMemory / ONE_MB_BYTES,
 		 (DWORD64)descAdapter.SharedSystemMemory / ONE_MB_BYTES);
 
