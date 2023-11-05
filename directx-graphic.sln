@@ -47,6 +47,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sample-fxaa", "sample-fxaa\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sample-dxError", "sample-dxError\sample-dxError.vcxproj", "{E73EACB8-3095-43E6-8D88-92BB78AF451A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sample-sharedTexture", "sample-readSharedTexture\sample-sharedTexture.vcxproj", "{F88129A0-4723-4BAD-837F-B02031127710}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -135,6 +137,14 @@ Global
 		{E73EACB8-3095-43E6-8D88-92BB78AF451A}.Release|x64.Build.0 = Release|x64
 		{E73EACB8-3095-43E6-8D88-92BB78AF451A}.Release|x86.ActiveCfg = Release|Win32
 		{E73EACB8-3095-43E6-8D88-92BB78AF451A}.Release|x86.Build.0 = Release|Win32
+		{F88129A0-4723-4BAD-837F-B02031127710}.Debug|x64.ActiveCfg = Debug|x64
+		{F88129A0-4723-4BAD-837F-B02031127710}.Debug|x64.Build.0 = Debug|x64
+		{F88129A0-4723-4BAD-837F-B02031127710}.Debug|x86.ActiveCfg = Debug|Win32
+		{F88129A0-4723-4BAD-837F-B02031127710}.Debug|x86.Build.0 = Debug|Win32
+		{F88129A0-4723-4BAD-837F-B02031127710}.Release|x64.ActiveCfg = Release|x64
+		{F88129A0-4723-4BAD-837F-B02031127710}.Release|x64.Build.0 = Release|x64
+		{F88129A0-4723-4BAD-837F-B02031127710}.Release|x86.ActiveCfg = Release|Win32
+		{F88129A0-4723-4BAD-837F-B02031127710}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
