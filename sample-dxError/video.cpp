@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "sample-1Dlg.h"
 
+// dxcap -forcetdr
+
 class DXCallback;
 
 std::shared_ptr<DXCallback> cb = std::make_shared<DXCallback>();
