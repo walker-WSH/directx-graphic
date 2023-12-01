@@ -6,6 +6,7 @@ import os
 import os.path
 import sys,re  
 import codecs
+import platform
 
 customIgnoreList = []
 realIgnoreList = []
@@ -30,7 +31,12 @@ lines = f.readlines()
 for line in lines:
     line = line.replace("\r", "") #移除txt中的特殊符号
     line = line.replace("\n", "") #移除txt中的特殊符号
-    fullPath = currentDir + '\\' + line
+    if platform.system() == 'Darwin': # mac 
+        line = line.replace('\\', '/')
+    elif platform.system() == 'Windows':
+        line = line.replace('/', '\\')
+
+    fullPath = os.path.join(currentDir, line)
     customIgnoreList.append(fullPath)
     print(fullPath)
 f.close()
@@ -40,14 +46,23 @@ f.close()
 print('\n\n================================= format files =====================================')
 for root, dirs, files in os.walk(currentDir):
     for name in files:
-        if (name.endswith(".h") or name.endswith(".hpp") or name.endswith(".hxx") or name.endswith(".c") or name.endswith(".cpp") or name.endswith(".cc") or name.endswith(".cxx") or name.endswith(".hlsl") or name.endswith(".hlsli")):
-            fullPath = root + '\\' + name
+        if (name.endswith(".h") or 
+            name.endswith(".hpp") or 
+            name.endswith(".hxx") or 
+            name.endswith(".c") or 
+            name.endswith(".cpp") or 
+            name.endswith(".cc") or 
+            name.endswith(".cxx") or 
+            name.endswith(".hlsl") or 
+            name.endswith(".hlsli")):
+            fullPath = os.path.join(root, name)
             ignoreFile = IsInIgnoreList(fullPath)
             if ignoreFile == True:
                 realIgnoreList.append(fullPath)
             else:
                 print('Format:' + fullPath)
                 os.system("clang-format -i %s -style=File" %(fullPath))
+                print('Finish Format:' + fullPath)
                 
                 
 # 显示忽略了的文件
