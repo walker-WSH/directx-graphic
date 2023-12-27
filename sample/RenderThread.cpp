@@ -31,6 +31,7 @@ texture_handle texCanvas = nullptr;
 texture_handle texCanvas2 = nullptr;
 texture_handle texGirlRotated = nullptr;
 texture_handle texGirlOrigin = nullptr;
+texture_handle texGirl = nullptr;
 texture_handle texGrid = nullptr;
 texture_handle texShared = nullptr;
 texture_handle texAlpha = nullptr;
@@ -88,7 +89,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncNormalRender(void *pParam)
 		info.tex = texAlpha;
 		texRegions.push_back(info);
 
-		info.tex = texGirlOrigin;
+		info.tex = texGirl;
 		texRegions.push_back(info);
 
 		info.tex = texImg;
@@ -678,6 +679,8 @@ bool InitGraphic(HWND hWnd)
 
 	//------------------------------------------------------------------
 	texGirlOrigin = pGraphic->OpenImageTexture(L"loading.png");
+
+	texGirl = pGraphic->OpenImageTexture(L"testGirl.jpg");
 
 	texGrid = pGraphic->OpenImageTexture(L"testWangge.jpg");
 
