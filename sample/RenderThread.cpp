@@ -88,9 +88,6 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncNormalRender(void *pParam)
 		info.tex = texAlpha;
 		texRegions.push_back(info);
 
-		info.tex = texGirlRotated;
-		texRegions.push_back(info);
-
 		info.tex = texGirlOrigin;
 		texRegions.push_back(info);
 
@@ -205,6 +202,14 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncNormalRender(void *pParam)
 						      canvasSize, item.region);
 				}
 			}
+
+			RECT rcIcon;
+			rcIcon.left = (canvasSize.cx - 100) / 2;
+			rcIcon.top = (canvasSize.cy - 100) / 2;
+			rcIcon.right = rcIcon.left + 100;
+			rcIcon.bottom = rcIcon.top + 100;
+			RenderTexture(std::vector<texture_handle>{texGirlRotated}, canvasSize,
+				      rcIcon);
 
 			if (texShared) {
 				RenderTexture(std::vector<texture_handle>{texShared}, canvasSize,
@@ -672,7 +677,7 @@ bool InitGraphic(HWND hWnd)
 	pGraphic->SetDisplaySize(display, rc.right - rc.left, rc.bottom - rc.top);
 
 	//------------------------------------------------------------------
-	texGirlOrigin = pGraphic->OpenImageTexture(L"testGirl.jpg");
+	texGirlOrigin = pGraphic->OpenImageTexture(L"loading.png");
 
 	texGrid = pGraphic->OpenImageTexture(L"testWangge.jpg");
 

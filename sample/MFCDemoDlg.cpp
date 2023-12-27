@@ -16,7 +16,7 @@
 float g_lineStride = 100.f;
 float g_blurValue = 50.f;
 float g_whitePercent = 100.f;
-int g_rotatePeriod = 10 * 1000;
+int g_rotatePeriod = 5 * 1000;
 bool g_bToGrey = false;
 
 extern IGraphicSession *pGraphic;
