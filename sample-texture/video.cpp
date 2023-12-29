@@ -103,11 +103,19 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 	float topUV = 0.f;
 	float rightUV = 1.f;
 	float bottomUV = 1.f;
-	// 纹理平铺渲染到画布上
-	outputVertex[0] = {-1.f, 1.f, 0, 1.f, leftUV, topUV};
-	outputVertex[1] = {1.f, 1.f, 0, 1.f, rightUV, topUV};
-	outputVertex[2] = {-1.f, -1.f, 0, 1.f, leftUV, bottomUV};
-	outputVertex[3] = {1.f, -1.f, 0, 1.f, rightUV, bottomUV};
+	if (1) {
+		// 纹理平铺渲染到画布上
+		outputVertex[0] = {-1.f, 1.f, 0, 1.f, leftUV, topUV};
+		outputVertex[1] = {1.f, 1.f, 0, 1.f, rightUV, topUV};
+		outputVertex[2] = {-1.f, -1.f, 0, 1.f, leftUV, bottomUV};
+		outputVertex[3] = {1.f, -1.f, 0, 1.f, rightUV, bottomUV};
+	} else {
+		// 只渲染到窗口左侧一半区域，这种方式 性能比设置wvp矩阵更高
+		outputVertex[0] = {-1.f, 1.f, 0, 1.f, leftUV, topUV};
+		outputVertex[1] = {0.f, 1.f, 0, 1.f, rightUV, topUV};
+		outputVertex[2] = {-1.f, -1.f, 0, 1.f, leftUV, bottomUV};
+		outputVertex[3] = {0.f, -1.f, 0, 1.f, rightUV, bottomUV};
+	}
 
 	pGraphic->SetGraphicBuffer(vertexBuf, outputVertex, sizeof(outputVertex));
 	pGraphic->DrawTexture(textures, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, shader, vertexBuf);
