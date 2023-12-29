@@ -49,6 +49,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sample-dxError", "sample-dx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sample-sharedTexture", "sample-readSharedTexture\sample-sharedTexture.vcxproj", "{F88129A0-4723-4BAD-837F-B02031127710}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sample-texture", "sample-texture\texture.vcxproj", "{4E796298-86A0-441F-A48C-315A5997E277}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -145,6 +147,14 @@ Global
 		{F88129A0-4723-4BAD-837F-B02031127710}.Release|x64.Build.0 = Release|x64
 		{F88129A0-4723-4BAD-837F-B02031127710}.Release|x86.ActiveCfg = Release|Win32
 		{F88129A0-4723-4BAD-837F-B02031127710}.Release|x86.Build.0 = Release|Win32
+		{4E796298-86A0-441F-A48C-315A5997E277}.Debug|x64.ActiveCfg = Debug|x64
+		{4E796298-86A0-441F-A48C-315A5997E277}.Debug|x64.Build.0 = Debug|x64
+		{4E796298-86A0-441F-A48C-315A5997E277}.Debug|x86.ActiveCfg = Debug|Win32
+		{4E796298-86A0-441F-A48C-315A5997E277}.Debug|x86.Build.0 = Debug|Win32
+		{4E796298-86A0-441F-A48C-315A5997E277}.Release|x64.ActiveCfg = Release|x64
+		{4E796298-86A0-441F-A48C-315A5997E277}.Release|x64.Build.0 = Release|x64
+		{4E796298-86A0-441F-A48C-315A5997E277}.Release|x86.ActiveCfg = Release|Win32
+		{4E796298-86A0-441F-A48C-315A5997E277}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
