@@ -33,14 +33,14 @@ bool D2DGeometry::BuildGraphic()
 	}
 
 	ComPtr<ID2D1PathGeometry> pathGeometry;
-	auto hr = d2d1Factory->CreatePathGeometry(pathGeometry.Assign());
+	auto hr = d2d1Factory->CreatePathGeometry(pathGeometry.GetAddressOf());
 	if (FAILED(hr)) {
 		LOG_WARN("CreatePathGeometry failed with %X, %X", hr, this);
 		return false;
 	}
 
 	ComPtr<ID2D1GeometrySink> pSink;
-	hr = pathGeometry->Open(pSink.Assign());
+	hr = pathGeometry->Open(pSink.GetAddressOf());
 	if (FAILED(hr)) {
 		LOG_WARN("ID2D1GeometrySink failed with %X, %X", hr, this);
 		return false;

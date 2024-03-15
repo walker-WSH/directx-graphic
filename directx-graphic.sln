@@ -46,10 +46,19 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sample-fxaa", "sample-fxaa\
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sample-dxError", "sample-dxError\sample-dxError.vcxproj", "{E73EACB8-3095-43E6-8D88-92BB78AF451A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5CC7C82D-26F3-4F27-81C0-868BC61B9962} = {5CC7C82D-26F3-4F27-81C0-868BC61B9962}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sample-sharedTexture", "sample-readSharedTexture\sample-sharedTexture.vcxproj", "{F88129A0-4723-4BAD-837F-B02031127710}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5CC7C82D-26F3-4F27-81C0-868BC61B9962} = {5CC7C82D-26F3-4F27-81C0-868BC61B9962}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sample-texture", "sample-texture\texture.vcxproj", "{4E796298-86A0-441F-A48C-315A5997E277}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5CC7C82D-26F3-4F27-81C0-868BC61B9962} = {5CC7C82D-26F3-4F27-81C0-868BC61B9962}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -47,17 +47,17 @@ bool DX11Buffer::ApplyBuffer()
 	if (m_bufferInfo.bufferType == D3D11_BIND_VERTEX_BUFFER) {
 		uint32_t stride = m_bufferInfo.sizePerItem;
 		uint32_t offset = 0;
-		ID3D11Buffer *buffer[1] = {m_pBuffer};
+		ID3D11Buffer *buffer[1] = {m_pBuffer.Get()};
 
 		m_graphicSession.D3DContext()->IASetVertexBuffers(0, 1, buffer, &stride, &offset);
 
 	} else if (m_bufferInfo.bufferType == D3D11_BIND_INDEX_BUFFER) {
 		if (m_bufferInfo.sizePerItem == sizeof(WORD)) {
-			m_graphicSession.D3DContext()->IASetIndexBuffer(m_pBuffer,
+			m_graphicSession.D3DContext()->IASetIndexBuffer(m_pBuffer.Get(),
 									DXGI_FORMAT_R16_UINT, 0);
 
 		} else if (m_bufferInfo.sizePerItem == sizeof(DWORD)) {
-			m_graphicSession.D3DContext()->IASetIndexBuffer(m_pBuffer,
+			m_graphicSession.D3DContext()->IASetIndexBuffer(m_pBuffer.Get(),
 									DXGI_FORMAT_R32_UINT, 0);
 		} else {
 			LOG_WARN("invalid index size:%d", (int)m_bufferInfo.sizePerItem);

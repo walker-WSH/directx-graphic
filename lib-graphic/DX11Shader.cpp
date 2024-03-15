@@ -26,14 +26,14 @@ bool DX11Shader::BuildGraphic()
 	ComPtr<ID3D10Blob> vertexShaderBuffer;
 	ComPtr<ID3D10Blob> pixelShaderBuffer;
 
-	HRESULT hr = D3DReadFileToBlob(m_shaderInfo.vsFile.c_str(), vertexShaderBuffer.Assign());
+	HRESULT hr = D3DReadFileToBlob(m_shaderInfo.vsFile.c_str(), vertexShaderBuffer.GetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "D3DReadFileToBlob %X", this);
 		assert(false);
 		return false;
 	}
 
-	hr = D3DReadFileToBlob(m_shaderInfo.psFile.c_str(), pixelShaderBuffer.Assign());
+	hr = D3DReadFileToBlob(m_shaderInfo.psFile.c_str(), pixelShaderBuffer.GetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "D3DReadFileToBlob %X", this);
 		assert(false);
@@ -42,7 +42,7 @@ bool DX11Shader::BuildGraphic()
 
 	hr = m_graphicSession.D3DDevice()->CreateVertexShader(
 		vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(),
-		nullptr, m_pVertexShader.Assign());
+		nullptr, m_pVertexShader.GetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateVertexShader %X", this);
 		assert(false);
@@ -51,7 +51,7 @@ bool DX11Shader::BuildGraphic()
 
 	hr = m_graphicSession.D3DDevice()->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(),
 							     pixelShaderBuffer->GetBufferSize(),
-							     nullptr, m_pPixelShader.Assign());
+							     nullptr, m_pPixelShader.GetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreatePixelShader %X", this);
 		assert(false);
@@ -63,7 +63,7 @@ bool DX11Shader::BuildGraphic()
 							     (uint32_t)inputLayoutDesc.size(),
 							     vertexShaderBuffer->GetBufferPointer(),
 							     vertexShaderBuffer->GetBufferSize(),
-							     m_pInputLayout.Assign());
+							     m_pInputLayout.GetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateInputLayout %X", this);
 		assert(false);
@@ -76,7 +76,7 @@ bool DX11Shader::BuildGraphic()
 		CBufferDesc.ByteWidth = m_shaderInfo.vsBufferSize;
 		CBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 		hr = m_graphicSession.D3DDevice()->CreateBuffer(&CBufferDesc, nullptr,
-								m_pVSConstBuffer.Assign());
+								m_pVSConstBuffer.GetAddressOf());
 		if (FAILED(hr)) {
 			CHECK_DX_ERROR(hr, "DX-CreateBuffer size:%u %X", CBufferDesc.ByteWidth,
 				       this);
@@ -91,7 +91,7 @@ bool DX11Shader::BuildGraphic()
 		CBufferDesc.ByteWidth = m_shaderInfo.psBufferSize;
 		CBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 		hr = m_graphicSession.D3DDevice()->CreateBuffer(&CBufferDesc, nullptr,
-								m_pPSConstBuffer.Assign());
+								m_pPSConstBuffer.GetAddressOf());
 		if (FAILED(hr)) {
 			CHECK_DX_ERROR(hr, "DX-CreateBuffer size:%u %X", CBufferDesc.ByteWidth,
 				       this);

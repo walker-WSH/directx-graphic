@@ -264,7 +264,7 @@ bool DX11GraphicSession::MapTexture(texture_handle hdl, MAP_TEXTURE_FEATURE type
 	}
 
 	D3D11_MAP method = D3D11_MAP(type);
-	HRESULT hr = m_pDeviceContext->Map(obj->m_pTexture2D, 0, method, 0, mapData);
+	HRESULT hr = m_pDeviceContext->Map(obj->m_pTexture2D.Get(), 0, method, 0, mapData);
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "mapTexture %X, for %s", (void *)hdl,
 			       (MAP_TEXTURE_FEATURE::FOR_READ_TEXTURE == type) ? "read" : "write");
@@ -281,7 +281,7 @@ void DX11GraphicSession::UnmapTexture(texture_handle hdl)
 	CHECK_GRAPHIC_CONTEXT;
 	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Texture2D, obj, return);
 
-	m_pDeviceContext->Unmap(obj->m_pTexture2D, 0);
+	m_pDeviceContext->Unmap(obj->m_pTexture2D.Get(), 0);
 	LeaveContext(std::source_location::current());
 }
 
@@ -328,7 +328,7 @@ D2D1_SIZE_F DX11GraphicSession::CalcTextSize(const wchar_t *text, font_handle fo
 
 	ComPtr<IDWriteTextLayout> pTextLayout;
 	auto hr = m_pDWriteFactory->CreateTextLayout(text, (UINT32)wcslen(text),
-						     pTextFormat->m_pTextFormat,
+						     pTextFormat->m_pTextFormat.Get(),
 						     (float)m_uMaxTextureSize,
 						     (float)m_uMaxTextureSize, &pTextLayout);
 	if (FAILED(hr)) {
@@ -561,10 +561,11 @@ bool DX11GraphicSession::BuildAllDX()
 	m_pAdapter->GetDesc(&descAdapter);
 
 	D3D_FEATURE_LEVEL levelUsed = D3D_FEATURE_LEVEL_10_0;
-	hr = D3D11CreateDevice(m_pAdapter, D3D_DRIVER_TYPE_UNKNOWN, nullptr,
+	hr = D3D11CreateDevice(m_pAdapter.Get(), D3D_DRIVER_TYPE_UNKNOWN, nullptr,
 			       D3D11_CREATE_DEVICE_BGRA_SUPPORT, featureLevels.data(),
 			       (uint32_t)featureLevels.size(), D3D11_SDK_VERSION,
-			       m_pDX11Device.Assign(), &levelUsed, m_pDeviceContext.Assign());
+			       m_pDX11Device.GetAddressOf(), &levelUsed,
+			       m_pDeviceContext.GetAddressOf());
 
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "D3D11CreateDevice");
@@ -646,7 +647,7 @@ bool DX11GraphicSession::InitBlendState()
 	blendStateDescription.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
 	HRESULT hr = m_pDX11Device->CreateBlendState(&blendStateDescription,
-						     m_pBlendStateNormal.Assign());
+						     m_pBlendStateNormal.GetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateBlendState failed for normal blend");
 		assert(false);
@@ -655,7 +656,7 @@ bool DX11GraphicSession::InitBlendState()
 
 	blendStateDescription.RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
 	hr = m_pDX11Device->CreateBlendState(&blendStateDescription,
-					     m_pBlendStatePreMultAlpha.Assign());
+					     m_pBlendStatePreMultAlpha.GetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateBlendState failed for preMultAlpha");
 		assert(false);
@@ -679,8 +680,8 @@ bool DX11GraphicSession::InitSamplerState()
 	//------------------------------------------------------------------------------------------
 	samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
 	samplerDesc.MaxAnisotropy = 16;
-	HRESULT hr =
-		m_pDX11Device->CreateSamplerState(&samplerDesc, m_pSampleStateAnisotropic.Assign());
+	HRESULT hr = m_pDX11Device->CreateSamplerState(&samplerDesc,
+						       m_pSampleStateAnisotropic.GetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateSamplerState D3D11_FILTER_ANISOTROPIC");
 		assert(false);
@@ -689,7 +690,7 @@ bool DX11GraphicSession::InitSamplerState()
 
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	samplerDesc.MaxAnisotropy = 0;
-	hr = m_pDX11Device->CreateSamplerState(&samplerDesc, m_pSampleStateLinear.Assign());
+	hr = m_pDX11Device->CreateSamplerState(&samplerDesc, m_pSampleStateLinear.GetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateSamplerState D3D11_FILTER_MIN_MAG_MIP_LINEAR");
 		assert(false);
@@ -698,7 +699,7 @@ bool DX11GraphicSession::InitSamplerState()
 
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
 	samplerDesc.MaxAnisotropy = 0;
-	hr = m_pDX11Device->CreateSamplerState(&samplerDesc, m_pSampleStatePoint.Assign());
+	hr = m_pDX11Device->CreateSamplerState(&samplerDesc, m_pSampleStatePoint.GetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateSamplerState D3D11_FILTER_MIN_MAG_MIP_POINT");
 		assert(false);
@@ -726,7 +727,7 @@ bool DX11GraphicSession::InitRasterizerState()
 		rd.CullMode = item;
 
 		ComPtr<ID3D11RasterizerState> state;
-		auto hr = m_pDX11Device->CreateRasterizerState(&rd, state.Assign());
+		auto hr = m_pDX11Device->CreateRasterizerState(&rd, state.GetAddressOf());
 		if (FAILED(hr)) {
 			CHECK_DX_ERROR(hr, "CreateRasterizerState");
 			assert(false);
@@ -772,7 +773,7 @@ void DX11GraphicSession::SetRenderContext(ID3DRenderTarget *target, uint32_t wid
 
 	assert(!m_bDuringRendering);
 	m_bDuringRendering = true;
-	m_pCurrentSwapChain = swapChain;
+	m_pCurrentSwapChain = swapChain.Get();
 	EnterContext(std::source_location::current());
 }
 
@@ -785,7 +786,7 @@ void DX11GraphicSession::UpdateShaderBuffer(ComPtr<ID3D11Buffer> buffer, const v
 	buffer->GetDesc(&desc);
 
 	if (desc.ByteWidth == size)
-		m_pDeviceContext->UpdateSubresource(buffer, 0, nullptr, data, 0, 0);
+		m_pDeviceContext->UpdateSubresource(buffer.Get(), 0, nullptr, data, 0, 0);
 	else {
 		assert(false);
 		LOG_WARN(
@@ -819,17 +820,17 @@ bool DX11GraphicSession::ApplyShader(DX11Shader *shader, buffer_handle index)
 
 	ID3D11Buffer *buffer[1];
 
-	m_pDeviceContext->IASetInputLayout(shader->m_pInputLayout);
+	m_pDeviceContext->IASetInputLayout(shader->m_pInputLayout.Get());
 
-	m_pDeviceContext->VSSetShader(shader->m_pVertexShader, nullptr, 0);
+	m_pDeviceContext->VSSetShader(shader->m_pVertexShader.Get(), nullptr, 0);
 	if (shader->m_pVSConstBuffer) {
-		buffer[0] = shader->m_pVSConstBuffer;
+		buffer[0] = shader->m_pVSConstBuffer.Get();
 		m_pDeviceContext->VSSetConstantBuffers(0, 1, buffer);
 	}
 
-	m_pDeviceContext->PSSetShader(shader->m_pPixelShader, nullptr, 0);
+	m_pDeviceContext->PSSetShader(shader->m_pPixelShader.Get(), nullptr, 0);
 	if (shader->m_pPSConstBuffer) {
-		buffer[0] = shader->m_pPSConstBuffer;
+		buffer[0] = shader->m_pPSConstBuffer.Get();
 		m_pDeviceContext->PSSetConstantBuffers(0, 1, buffer);
 	}
 
@@ -952,11 +953,11 @@ void DX11GraphicSession::SetBlendState(VIDEO_BLEND_TYPE type)
 
 	switch (type) {
 	case VIDEO_BLEND_TYPE::BLEND_NORMAL:
-		SET_BLEND(m_pBlendStateNormal);
+		SET_BLEND(m_pBlendStateNormal.Get());
 		break;
 
 	case VIDEO_BLEND_TYPE::BLEND_PREMULTIPLIED: {
-		SET_BLEND(m_pBlendStatePreMultAlpha);
+		SET_BLEND(m_pBlendStatePreMultAlpha.Get());
 	} break;
 
 	case VIDEO_BLEND_TYPE::BLEND_DISABLED:
@@ -981,7 +982,7 @@ void DX11GraphicSession::SetRasterizerState(D3D11_CULL_MODE mode)
 		return;
 	}
 
-	m_pDeviceContext->RSSetState(itr->second);
+	m_pDeviceContext->RSSetState(itr->second.Get());
 }
 
 void DX11GraphicSession::SetVSConstBuffer(shader_handle hdl, const void *vsBuffer, size_t vsSize)
@@ -1266,19 +1267,19 @@ void DX11GraphicSession::CopyTextureInner(ComPtr<ID3D11Texture2D> dest, ComPtr<I
 		}
 
 		m_pDeviceContext->CopySubresourceRegion(
-			dest,
+			dest.Get(),
 			D3D11CalcSubresource(0, region->destArraySliceIndex, destDesc.MipLevels),
-			region->destLeft, region->destTop, 0, src,
+			region->destLeft, region->destTop, 0, src.Get(),
 			D3D11CalcSubresource(0, 0, srcDesc.MipLevels), &sourceRegion);
 
 	} else {
 		if (srcDesc.MipLevels == destDesc.MipLevels) {
-			m_pDeviceContext->CopyResource(dest, src);
+			m_pDeviceContext->CopyResource(dest.Get(), src.Get());
 
 		} else {
 			m_pDeviceContext->CopySubresourceRegion(
-				dest, D3D11CalcSubresource(0, 0, destDesc.MipLevels), 0, 0, 0, src,
-				D3D11CalcSubresource(0, 0, srcDesc.MipLevels), nullptr);
+				dest.Get(), D3D11CalcSubresource(0, 0, destDesc.MipLevels), 0, 0, 0,
+				src.Get(), D3D11CalcSubresource(0, 0, srcDesc.MipLevels), nullptr);
 		}
 	}
 }
@@ -1289,7 +1290,7 @@ bool DX11GraphicSession::BuildD2D()
 	CHECK_GRAPHIC_CONTEXT;
 
 	HRESULT hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, __uuidof(ID2D1Factory1),
-				       reinterpret_cast<void **>(m_pD2DFactory.Assign()));
+				       reinterpret_cast<void **>(m_pD2DFactory.GetAddressOf()));
 	if (FAILED(hr)) {
 		LOG_WARN("D2D1CreateFactory failed 0x%x", hr);
 		assert(false);
@@ -1297,7 +1298,7 @@ bool DX11GraphicSession::BuildD2D()
 	}
 
 	hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory1),
-				 reinterpret_cast<IUnknown **>(m_pDWriteFactory.Assign()));
+				 reinterpret_cast<IUnknown **>(m_pDWriteFactory.GetAddressOf()));
 	if (FAILED(hr)) {
 		LOG_WARN("DWriteCreateFactory failed 0x%x", hr);
 		assert(false);
@@ -1313,7 +1314,7 @@ bool DX11GraphicSession::BuildD2D()
 	}
 
 	ComPtr<ID2D1Device> pD2DDevice = nullptr;
-	hr = m_pD2DFactory->CreateDevice(pDxgiDevice, &pD2DDevice);
+	hr = m_pD2DFactory->CreateDevice(pDxgiDevice.Get(), &pD2DDevice);
 	if (FAILED(hr)) {
 		LOG_WARN("ID2D1Device create failed 0x%x", hr);
 		assert(false);

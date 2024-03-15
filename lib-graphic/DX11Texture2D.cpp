@@ -47,7 +47,7 @@ ID3D11RenderTargetView *DX11Texture2D::D3DTarget(bool srgb)
 {
 	CHECK_GRAPHIC_CONTEXT_EX(DX11GraphicBase::m_graphicSession);
 	assert(m_textureInfo.usage == TEXTURE_USAGE::CANVAS_TARGET);
-	return m_pRenderTargetView;
+	return m_pRenderTargetView.Get();
 }
 
 bool DX11Texture2D::BuildGraphic()
@@ -132,7 +132,7 @@ bool DX11Texture2D::InitWriteTexture()
 	desc.Usage = D3D11_USAGE_DYNAMIC;
 
 	HRESULT hr = DX11GraphicBase::m_graphicSession.D3DDevice()->CreateTexture2D(
-		&desc, nullptr, m_pTexture2D.Assign());
+		&desc, nullptr, m_pTexture2D.GetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateTexture2D for write, %ux%u format:%d %X",
 			       m_textureInfo.width, m_textureInfo.height, (int)m_textureInfo.format,
@@ -145,7 +145,7 @@ bool DX11Texture2D::InitWriteTexture()
 		return false;
 
 	D3D11_MAPPED_SUBRESOURCE map;
-	hr = DX11GraphicBase::m_graphicSession.D3DContext()->Map(m_pTexture2D, 0,
+	hr = DX11GraphicBase::m_graphicSession.D3DContext()->Map(m_pTexture2D.Get(), 0,
 								 D3D11_MAP_WRITE_DISCARD, 0, &map);
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "mapWriteTexture %X", this);
@@ -153,7 +153,7 @@ bool DX11Texture2D::InitWriteTexture()
 		return false;
 	}
 
-	DX11GraphicBase::m_graphicSession.D3DContext()->Unmap(m_pTexture2D, 0);
+	DX11GraphicBase::m_graphicSession.D3DContext()->Unmap(m_pTexture2D.Get(), 0);
 	return true;
 }
 
@@ -170,7 +170,7 @@ bool DX11Texture2D::InitReadTexture()
 	desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
 
 	HRESULT hr = DX11GraphicBase::m_graphicSession.D3DDevice()->CreateTexture2D(
-		&desc, nullptr, m_pTexture2D.Assign());
+		&desc, nullptr, m_pTexture2D.GetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateTexture2D for read, %ux%u format:%d %X",
 			       m_textureInfo.width, m_textureInfo.height, (int)m_textureInfo.format,
@@ -180,15 +180,15 @@ bool DX11Texture2D::InitReadTexture()
 	}
 
 	D3D11_MAPPED_SUBRESOURCE map;
-	hr = DX11GraphicBase::m_graphicSession.D3DContext()->Map(m_pTexture2D, 0, D3D11_MAP_READ, 0,
-								 &map);
+	hr = DX11GraphicBase::m_graphicSession.D3DContext()->Map(m_pTexture2D.Get(), 0,
+								 D3D11_MAP_READ, 0, &map);
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "mapReadTexture");
 		assert(false);
 		return false;
 	}
 
-	DX11GraphicBase::m_graphicSession.D3DContext()->Unmap(m_pTexture2D, 0);
+	DX11GraphicBase::m_graphicSession.D3DContext()->Unmap(m_pTexture2D.Get(), 0);
 	return true;
 }
 
@@ -231,7 +231,7 @@ bool DX11Texture2D::InitTargetTexture(bool cube)
 	}
 
 	HRESULT hr = DX11GraphicBase::m_graphicSession.D3DDevice()->CreateTexture2D(
-		&desc, nullptr, m_pTexture2D.Assign());
+		&desc, nullptr, m_pTexture2D.GetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateTexture2D for target, %ux%u format:%d %X",
 			       m_textureInfo.width, m_textureInfo.height, (int)m_textureInfo.format,
@@ -241,7 +241,7 @@ bool DX11Texture2D::InitTargetTexture(bool cube)
 	}
 
 	hr = DX11GraphicBase::m_graphicSession.D3DDevice()->CreateRenderTargetView(
-		m_pTexture2D, nullptr, m_pRenderTargetView.Assign());
+		m_pTexture2D.Get(), nullptr, m_pRenderTargetView.GetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateRenderTargetView %X", this);
 		assert(false);
@@ -252,7 +252,8 @@ bool DX11Texture2D::InitTargetTexture(bool cube)
 		return false;
 
 	ComPtr<IDXGIResource> pDXGIRes = nullptr;
-	hr = m_pTexture2D->QueryInterface(__uuidof(IDXGIResource), (LPVOID *)(pDXGIRes.Assign()));
+	hr = m_pTexture2D->QueryInterface(__uuidof(IDXGIResource),
+					  (LPVOID *)(pDXGIRes.GetAddressOf()));
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "query-IDXGIResource %X", this);
 		assert(false);
@@ -268,7 +269,7 @@ bool DX11Texture2D::InitTargetTexture(bool cube)
 
 	ComPtr<IDXGISurface1> sfc;
 	hr = DX11GraphicBase::m_graphicSession.D3DDevice()->OpenSharedResource(
-		m_hSharedHandle, __uuidof(IDXGISurface1), (LPVOID *)(sfc.Assign()));
+		m_hSharedHandle, __uuidof(IDXGISurface1), (LPVOID *)(sfc.GetAddressOf()));
 	if (SUCCEEDED(hr))
 		D2DRenderTarget::BuildD2DFromDXGI(sfc, m_textureInfo.format);
 
@@ -278,7 +279,8 @@ bool DX11Texture2D::InitTargetTexture(bool cube)
 bool DX11Texture2D::InitSharedTexture()
 {
 	HRESULT hr = DX11GraphicBase::m_graphicSession.D3DDevice()->OpenSharedResource(
-		(HANDLE)m_hSharedHandle, __uuidof(ID3D11Texture2D), (void **)m_pTexture2D.Assign());
+		(HANDLE)m_hSharedHandle, __uuidof(ID3D11Texture2D),
+		(void **)m_pTexture2D.GetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "OpenSharedResource HANDLE:%X %X", m_hSharedHandle, this);
 		return false;
@@ -319,8 +321,8 @@ bool DX11Texture2D::InitImageTexture()
 	m_pTexture2D->GetDesc(&destDesc);
 
 	DX11GraphicBase::m_graphicSession.D3DContext()->CopySubresourceRegion(
-		m_pTexture2D, D3D11CalcSubresource(0, 0, destDesc.MipLevels), 0, 0, 0, pImage,
-		D3D11CalcSubresource(0, 0, srcDesc.MipLevels), nullptr);
+		m_pTexture2D.Get(), D3D11CalcSubresource(0, 0, destDesc.MipLevels), 0, 0, 0,
+		pImage.Get(), D3D11CalcSubresource(0, 0, srcDesc.MipLevels), nullptr);
 
 	return true;
 }
@@ -332,22 +334,22 @@ ComPtr<ID3D11Texture2D> DX11Texture2D::LoadImageTexture()
 	ComPtr<ID3D11Texture2D> pTexture2D = nullptr;
 
 	HRESULT hr = D3DX11CreateShaderResourceViewFromFile(
-		DX11GraphicBase::m_graphicSession.D3DDevice(), m_strImagePath.c_str(), nullptr,
-		nullptr, pTextureResView.Assign(), nullptr);
+		DX11GraphicBase::m_graphicSession.D3DDevice().Get(), m_strImagePath.c_str(),
+		nullptr, nullptr, pTextureResView.GetAddressOf(), nullptr);
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "D3DX11CreateShaderResourceViewFromFile %X", this);
 		assert(false);
 		return nullptr;
 	}
 
-	pTextureResView->GetResource(pResource.Assign());
+	pTextureResView->GetResource(pResource.GetAddressOf());
 	if (!pResource) {
 		CHECK_DX_ERROR(hr, "m_pTextureResView->GetResource %X", this);
 		assert(false);
 		return nullptr;
 	}
 
-	hr = pResource->QueryInterface<ID3D11Texture2D>(pTexture2D.Assign());
+	hr = pResource->QueryInterface<ID3D11Texture2D>(pTexture2D.GetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "QueryInterfaceID3D11Texture2D %X", this);
 		assert(false);
@@ -393,7 +395,7 @@ bool DX11Texture2D::InitResourceView()
 	}
 
 	HRESULT hr = DX11GraphicBase::m_graphicSession.D3DDevice()->CreateShaderResourceView(
-		m_pTexture2D, &viewDesc, m_pTextureResView.Assign());
+		m_pTexture2D.Get(), &viewDesc, m_pTextureResView.GetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateShaderResourceView %X", this);
 		assert(false);
@@ -402,7 +404,7 @@ bool DX11Texture2D::InitResourceView()
 
 	if (desc.MiscFlags & D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX) {
 		hr = m_pTexture2D->QueryInterface(__uuidof(IDXGIKeyedMutex),
-						  (void **)m_pKeyedMutex.Assign());
+						  (void **)m_pKeyedMutex.GetAddressOf());
 		if (FAILED(hr)) {
 			CHECK_DX_ERROR(hr, "IDXGIKeyedMutex failed %X", this);
 			assert(false);
