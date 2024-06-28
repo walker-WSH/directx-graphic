@@ -80,6 +80,9 @@ HRESULT D2DRenderTarget::EndDrawD2D(std::source_location location)
 			 location.function_name());
 	}
 
+	if (SUCCEEDED(ret))
+		m_graphicSession.D3DContext()->Flush();
+
 	return ret;
 }
 
@@ -305,6 +308,9 @@ void D2DRenderTarget::DrawGaussianBlur(texture_handle srcCanvas, float value,
 		pD2DContext->SetTarget(nullptr);
 		pEffect->SetInput(0, nullptr, FALSE);
 
+		if (SUCCEEDED(hr))
+			m_graphicSession.D3DContext()->Flush();
+
 		if (hr == D2DERR_RECREATE_TARGET && !m_bD2DRendering)
 			m_graphicSession.HandleDirectResult(hr);
 	}
@@ -349,6 +355,9 @@ void D2DRenderTarget::DrawDirectBlur(texture_handle srcCanvas, float value, floa
 		// Here we must reset its parameters, otherwise swapchain will fail to resize.
 		pD2DContext->SetTarget(nullptr);
 		pEffect->SetInput(0, nullptr, FALSE);
+
+		if (SUCCEEDED(hr))
+			m_graphicSession.D3DContext()->Flush();
 
 		if (hr == D2DERR_RECREATE_TARGET && !m_bD2DRendering)
 			m_graphicSession.HandleDirectResult(hr);
@@ -395,6 +404,9 @@ void D2DRenderTarget::DrawHighlight(texture_handle srcCanvas, float highlight, f
 		pD2DContext->SetTarget(nullptr);
 		pEffect->SetInput(0, nullptr, FALSE);
 
+		if (SUCCEEDED(hr))
+			m_graphicSession.D3DContext()->Flush();
+
 		if (hr == D2DERR_RECREATE_TARGET && !m_bD2DRendering)
 			m_graphicSession.HandleDirectResult(hr);
 	}
@@ -440,6 +452,9 @@ void D2DRenderTarget::DrawChromakey(texture_handle srcCanvas, ColorRGB clrKey, f
 		// Here we must reset its parameters, otherwise swapchain will fail to resize.
 		pD2DContext->SetTarget(nullptr);
 		pEffect->SetInput(0, nullptr, FALSE);
+
+		if (SUCCEEDED(hr))
+			m_graphicSession.D3DContext()->Flush();
 
 		if (hr == D2DERR_RECREATE_TARGET && !m_bD2DRendering)
 			m_graphicSession.HandleDirectResult(hr);
