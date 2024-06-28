@@ -154,7 +154,7 @@ private:
 	std::vector<std::weak_ptr<IGraphicCallback>> m_pGraphicCallbacks;
 
 	uint32_t m_uAdapterIdx = 0;
-	bool m_bBuildSuccessed = false;
+	std::atomic<bool> m_bBuildSuccessed = false;
 	std::atomic<uint32_t> m_uMaxTextureSize = D3D10_REQ_TEXTURE2D_U_OR_V_DIMENSION;
 
 	ComPtr<ID2D1Factory1> m_pD2DFactory = nullptr;

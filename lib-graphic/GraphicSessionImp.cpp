@@ -83,7 +83,15 @@ void DX11GraphicSession::UnRegisterCallback(IGraphicCallback *cb)
 bool DX11GraphicSession::IsGraphicBuilt()
 {
 	CHECK_GRAPHIC_CONTEXT;
-	return m_bBuildSuccessed;
+
+	if (!m_bBuildSuccessed.load())
+		return false;
+
+	auto hr = m_pDX11Device->GetDeviceRemovedReason();
+	if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
+		return false;
+
+	return true;
 }
 
 uint32_t DX11GraphicSession::MaxVideoSize()
@@ -95,6 +103,7 @@ uint32_t DX11GraphicSession::MaxVideoSize()
 bool DX11GraphicSession::ReBuildGraphic()
 {
 	CHECK_GRAPHIC_CONTEXT;
+	ReleaseAllDX(true);
 	return BuildAllDX();
 }
 
@@ -202,7 +211,7 @@ bool DX11GraphicSession::CopyTexture(texture_handle dest, texture_handle src,
 	CHECK_GRAPHIC_OBJECT_VALID((*this), dest, DX11Texture2D, destTex, return false);
 	CHECK_GRAPHIC_OBJECT_VALID((*this), src, DX11Texture2D, srcTex, return false);
 
-	if (!m_bBuildSuccessed) {
+	if (!m_bBuildSuccessed.load()) {
 		LOG_WARN("DX is not built");
 		return false;
 	}
@@ -232,7 +241,7 @@ bool DX11GraphicSession::CopyDisplay(texture_handle dest, display_handle src,
 	CHECK_GRAPHIC_OBJECT_VALID((*this), dest, DX11Texture2D, destTex, return false);
 	CHECK_GRAPHIC_OBJECT_VALID((*this), src, DX11SwapChain, srcDisplay, return false);
 
-	if (!m_bBuildSuccessed) {
+	if (!m_bBuildSuccessed.load()) {
 		LOG_WARN("DX is not built");
 		return false;
 	}
@@ -258,7 +267,7 @@ bool DX11GraphicSession::MapTexture(texture_handle hdl, MAP_TEXTURE_FEATURE type
 	CHECK_GRAPHIC_CONTEXT;
 	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Texture2D, obj, return false);
 
-	if (!m_bBuildSuccessed) {
+	if (!m_bBuildSuccessed.load()) {
 		LOG_WARN("DX is not built");
 		return false;
 	}
@@ -321,7 +330,7 @@ D2D1_SIZE_F DX11GraphicSession::CalcTextSize(const wchar_t *text, font_handle fo
 	CHECK_GRAPHIC_OBJECT_VALID((*this), font, D2DTextFormat, pTextFormat,
 				   return D2D1_SIZE_F(0.f, 0.f));
 
-	if (!m_bBuildSuccessed) {
+	if (!m_bBuildSuccessed.load()) {
 		LOG_WARN("DX is not built");
 		return D2D1_SIZE_F(0.f, 0.f);
 	}
@@ -859,9 +868,10 @@ bool DX11GraphicSession::BeginRenderCanvas(texture_handle hdl,
 		return false;
 	}
 
-	if (!m_bBuildSuccessed) {
-		if (!BuildAllDX())
-			return false;
+	if (!m_bBuildSuccessed.load()) {
+		LOG_WARN("graphic is not built");
+		assert(false);
+		return false;
 	}
 
 	if (obj->m_textureInfo.usage != TEXTURE_USAGE::CANVAS_TARGET) {
@@ -898,9 +908,10 @@ bool DX11GraphicSession::BeginRenderWindow(display_handle hdl,
 		return false;
 	}
 
-	if (!m_bBuildSuccessed) {
-		if (!BuildAllDX())
-			return false;
+	if (!m_bBuildSuccessed.load()) {
+		LOG_WARN("graphic is not built");
+		assert(false);
+		return false;
 	}
 
 	if (!IsWindow(obj->m_hWnd))
@@ -1168,17 +1179,6 @@ void DX11GraphicSession::HandleDirectResult(HRESULT hr, std::source_location loc
 			auto cb = item.lock();
 			if (cb)
 				cb->OnGraphicError(hr);
-		}
-
-		if (rebuild && !m_bDuringRendering) {
-			for (auto &item : m_pGraphicCallbacks) {
-				auto cb = item.lock();
-				if (cb)
-					cb->OnRequestRebuild();
-			}
-
-			ReleaseAllDX(true);
-			BuildAllDX();
 		}
 	}
 }

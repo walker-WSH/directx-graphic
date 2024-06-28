@@ -286,7 +286,6 @@ public:
 	virtual ~IGraphicCallback() = default;
 
 	virtual void OnGraphicError(HRESULT hr) = 0;
-	virtual void OnRequestRebuild() = 0;
 	virtual void OnBuildSuccessed(const DXGI_ADAPTER_DESC &desc) = 0;
 };
 

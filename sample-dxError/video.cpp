@@ -19,11 +19,6 @@ public:
 		OutputDebugStringA(__FUNCTION__);
 	}
 
-	virtual void OnRequestRebuild() 
-	{ 
-		OutputDebugStringA(__FUNCTION__);
-	}
-
 	virtual void OnBuildSuccessed(const DXGI_ADAPTER_DESC &desc) 
 	{
 		OutputDebugStringA(__FUNCTION__);
