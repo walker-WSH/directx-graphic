@@ -452,6 +452,7 @@ unsigned __stdcall CMFCDemoDlg::ThreadFuncForSubRegionMosic(void *pParam)
 			RenderTexture(std::vector<texture_handle>{texGrid}, wndSize, right);
 
 			if (drawingPath) {
+				pGraphic->FlushD3D();
 				d2d->DrawGeometry(drawingPath, &clrRed, g_lineStride,
 						  LINE_DASH_STYLE::LINE_SOLID);
 			}

@@ -1132,6 +1132,19 @@ void DX11GraphicSession::DrawTexture(const std::vector<texture_handle> &textures
 		resourceTex->UnlockTexture();
 }
 
+void DX11GraphicSession::FlushD3D()
+{
+	CHECK_GRAPHIC_CONTEXT;
+
+	if (!m_bBuildSuccessed.load()) {
+		LOG_WARN("graphic is not built");
+		assert(false);
+		return;
+	}
+
+	D3DContext()->Flush();
+}
+
 void DX11GraphicSession::EndRender(IGeometryInterface *geometryInterface)
 {
 	CHECK_GRAPHIC_CONTEXT;

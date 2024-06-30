@@ -78,6 +78,7 @@ public:
 		    shader_handle hdl, buffer_handle vertex, buffer_handle index = nullptr,
 		    D3D11_PRIMITIVE_TOPOLOGY type = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP) = 0;
 
+	virtual void FlushD3D() = 0;
 	virtual void EndRender(IGeometryInterface *geometryInterface = nullptr) = 0;
 };
 
