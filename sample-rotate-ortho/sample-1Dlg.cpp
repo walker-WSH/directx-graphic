@@ -220,18 +220,30 @@ void Csample1Dlg::OnBnClickedButtonAddScale()
 {
 	// 左上角为起点时  scale时就不是以图像当前move的位置的左上角为起点了
 	// 即：如果图像先move再scale，则scale会引起图像左上角的位置
-	WorldVector vec;
-	vec.type = WORLD_TYPE::VECTOR_SCALE;
+
+	if (m_worldList.empty() || m_worldList[0].type != WORLD_TYPE::VECTOR_SCALE) {
+		WorldVector vec;
+		vec.type = WORLD_TYPE::VECTOR_SCALE;
+		m_worldList.insert(m_worldList.begin(), vec);
+	}
+
+	auto& scale = m_worldList[0];
 
 	auto x = GetFloatValue(&m_edit_x);
-	if (x > 0.1f || x < -0.1f)
-		vec.x = x;
+	if (x > 0.1f || x < -0.1f) {
+		if (scale.x.has_value())
+			scale.x = scale.x.value() * x;
+		else
+			scale.x = x;
+	}
 
 	auto y = GetFloatValue(&m_edit_y);
-	if (y > 0.1f || y < -0.1f)
-		vec.y = y;
-
-	m_worldList.push_back(vec);
+	if (y > 0.1f || y < -0.1f) {
+		if (scale.y.has_value())
+			scale.y = scale.y.value() * y;
+		else
+			scale.y = y;
+	}
 }
 
 bool Csample1Dlg::IsPointOnImage(const CPoint &pt) // 判断屏幕上某个点 是否命中了图片
