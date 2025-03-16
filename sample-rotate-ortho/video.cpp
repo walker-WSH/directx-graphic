@@ -119,6 +119,7 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest, 
 {
 	AUTO_GRAPHIC_CONTEXT(pGraphic);
 
+	//---------------------------------------- 顶点数组赋值 ---------------------------------------
 	TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT];
 	float l = 0.f;
 	float t = 0.f;
@@ -146,9 +147,23 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest, 
 	outputVertex[2] = {l, b, 0.f, leftUV, bottomUV};
 	outputVertex[3] = {r, b, 0.f, rightUV, bottomUV};
 
-	m_worldMatrix = GetWorldMatrix(&m_worldList);
-	XMMATRIX matrixWVP = TransposedOrthoMatrixWVP2(canvas, true, m_worldMatrix);
+	//------------------------------------------ 生成世界坐标转换以及wvp矩阵 -------------------------------------
+	XMMATRIX matrixWVP;
+	if (overflow) {
+		std::vector<WorldVector> worldList = m_worldList;
+		if (!worldList.empty() && worldList[0].type != WORLD_TYPE::VECTOR_SCALE) {
+			worldList[0].x = worldList[0].y = worldList[0].z = 1.f; // overflow 不执行缩放
+		}
 
+		auto worldMatrix = GetWorldMatrix(&worldList);
+		matrixWVP = TransposedOrthoMatrixWVP2(canvas, true, worldMatrix);
+
+	} else {
+		m_worldMatrix = GetWorldMatrix(&m_worldList);
+		matrixWVP = TransposedOrthoMatrixWVP2(canvas, true, m_worldMatrix);
+	}
+
+	//------------------------------------------- 渲染 ------------------------------------
 	pGraphic->SetGraphicBuffer(texVertexBuf, outputVertex, sizeof(outputVertex));
 	pGraphic->SetVSConstBuffer(texShader, &matrixWVP, sizeof(matrixWVP));
 
