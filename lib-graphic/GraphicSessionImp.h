@@ -174,6 +174,7 @@ private:
 	ComPtr<ID3D11BlendState> m_pBlendStatePreMultAlpha = nullptr;
 	ComPtr<ID3D11SamplerState> m_pSampleStateAnisotropic = nullptr;
 	ComPtr<ID3D11SamplerState> m_pSampleStateLinear = nullptr;
+	ComPtr<ID3D11SamplerState> m_pSampleStateLinearrRepeat = nullptr;
 	ComPtr<ID3D11SamplerState> m_pSampleStatePoint = nullptr;
 	std::map<DX11GraphicBase *, bool> m_listObject;
 

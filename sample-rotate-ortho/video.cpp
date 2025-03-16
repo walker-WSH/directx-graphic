@@ -7,6 +7,7 @@ display_handle display = nullptr;
 shader_handle texShader = nullptr;
 buffer_handle texVertexBuf = nullptr;
 texture_handle texImg = nullptr;
+texture_handle texOver = nullptr;
 
 shader_handle solidShader = nullptr;
 buffer_handle solidVertexBuf = nullptr;
@@ -92,6 +93,9 @@ void Csample1Dlg::initGraphic(HWND hWnd)
 	initSolidShader();
 
 	texImg = pGraphic->OpenImageTexture(L"test.jpg");
+	texOver = pGraphic->OpenImageTexture(L"overflow.png");
+
+	m_texMainImgInfo = pGraphic->GetTextureInfo(texImg);
 
 	display = pGraphic->CreateDisplay(hWnd);
 	assert(display);
@@ -111,22 +115,32 @@ void Csample1Dlg::uninitGraphic()
 	graphic::DestroyGraphicSession(pGraphic);
 }
 
-void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
+void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest, bool overflow)
 {
 	AUTO_GRAPHIC_CONTEXT(pGraphic);
-
-	m_texInfo = pGraphic->GetTextureInfo(tex);
-	std::vector<texture_handle> textures = {tex};
 
 	TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT];
 	float l = 0.f;
 	float t = 0.f;
-	float r = (float)m_texInfo.width;
-	float b = (float)m_texInfo.height;
+	float r = (float)m_texMainImgInfo.width;
+	float b = (float)m_texMainImgInfo.height;
 	float leftUV = 0.f;
 	float topUV = 0.f;
 	float rightUV = 1.f;
 	float bottomUV = 1.f;
+	if (overflow) {
+		CPoint lt, rb;
+		GetTextureScreenPos(lt, rb);
+
+		auto x = rb.x - lt.x;
+		auto y = rb.y - lt.y;
+
+		float cntX = float(x) / 40;
+		float cntY = float(y) / 40.f;
+
+		rightUV *= cntX;
+		bottomUV *= cntY;
+	}
 	outputVertex[0] = {l, t, 0.f, leftUV, topUV};
 	outputVertex[1] = {r, t, 0.f, rightUV, topUV};
 	outputVertex[2] = {l, b, 0.f, leftUV, bottomUV};
@@ -137,7 +151,9 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 
 	pGraphic->SetGraphicBuffer(texVertexBuf, outputVertex, sizeof(outputVertex));
 	pGraphic->SetVSConstBuffer(texShader, &matrixWVP, sizeof(matrixWVP));
-	pGraphic->DrawTexture(textures, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, texShader, texVertexBuf);
+
+	std::vector<texture_handle> textures = {tex};
+	pGraphic->DrawTexture(textures, overflow ? VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR_REPEAT : VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, texShader, texVertexBuf);
 }
 
 float SOLID_SIZE = 20.f;
@@ -194,7 +210,11 @@ void Csample1Dlg::render()
 		pGraphic->ClearBackground(&clrBlue);
 		pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_DISABLED);
 
-		RenderTexture(texImg, SIZE(rcWindow.right, rcWindow.bottom), rcWindow);
+		RenderTexture(texImg, SIZE(rcWindow.right, rcWindow.bottom), rcWindow, false);
+
+		if (GetAsyncKeyState(VK_RBUTTON) & 0x8000) {
+			RenderTexture(texOver, SIZE(rcWindow.right, rcWindow.bottom), rcWindow, true);
+		}
 
 		if (m_selected) {
 			CPoint lt, rb;

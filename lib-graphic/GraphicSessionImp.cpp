@@ -546,7 +546,7 @@ void DX11GraphicSession::ReleaseAllDX(bool isForRebuild)
 
 	m_pBlendStateNormal = nullptr;
 	m_pBlendStatePreMultAlpha = nullptr;
-	m_pSampleStateAnisotropic = m_pSampleStatePoint = m_pSampleStateLinear = nullptr;
+	m_pSampleStateAnisotropic = m_pSampleStatePoint = m_pSampleStateLinear = m_pSampleStateLinearrRepeat = nullptr;
 }
 
 bool DX11GraphicSession::BuildAllDX()
@@ -711,6 +711,18 @@ bool DX11GraphicSession::InitSamplerState()
 	hr = m_pDX11Device->CreateSamplerState(&samplerDesc, m_pSampleStatePoint.GetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateSamplerState D3D11_FILTER_MIN_MAG_MIP_POINT");
+		assert(false);
+		return false;
+	}
+
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	samplerDesc.MaxAnisotropy = 0;
+	hr = m_pDX11Device->CreateSamplerState(&samplerDesc, m_pSampleStateLinear.GetAddressOf());
+	if (FAILED(hr)) {
+		CHECK_DX_ERROR(hr, "CreateSamplerState D3D11_FILTER_MIN_MAG_MIP_LINEAR_REPEAT");
 		assert(false);
 		return false;
 	}
@@ -1108,6 +1120,10 @@ void DX11GraphicSession::DrawTexture(const std::vector<texture_handle> &textures
 
 	case VIDEO_FILTER_TYPE::VIDEO_FILTER_ANISOTROPIC:
 		sampleState = m_pSampleStateAnisotropic.Get();
+		break;
+
+	case VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR_REPEAT:
+		sampleState = m_pSampleStateLinearrRepeat.Get();
 		break;
 
 	case VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR:

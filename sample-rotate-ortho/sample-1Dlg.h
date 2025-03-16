@@ -28,7 +28,7 @@ protected:
 	void uninitGraphic();
 	void render();
 
-	void RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest);
+	void RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest, bool overflow);
 	void RenderSolid(SIZE canvas, CPoint pos);
 
 	bool IsPointOnImage(const CPoint &pt);
@@ -50,7 +50,7 @@ public:
 
 	XMMATRIX m_worldMatrix;
 	std::vector<WorldVector> m_worldList;
-	TextureInformation m_texInfo;
+	TextureInformation m_texMainImgInfo;
 	bool m_selected = false;
 
 	afx_msg void OnDestroy();

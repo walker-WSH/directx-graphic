@@ -233,8 +233,8 @@ bool Csample1Dlg::IsPointOnImage(const CPoint &pt) // 判断屏幕上某个点 �
 	auto x = pointLocal.m128_f32[0];
 	auto y = pointLocal.m128_f32[1];
 
-	auto is_selected = (x > 0 && x < m_texInfo.width && y > 0 && y < m_texInfo.height);
-	ATLTRACE("----------- selected=%d (%d, %d) image=%dx%d \n", is_selected, (int)x, (int)y, m_texInfo.width, m_texInfo.height);
+	auto is_selected = (x > 0 && x < m_texMainImgInfo.width && y > 0 && y < m_texMainImgInfo.height);
+	ATLTRACE("----------- selected=%d (%d, %d) image=%dx%d \n", is_selected, (int)x, (int)y, m_texMainImgInfo.width, m_texMainImgInfo.height);
 	return is_selected;
 }
 
@@ -245,7 +245,7 @@ void Csample1Dlg::GetTextureScreenPos(CPoint &lt, CPoint &rb) // 获取图标在
 		lt.x = (LONG)screenLeftTop.m128_f32[0];
 		lt.y = (LONG)screenLeftTop.m128_f32[1];
 
-		XMVECTOR rb_pt = XMVectorSet((float)m_texInfo.width, (float)m_texInfo.height, 0.0f, 1.0f);
+		XMVECTOR rb_pt = XMVectorSet((float)m_texMainImgInfo.width, (float)m_texMainImgInfo.height, 0.0f, 1.0f);
 		XMVECTOR rightBottom = XMVector4Transform(rb_pt, m_worldMatrix);
 		rb.x = (LONG)rightBottom.m128_f32[0];
 		rb.y = (LONG)rightBottom.m128_f32[1];
