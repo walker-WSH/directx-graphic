@@ -1079,14 +1079,20 @@ void DX11GraphicSession::DrawTexture(const std::vector<texture_handle> &textures
 {
 	CHECK_GRAPHIC_CONTEXT;
 	CHECK_GRAPHIC_OBJECT_VALID((*this), hdl, DX11Shader, shader, return);
-	CHECK_GRAPHIC_OBJECT_VALID((*this), textures[0], DX11Texture2D, resourceTex, return);
 	CHECK_GRAPHIC_OBJECT_VALID((*this), vertex, DX11Buffer, vertexBuffer, return);
 
 	std::vector<ID3D11ShaderResourceView *> resources;
-	if (!GetResource(textures, resources)) {
-		LOG_WARN("invalid texture for render");
-		assert(false);
-		return;
+	DX11Texture2D *resourceTex = NULL;
+
+	if (!textures.empty()) {
+		CHECK_GRAPHIC_OBJECT_VALID((*this), textures[0], DX11Texture2D, dest, return);
+		resourceTex = dest;
+
+		if (!GetResource(textures, resources)) {
+			LOG_WARN("invalid texture for render");
+			assert(false);
+			return;
+		}
 	}
 
 	if (!ApplyShader(shader, index)) {
@@ -1118,7 +1124,9 @@ void DX11GraphicSession::DrawTexture(const std::vector<texture_handle> &textures
 
 	vertexBuffer->ApplyBuffer();
 	m_pDeviceContext->IASetPrimitiveTopology(type);
-	m_pDeviceContext->PSSetShaderResources(0, (uint32_t)resources.size(), resources.data());
+
+	if (!resources.empty())
+		m_pDeviceContext->PSSetShaderResources(0, (uint32_t)resources.size(), resources.data());
 
 	if (index) {
 		CHECK_GRAPHIC_OBJECT_VALID((*this), index, DX11Buffer, indexBuffer, return);

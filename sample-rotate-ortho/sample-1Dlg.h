@@ -29,6 +29,7 @@ protected:
 	void render();
 
 	void RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest);
+	void RenderSolid(SIZE canvas);
 
 	// 实现
 protected:
@@ -62,5 +63,5 @@ static std::wstring GetShaderDirectory()
 	WCHAR dir[MAX_PATH] = {};
 	GetModuleFileNameW(0, dir, MAX_PATH);
 	PathRemoveFileSpecW(dir);
-	return std::wstring(dir) + std::wstring(L"\\HLSL\\");
+	return std::wstring(dir) + std::wstring(L"\\");
 }

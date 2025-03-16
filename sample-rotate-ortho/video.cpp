@@ -2,10 +2,14 @@
 #include "sample-1Dlg.h"
 
 IGraphicSession *pGraphic = nullptr;
-shader_handle shader = nullptr;
-buffer_handle vertexBuf = nullptr;
 display_handle display = nullptr;
+
+shader_handle texShader = nullptr;
+buffer_handle texVertexBuf = nullptr;
 texture_handle texImg = nullptr;
+
+shader_handle solidShader = nullptr;
+buffer_handle solidVertexBuf = nullptr;
 
 ColorRGBA clrBlack = {0, 0, 0, 1.f};
 ColorRGBA clrBlue = {0, 0, 1, 1.f};
@@ -15,17 +19,19 @@ struct TextureVertexDesc {
 	float x, y, z;
 	float u, v;
 };
+struct SolidVertexDesc {
+	float x, y, z;
+	float r, g, b;
+};
 
-void initShader()
+void initTexShader()
 {
-	float matrixWVP[4][4];
 	ShaderInformation shaderInfo;
 
 	VertexInputDesc desc;
 	desc.type = VERTEX_INPUT_TYPE::POSITION;
 	desc.size = 12;
 	shaderInfo.vertexDesc.push_back(desc);
-
 	desc.type = VERTEX_INPUT_TYPE::TEXTURE_COORD;
 	desc.size = 8;
 	shaderInfo.vertexDesc.push_back(desc);
@@ -33,17 +39,45 @@ void initShader()
 	std::wstring dir = GetShaderDirectory();
 	shaderInfo.vsFile = dir + L"rotate-vs.cso";
 	shaderInfo.psFile = dir + L"rotate-ps.cso";
-	shaderInfo.vsBufferSize = sizeof(matrixWVP);
+	shaderInfo.vsBufferSize = sizeof(XMMATRIX);
 	shaderInfo.psBufferSize = 0;
 
-	shader = pGraphic->CreateShader(shaderInfo);
-	assert(shader);
+	texShader = pGraphic->CreateShader(shaderInfo);
+	assert(texShader);
 
 	BufferDesc bufDesc;
 	bufDesc.bufferType = D3D11_BIND_VERTEX_BUFFER;
 	bufDesc.itemCount = TEXTURE_VERTEX_COUNT;
 	bufDesc.sizePerItem = sizeof(TextureVertexDesc);
-	vertexBuf = pGraphic->CreateGraphicBuffer(bufDesc);
+	texVertexBuf = pGraphic->CreateGraphicBuffer(bufDesc);
+}
+
+void initSolidShader()
+{
+	ShaderInformation shaderInfo;
+
+	VertexInputDesc desc;
+	desc.type = VERTEX_INPUT_TYPE::POSITION;
+	desc.size = 12;
+	shaderInfo.vertexDesc.push_back(desc);
+	desc.type = VERTEX_INPUT_TYPE::COLOR;
+	desc.size = 12;
+	shaderInfo.vertexDesc.push_back(desc);
+
+	std::wstring dir = GetShaderDirectory();
+	shaderInfo.vsFile = dir + L"solid-vs.cso";
+	shaderInfo.psFile = dir + L"solid-ps.cso";
+	shaderInfo.vsBufferSize = sizeof(XMMATRIX);
+	shaderInfo.psBufferSize = 0;
+
+	solidShader = pGraphic->CreateShader(shaderInfo);
+	assert(solidShader);
+
+	BufferDesc bufDesc;
+	bufDesc.bufferType = D3D11_BIND_VERTEX_BUFFER;
+	bufDesc.itemCount = TEXTURE_VERTEX_COUNT;
+	bufDesc.sizePerItem = sizeof(SolidVertexDesc);
+	solidVertexBuf = pGraphic->CreateGraphicBuffer(bufDesc);
 }
 
 void Csample1Dlg::initGraphic(HWND hWnd)
@@ -54,7 +88,8 @@ void Csample1Dlg::initGraphic(HWND hWnd)
 	bool bOK = pGraphic->InitializeGraphic(0);
 	assert(bOK);
 
-	initShader();
+	initTexShader();
+	initSolidShader();
 
 	texImg = pGraphic->OpenImageTexture(L"test.jpg");
 
@@ -101,9 +136,39 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 	TransposedOrthoMatrixWVP(canvas, true, &m_worldList, matrixWVP);
 	m_worldMatrix = GetWorldMatrix(&m_worldList);
 
-	pGraphic->SetGraphicBuffer(vertexBuf, outputVertex, sizeof(outputVertex));
-	pGraphic->SetVSConstBuffer(shader, &matrixWVP, sizeof(matrixWVP));
-	pGraphic->DrawTexture(textures, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, shader, vertexBuf);
+	pGraphic->SetGraphicBuffer(texVertexBuf, outputVertex, sizeof(outputVertex));
+	pGraphic->SetVSConstBuffer(texShader, &matrixWVP, sizeof(matrixWVP));
+	pGraphic->DrawTexture(textures, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, texShader, texVertexBuf);
+}
+
+void Csample1Dlg::RenderSolid(SIZE canvas)
+{
+	AUTO_GRAPHIC_CONTEXT(pGraphic);
+
+	float SOLID_SIZE = 20.f;
+
+	SolidVertexDesc outputVertex[TEXTURE_VERTEX_COUNT];
+	float l = 0.f;
+	float t = 0.f;
+	float r = SOLID_SIZE;
+	float b = SOLID_SIZE;
+	float clr_r = 0.f;
+	float clr_g = 1.f;
+	float clr_b = 0.f;
+	outputVertex[0] = {l, t, 0.f, clr_r, clr_g, clr_b};
+	outputVertex[1] = {r, t, 0.f, clr_r, clr_g, clr_b};
+	outputVertex[2] = {l, b, 0.f, clr_r, clr_g, clr_b};
+	outputVertex[3] = {r, b, 0.f, clr_r, clr_g, clr_b};
+
+	XMMATRIX matrixWVP;
+	TransposedOrthoMatrixWVP(canvas, true, &m_worldList, matrixWVP);
+	m_worldMatrix = GetWorldMatrix(&m_worldList);
+
+	pGraphic->SetGraphicBuffer(solidVertexBuf, outputVertex, sizeof(outputVertex));
+	pGraphic->SetVSConstBuffer(solidShader, &matrixWVP, sizeof(matrixWVP));
+
+	std::vector<texture_handle> textures = {};
+	pGraphic->DrawTexture(textures, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, solidShader, solidVertexBuf);
 }
 
 void Csample1Dlg::render()
@@ -125,6 +190,9 @@ void Csample1Dlg::render()
 		pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_DISABLED);
 
 		RenderTexture(texImg, SIZE(rcWindow.right, rcWindow.bottom), rcWindow);
+
+		//if (m_selected)
+			RenderSolid(SIZE(rcWindow.right, rcWindow.bottom));
 
 		pGraphic->EndRender();
 	}
