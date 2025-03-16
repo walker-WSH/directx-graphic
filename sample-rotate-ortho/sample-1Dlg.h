@@ -60,6 +60,7 @@ public:
 	afx_msg void OnBnClickedButtonAddMove();
 	afx_msg void OnBnClickedButtonAddScale();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnBnClickedButtonRotate();
 };
 
 static std::wstring GetShaderDirectory()

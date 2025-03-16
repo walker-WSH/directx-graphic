@@ -72,6 +72,7 @@ ON_BN_CLICKED(IDC_BUTTON_CLEAR, &Csample1Dlg::OnBnClickedButtonClear)
 ON_BN_CLICKED(IDC_BUTTON_ADD_MOVE, &Csample1Dlg::OnBnClickedButtonAddMove)
 ON_BN_CLICKED(IDC_BUTTON_ADD_SCALE, &Csample1Dlg::OnBnClickedButtonAddScale)
 ON_WM_LBUTTONDOWN()
+ON_BN_CLICKED(IDC_BUTTON_ROTATE, &Csample1Dlg::OnBnClickedButtonRotate)
 END_MESSAGE_MAP()
 
 // Csample1Dlg 消息处理程序
@@ -194,6 +195,15 @@ float GetFloatValue(CEdit *pEdit)
 	// 将文本转换为浮点数
 	double fValue = _ttof(strInput);
 	return (float)fValue;
+}
+
+void Csample1Dlg::OnBnClickedButtonRotate()
+{
+	WorldVector vec;
+	vec.type = WORLD_TYPE::VECTOR_ROTATE;
+	vec.z = 45;
+
+	m_worldList.push_back(vec);
 }
 
 void Csample1Dlg::OnBnClickedButtonAddMove()
