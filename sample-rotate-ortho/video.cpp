@@ -151,16 +151,20 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest, 
 	//------------------------------------------ 生成世界坐标转换以及wvp矩阵 -------------------------------------
 	XMMATRIX matrixWVP;
 	if (overflow) {
-		std::vector<WorldVector> worldList = m_worldList;
-		if (!worldList.empty() && worldList[0].type == WORLD_TYPE::VECTOR_SCALE) {
-			worldList[0].x = worldList[0].y = worldList[0].z = 1.f; // overflow 不执行缩放
-		}
+		std::vector<WorldVector> worldList; // overflow 不执行缩放
+		worldList.push_back(m_rotate);
+		worldList.push_back(m_move);
 
 		auto worldMatrix = GetWorldMatrix(&worldList);
 		matrixWVP = TransposedOrthoMatrixWVP2(canvas, true, worldMatrix);
 
 	} else {
-		m_worldMatrix = GetWorldMatrix(&m_worldList);
+		std::vector<WorldVector> worldList;
+		worldList.push_back(m_scale);
+		worldList.push_back(m_rotate);
+		worldList.push_back(m_move);
+
+		m_worldMatrix = GetWorldMatrix(&worldList);
 		matrixWVP = TransposedOrthoMatrixWVP2(canvas, true, m_worldMatrix);
 	}
 
@@ -190,15 +194,18 @@ void Csample1Dlg::RenderSolid(SIZE canvas, CPoint pos)
 	outputVertex[2] = {l, b, 0.f, clr_r, clr_g, clr_b};
 	outputVertex[3] = {r, b, 0.f, clr_r, clr_g, clr_b};
 
-	std::vector<WorldVector> tempWorldList;
+	std::vector<WorldVector> worldList; // overflow 不执行缩放
+	worldList.push_back(m_rotate);
+	worldList.push_back(m_move);
 	{
 		WorldVector vec;
 		vec.type = WORLD_TYPE::VECTOR_MOVE; // 计算得到纹理的左上角位置 
 		vec.x = pos.x;
 		vec.y = pos.y;
-		tempWorldList.push_back(vec);
+		worldList.push_back(vec);
 	}
-	XMMATRIX worldMatrix = GetWorldMatrix(&tempWorldList);
+
+	XMMATRIX worldMatrix = GetWorldMatrix(&worldList);
 	XMMATRIX matrixWVP = TransposedOrthoMatrixWVP2(canvas, true, worldMatrix);
 
 	pGraphic->SetGraphicBuffer(solidVertexBuf, outputVertex, sizeof(outputVertex));
@@ -236,8 +243,11 @@ void Csample1Dlg::render()
 			CPoint lt, rb;
 			GetTextureScreenPos(lt, rb);
 
-			RenderSolid(SIZE(rcWindow.right, rcWindow.bottom), lt);
-			RenderSolid(SIZE(rcWindow.right, rcWindow.bottom), CPoint(rb.x - SOLID_SIZE, rb.y - SOLID_SIZE));
+			auto offsetX = rb.x > lt.x ? -SOLID_SIZE : SOLID_SIZE;
+			auto offsetY = rb.y > lt.y ? -SOLID_SIZE : SOLID_SIZE;
+
+			RenderSolid(SIZE(rcWindow.right, rcWindow.bottom), CPoint(0,0));
+			RenderSolid(SIZE(rcWindow.right, rcWindow.bottom), rb - lt + CPoint(offsetX, offsetY));
 		}
 
 		pGraphic->EndRender();

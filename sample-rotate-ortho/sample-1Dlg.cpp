@@ -47,6 +47,8 @@ Csample1Dlg::Csample1Dlg(CWnd *pParent /*=nullptr*/) : CDialogEx(IDD_SAMPLE1_DIA
 {
 	CoInitialize(nullptr);
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+
+	OnBnClickedButtonClear();
 }
 
 Csample1Dlg::~Csample1Dlg()
@@ -166,9 +168,12 @@ void Csample1Dlg::OnDestroy()
 
 void Csample1Dlg::OnTimer(UINT_PTR nIDEvent)
 {
+	static bool rendering = false;
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
-	if (nIDEvent == TIMER_RENDER) {
+	if (nIDEvent == TIMER_RENDER && !rendering) {
+		rendering = true;
 		render();
+		rendering = false;
 	}
 
 	CDialogEx::OnTimer(nIDEvent);
@@ -181,7 +186,13 @@ BOOL Csample1Dlg::OnEraseBkgnd(CDC *pDC)
 
 void Csample1Dlg::OnBnClickedButtonClear()
 {
-	m_worldList.clear();
+	m_scale = WorldVector();
+	m_rotate = WorldVector();
+	m_move = WorldVector();
+
+	m_scale.type = WORLD_TYPE::VECTOR_SCALE;
+	m_rotate.type = WORLD_TYPE::VECTOR_ROTATE;
+	m_move.type = WORLD_TYPE::VECTOR_MOVE;
 }
 
 float GetFloatValue(CEdit *pEdit)
@@ -197,23 +208,58 @@ float GetFloatValue(CEdit *pEdit)
 	return (float)fValue;
 }
 
+void AddValue(std::optional<float> &value, float step)
+{
+	if (value.has_value())
+		value = value.value() + step;
+	else
+		value = step;
+}
+
+void MulValue(std::optional<float> &value, float step)
+{
+	if (value.has_value())
+		value = value.value() * step;
+	else
+		value = step;
+}
+
 void Csample1Dlg::OnBnClickedButtonRotate()
 {
-	WorldVector vec;
-	vec.type = WORLD_TYPE::VECTOR_ROTATE;
-	vec.z = 45;
+	AddValue(m_rotate.z, 90.f);
+	
+	auto value = (int)m_rotate.z.value();
+	m_rotate.z = value % 360;
 
-	m_worldList.push_back(vec);
+	switch ((int)m_rotate.z.value()) {
+	case 90:
+		AddValue(m_move.x, (float)m_texMainImgInfo.height);
+		break;
+
+	case 180:
+		AddValue(m_move.x, (float)m_texMainImgInfo.width - (float)m_texMainImgInfo.height);
+		AddValue(m_move.y, (float)m_texMainImgInfo.height);
+		break;
+
+	case 270:
+		AddValue(m_move.x, -(float)m_texMainImgInfo.width);
+		AddValue(m_move.y, (float)m_texMainImgInfo.width - (float)m_texMainImgInfo.height);
+		break;
+
+	case 360:
+	case 0:
+		AddValue(m_move.y, -(float)m_texMainImgInfo.width);
+		break;
+
+	default:
+		break;
+	}
 }
 
 void Csample1Dlg::OnBnClickedButtonAddMove()
 {
-	WorldVector vec;
-	vec.type = WORLD_TYPE::VECTOR_MOVE;
-	vec.x = GetFloatValue(&m_edit_x);
-	vec.y = GetFloatValue(&m_edit_y);
-
-	m_worldList.push_back(vec);
+	AddValue(m_move.x, GetFloatValue(&m_edit_x));
+	AddValue(m_move.y, GetFloatValue(&m_edit_y));
 }
 
 void Csample1Dlg::OnBnClickedButtonAddScale()
@@ -221,28 +267,15 @@ void Csample1Dlg::OnBnClickedButtonAddScale()
 	// 左上角为起点时  scale时就不是以图像当前move的位置的左上角为起点了
 	// 即：如果图像先move再scale，则scale会引起图像左上角的位置
 
-	if (m_worldList.empty() || m_worldList[0].type != WORLD_TYPE::VECTOR_SCALE) {
-		WorldVector vec;
-		vec.type = WORLD_TYPE::VECTOR_SCALE;
-		m_worldList.insert(m_worldList.begin(), vec);
-	}
-
-	auto& scale = m_worldList[0];
-
 	auto x = GetFloatValue(&m_edit_x);
+	auto y = GetFloatValue(&m_edit_y);
+
 	if (x > 0.1f || x < -0.1f) {
-		if (scale.x.has_value())
-			scale.x = scale.x.value() * x;
-		else
-			scale.x = x;
+		MulValue(m_scale.x, x);
 	}
 
-	auto y = GetFloatValue(&m_edit_y);
-	if (y > 0.1f || y < -0.1f) {
-		if (scale.y.has_value())
-			scale.y = scale.y.value() * y;
-		else
-			scale.y = y;
+	if (y > 0.1f || y < -0.1f){
+		MulValue(m_scale.y, y);
 	}
 }
 

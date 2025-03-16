@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include <cmath>
 
 #include "lib-graphic/IGraphicEngine.h"
 using namespace graphic;
@@ -49,7 +50,10 @@ public:
 	CEdit m_edit_y;
 
 	XMMATRIX m_worldMatrix;
-	std::vector<WorldVector> m_worldList;
+	WorldVector m_scale;
+	WorldVector m_rotate;
+	WorldVector m_move;
+
 	TextureInformation m_texMainImgInfo;
 	bool m_selected = false;
 
