@@ -5,7 +5,7 @@ cbuffer MatrixBuffer
 };
 
 struct VertexInput {
-	float4 position : POSITION;
+	float3 position : POSITION;
 	float2 tex : TEXCOORD0;
 };
 

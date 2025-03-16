@@ -57,7 +57,8 @@ Csample1Dlg::~Csample1Dlg()
 void Csample1Dlg::DoDataExchange(CDataExchange *pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_SLIDER1, m_sliderRotate);
+	DDX_Control(pDX, IDC_EDIT_X, m_edit_x);
+	DDX_Control(pDX, IDC_EDIT_Y, m_edit_y);
 }
 
 BEGIN_MESSAGE_MAP(Csample1Dlg, CDialogEx)
@@ -67,6 +68,10 @@ ON_WM_QUERYDRAGICON()
 ON_WM_DESTROY()
 ON_WM_TIMER()
 ON_WM_ERASEBKGND()
+ON_BN_CLICKED(IDC_BUTTON_CLEAR, &Csample1Dlg::OnBnClickedButtonClear)
+ON_BN_CLICKED(IDC_BUTTON_ADD_MOVE, &Csample1Dlg::OnBnClickedButtonAddMove)
+ON_BN_CLICKED(IDC_BUTTON_ADD_SCALE, &Csample1Dlg::OnBnClickedButtonAddScale)
+ON_WM_LBUTTONDOWN()
 END_MESSAGE_MAP()
 
 // Csample1Dlg 消息处理程序
@@ -103,9 +108,6 @@ BOOL Csample1Dlg::OnInitDialog()
 
 	initGraphic(m_hWnd);
 	SetTimer(TIMER_RENDER, 33, 0);
-
-	m_sliderRotate.SetRange(-360, 360);
-	m_sliderRotate.SetPos(0);
 
 	return TRUE; // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -174,4 +176,57 @@ void Csample1Dlg::OnTimer(UINT_PTR nIDEvent)
 BOOL Csample1Dlg::OnEraseBkgnd(CDC *pDC)
 {
 	return TRUE;
+}
+
+void Csample1Dlg::OnBnClickedButtonClear()
+{
+	m_worldList.clear();
+}
+
+float GetFloatValue(CEdit *pEdit)
+{
+	CString strInput;
+	pEdit->GetWindowText(strInput);
+
+	if (strInput.IsEmpty())
+		return 0.f;
+
+	// 将文本转换为浮点数
+	double fValue = _ttof(strInput);
+	return (float)fValue;
+}
+
+void Csample1Dlg::OnBnClickedButtonAddMove()
+{
+	WorldVector vec;
+	vec.type = WORLD_TYPE::VECTOR_MOVE;
+	vec.x = GetFloatValue(&m_edit_x);
+	vec.y = GetFloatValue(&m_edit_y);
+
+	m_worldList.push_back(vec);
+}
+
+void Csample1Dlg::OnBnClickedButtonAddScale()
+{
+	// 左上角为起点时  scale时就不是以图像当前move的位置的左上角为起点了
+	// 即：如果图像先move再scale，则scale会引起图像左上角的位置
+	WorldVector vec;
+	vec.type = WORLD_TYPE::VECTOR_SCALE;
+
+	auto x = GetFloatValue(&m_edit_x);
+	if (x > 0.1f || x < -0.1f)
+		vec.x = x;
+
+	auto y = GetFloatValue(&m_edit_y);
+	if (y > 0.1f || y < -0.1f)
+		vec.y = y;
+
+	m_worldList.push_back(vec);
+}
+
+void Csample1Dlg::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+
+	CDialogEx::OnLButtonDown(nFlags, point);
 }

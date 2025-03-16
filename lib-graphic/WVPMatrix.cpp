@@ -7,7 +7,6 @@
 
 namespace graphic {
 
-XMMATRIX GetWorldMatrix(const std::vector<WorldVector> *worldList);
 XMMATRIX GetOrthoMatrix(SIZE canvas, bool convertCoord);
 
 GRAPHIC_API void TransposedOrthoMatrixWVP(const SIZE &canvas, bool convertCoord,
@@ -78,6 +77,12 @@ XMMATRIX GetRotateMatrix(const WorldVector &param)
 	return rotate;
 }
 
+GRAPHIC_API XMMATRIX MatrixTranspose(const XMMATRIX& temp)
+{
+	XMMATRIX ret = XMMatrixTranspose(temp);
+	return ret;
+}
+
 XMMATRIX GetWorldMatrix(const std::vector<WorldVector> *worldList)
 {
 	XMMATRIX outputWorldMatrix = XMMatrixIdentity();
@@ -87,14 +92,12 @@ XMMATRIX GetWorldMatrix(const std::vector<WorldVector> *worldList)
 	for (const auto &item : (*worldList)) {
 		switch (item.type) {
 		case WORLD_TYPE::VECTOR_MOVE: {
-			XMMATRIX temp = XMMatrixTranslation(
-				item.x.value_or(0.f), item.y.value_or(0.f), item.z.value_or(0.f));
+			XMMATRIX temp = XMMatrixTranslation(item.x.value_or(0.f), item.y.value_or(0.f), item.z.value_or(0.f));
 			outputWorldMatrix *= temp;
 		} break;
 
 		case WORLD_TYPE::VECTOR_SCALE: {
-			XMMATRIX temp = XMMatrixScaling(item.x.value_or(1.f), item.y.value_or(1.f),
-							item.z.value_or(1.f));
+			XMMATRIX temp = XMMatrixScaling(item.x.value_or(1.f), item.y.value_or(1.f), item.z.value_or(1.f));
 			outputWorldMatrix *= temp;
 		} break;
 

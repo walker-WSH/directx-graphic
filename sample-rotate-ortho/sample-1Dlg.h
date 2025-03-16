@@ -29,7 +29,6 @@ protected:
 	void render();
 
 	void RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest);
-	float getRotate();
 
 	// 实现
 protected:
@@ -42,8 +41,26 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
+	CEdit m_edit_x;
+	CEdit m_edit_y;
+
+	XMMATRIX m_worldMatrix;
+	std::vector<WorldVector> m_worldList;
+	bool m_selected = false;
+
 	afx_msg void OnDestroy();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
-	CSliderCtrl m_sliderRotate;
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
+	afx_msg void OnBnClickedButtonClear();
+	afx_msg void OnBnClickedButtonAddMove();
+	afx_msg void OnBnClickedButtonAddScale();
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 };
+
+static std::wstring GetShaderDirectory()
+{
+	WCHAR dir[MAX_PATH] = {};
+	GetModuleFileNameW(0, dir, MAX_PATH);
+	PathRemoveFileSpecW(dir);
+	return std::wstring(dir) + std::wstring(L"\\HLSL\\");
+}
