@@ -224,9 +224,21 @@ void Csample1Dlg::OnBnClickedButtonAddScale()
 	m_worldList.push_back(vec);
 }
 
+bool Csample1Dlg::IsPointOnImage(const CPoint &pt)
+{
+	XMVECTOR ptTemp = XMVectorSet((float)pt.x, (float)pt.y, 0.0f, 1.0f);
+	XMMATRIX inverseWorldMatrix = XMMatrixInverse(nullptr, m_worldMatrix);
+	XMVECTOR pointLocal = XMVector4Transform(ptTemp, inverseWorldMatrix);
+
+	auto x = pointLocal.m128_f32[0];
+	auto y = pointLocal.m128_f32[1];
+
+	auto is_selected = (x > 0 && x < m_texInfo.width && y > 0 && y < m_texInfo.height);
+	ATLTRACE("----------- selected=%d (%d, %d) image=%dx%d \n", is_selected, (int)x, (int)y, m_texInfo.width, m_texInfo.height);
+	return is_selected;
+}
+
 void Csample1Dlg::OnLButtonDown(UINT nFlags, CPoint point)
 {
-	// TODO: 在此添加消息处理程序代码和/或调用默认值
-
-	CDialogEx::OnLButtonDown(nFlags, point);
+	m_selected = IsPointOnImage(point);
 }

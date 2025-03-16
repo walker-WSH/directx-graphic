@@ -20,6 +20,15 @@ GRAPHIC_API void TransposedOrthoMatrixWVP(const SIZE &canvas, bool convertCoord,
 	outputMatrix = XMMatrixTranspose(temp);
 }
 
+// orthogonal matrix
+GRAPHIC_API XMMATRIX TransposedOrthoMatrixWVP2(const SIZE &canvas, bool convertCoord, const XMMATRIX &worldMatrix)
+{
+	XMMATRIX orthoMatrix = GetOrthoMatrix(canvas, convertCoord);
+	XMMATRIX temp = worldMatrix * orthoMatrix;
+	XMMATRIX outputMatrix = XMMatrixTranspose(temp);
+	return outputMatrix;
+}
+
 GRAPHIC_API void TransposedPerspectiveMatrixWVP(const SIZE &canvas,
 						const std::vector<WorldVector> *worldList,
 						CameraDesc camera, XMMATRIX &outputMatrix)

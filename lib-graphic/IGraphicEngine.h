@@ -25,6 +25,9 @@ GRAPHIC_API void TransposedOrthoMatrixWVP(const SIZE &canvas, bool convertCoord,
 					  const std::vector<WorldVector> *worldList,
 					  XMMATRIX &outputMatrix);
 
+// orthogonal matrix
+GRAPHIC_API XMMATRIX TransposedOrthoMatrixWVP2(const SIZE &canvas, bool convertCoord, const XMMATRIX &worldMatrix);
+
 // perspective matrix
 GRAPHIC_API void TransposedPerspectiveMatrixWVP(const SIZE &canvas,
 						const std::vector<WorldVector> *worldList,

@@ -30,6 +30,7 @@ protected:
 
 	void RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest);
 	void RenderSolid(SIZE canvas);
+	bool IsPointOnImage(const CPoint &pt);
 
 	// 实现
 protected:
@@ -47,6 +48,7 @@ public:
 
 	XMMATRIX m_worldMatrix;
 	std::vector<WorldVector> m_worldList;
+	TextureInformation m_texInfo;
 	bool m_selected = false;
 
 	afx_msg void OnDestroy();

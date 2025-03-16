@@ -115,14 +115,14 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 {
 	AUTO_GRAPHIC_CONTEXT(pGraphic);
 
-	auto texInfo = pGraphic->GetTextureInfo(tex);
+	m_texInfo = pGraphic->GetTextureInfo(tex);
 	std::vector<texture_handle> textures = {tex};
 
 	TextureVertexDesc outputVertex[TEXTURE_VERTEX_COUNT];
 	float l = 0.f;
 	float t = 0.f;
-	float r = (float)texInfo.width;
-	float b = (float)texInfo.height;
+	float r = (float)m_texInfo.width;
+	float b = (float)m_texInfo.height;
 	float leftUV = 0.f;
 	float topUV = 0.f;
 	float rightUV = 1.f;
@@ -132,9 +132,8 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 	outputVertex[2] = {l, b, 0.f, leftUV, bottomUV};
 	outputVertex[3] = {r, b, 0.f, rightUV, bottomUV};
 
-	XMMATRIX matrixWVP;
-	TransposedOrthoMatrixWVP(canvas, true, &m_worldList, matrixWVP);
 	m_worldMatrix = GetWorldMatrix(&m_worldList);
+	XMMATRIX matrixWVP = TransposedOrthoMatrixWVP2(canvas, true, m_worldMatrix);
 
 	pGraphic->SetGraphicBuffer(texVertexBuf, outputVertex, sizeof(outputVertex));
 	pGraphic->SetVSConstBuffer(texShader, &matrixWVP, sizeof(matrixWVP));
@@ -160,9 +159,8 @@ void Csample1Dlg::RenderSolid(SIZE canvas)
 	outputVertex[2] = {l, b, 0.f, clr_r, clr_g, clr_b};
 	outputVertex[3] = {r, b, 0.f, clr_r, clr_g, clr_b};
 
-	XMMATRIX matrixWVP;
-	TransposedOrthoMatrixWVP(canvas, true, &m_worldList, matrixWVP);
-	m_worldMatrix = GetWorldMatrix(&m_worldList);
+	XMMATRIX worldMatrix = GetWorldMatrix(&m_worldList);
+	XMMATRIX matrixWVP = TransposedOrthoMatrixWVP2(canvas, true, worldMatrix);
 
 	pGraphic->SetGraphicBuffer(solidVertexBuf, outputVertex, sizeof(outputVertex));
 	pGraphic->SetVSConstBuffer(solidShader, &matrixWVP, sizeof(matrixWVP));
@@ -191,7 +189,7 @@ void Csample1Dlg::render()
 
 		RenderTexture(texImg, SIZE(rcWindow.right, rcWindow.bottom), rcWindow);
 
-		//if (m_selected)
+		if (m_selected)
 			RenderSolid(SIZE(rcWindow.right, rcWindow.bottom));
 
 		pGraphic->EndRender();
