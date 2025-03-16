@@ -29,7 +29,7 @@ protected:
 	void render();
 
 	void RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest);
-	void RenderSolid(SIZE canvas);
+	void RenderSolid(SIZE canvas, CPoint pos);
 
 	bool IsPointOnImage(const CPoint &pt);
 	void GetTextureScreenPos(CPoint &lt, CPoint &rb);

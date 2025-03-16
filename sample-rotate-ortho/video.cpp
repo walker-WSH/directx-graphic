@@ -140,11 +140,10 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest)
 	pGraphic->DrawTexture(textures, VIDEO_FILTER_TYPE::VIDEO_FILTER_LINEAR, texShader, texVertexBuf);
 }
 
-void Csample1Dlg::RenderSolid(SIZE canvas)
+float SOLID_SIZE = 20.f;
+void Csample1Dlg::RenderSolid(SIZE canvas, CPoint pos)
 {
 	AUTO_GRAPHIC_CONTEXT(pGraphic);
-
-	float SOLID_SIZE = 20.f;
 
 	SolidVertexDesc outputVertex[TEXTURE_VERTEX_COUNT];
 	float l = 0.f;
@@ -159,7 +158,15 @@ void Csample1Dlg::RenderSolid(SIZE canvas)
 	outputVertex[2] = {l, b, 0.f, clr_r, clr_g, clr_b};
 	outputVertex[3] = {r, b, 0.f, clr_r, clr_g, clr_b};
 
-	XMMATRIX worldMatrix = GetWorldMatrix(&m_worldList);
+	std::vector<WorldVector> tempWorldList;
+	{
+		WorldVector vec;
+		vec.type = WORLD_TYPE::VECTOR_MOVE; // 计算得到纹理的左上角位置 
+		vec.x = pos.x;
+		vec.y = pos.y;
+		tempWorldList.push_back(vec);
+	}
+	XMMATRIX worldMatrix = GetWorldMatrix(&tempWorldList);
 	XMMATRIX matrixWVP = TransposedOrthoMatrixWVP2(canvas, true, worldMatrix);
 
 	pGraphic->SetGraphicBuffer(solidVertexBuf, outputVertex, sizeof(outputVertex));
@@ -189,8 +196,13 @@ void Csample1Dlg::render()
 
 		RenderTexture(texImg, SIZE(rcWindow.right, rcWindow.bottom), rcWindow);
 
-		if (m_selected)
-			RenderSolid(SIZE(rcWindow.right, rcWindow.bottom));
+		if (m_selected) {
+			CPoint lt, rb;
+			GetTextureScreenPos(lt, rb);
+
+			RenderSolid(SIZE(rcWindow.right, rcWindow.bottom), lt);
+			RenderSolid(SIZE(rcWindow.right, rcWindow.bottom), CPoint(rb.x - SOLID_SIZE, rb.y - SOLID_SIZE));
+		}
 
 		pGraphic->EndRender();
 	}
