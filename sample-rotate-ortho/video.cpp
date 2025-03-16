@@ -138,7 +138,8 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest, 
 
 		float cntX = float(x) / 40;
 		float cntY = float(y) / 40.f;
-
+		cntX = 14.f;
+		cntY = 7.f;
 		rightUV *= cntX;
 		bottomUV *= cntY;
 	}
@@ -151,7 +152,7 @@ void Csample1Dlg::RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest, 
 	XMMATRIX matrixWVP;
 	if (overflow) {
 		std::vector<WorldVector> worldList = m_worldList;
-		if (!worldList.empty() && worldList[0].type != WORLD_TYPE::VECTOR_SCALE) {
+		if (!worldList.empty() && worldList[0].type == WORLD_TYPE::VECTOR_SCALE) {
 			worldList[0].x = worldList[0].y = worldList[0].z = 1.f; // overflow 不执行缩放
 		}
 
