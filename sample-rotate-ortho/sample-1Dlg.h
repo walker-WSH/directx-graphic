@@ -30,7 +30,9 @@ protected:
 
 	void RenderTexture(texture_handle tex, SIZE canvas, RECT drawDest);
 	void RenderSolid(SIZE canvas);
+
 	bool IsPointOnImage(const CPoint &pt);
+	void GetTextureScreenPos(CPoint &lt, CPoint &rb);
 
 	// 实现
 protected:

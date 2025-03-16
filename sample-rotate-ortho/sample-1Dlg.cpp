@@ -224,7 +224,7 @@ void Csample1Dlg::OnBnClickedButtonAddScale()
 	m_worldList.push_back(vec);
 }
 
-bool Csample1Dlg::IsPointOnImage(const CPoint &pt)
+bool Csample1Dlg::IsPointOnImage(const CPoint &pt) // 判断屏幕上某个点 是否命中了图片
 {
 	XMVECTOR ptTemp = XMVectorSet((float)pt.x, (float)pt.y, 0.0f, 1.0f);
 	XMMATRIX inverseWorldMatrix = XMMatrixInverse(nullptr, m_worldMatrix);
@@ -236,6 +236,19 @@ bool Csample1Dlg::IsPointOnImage(const CPoint &pt)
 	auto is_selected = (x > 0 && x < m_texInfo.width && y > 0 && y < m_texInfo.height);
 	ATLTRACE("----------- selected=%d (%d, %d) image=%dx%d \n", is_selected, (int)x, (int)y, m_texInfo.width, m_texInfo.height);
 	return is_selected;
+}
+
+void Csample1Dlg::GetTextureScreenPos(CPoint &lt, CPoint &rb) // 获取图标在窗口上渲染的位置
+{
+		XMVECTOR lt_pt = XMVectorSet(0.f, 0.f, 0.0f, 1.0f);
+		XMVECTOR screenLeftTop = XMVector4Transform(lt_pt, m_worldMatrix);
+		lt.x = (LONG)screenLeftTop.m128_f32[0];
+		lt.y = (LONG)screenLeftTop.m128_f32[1];
+
+		XMVECTOR rb_pt = XMVectorSet((float)m_texInfo.width, (float)m_texInfo.height, 0.0f, 1.0f);
+		XMVECTOR rightBottom = XMVector4Transform(rb_pt, m_worldMatrix);
+		rb.x = (LONG)rightBottom.m128_f32[0];
+		rb.y = (LONG)rightBottom.m128_f32[1];
 }
 
 void Csample1Dlg::OnLButtonDown(UINT nFlags, CPoint point)
