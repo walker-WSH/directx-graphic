@@ -34,6 +34,7 @@ protected:
 
 	bool IsPointOnImage(const CPoint &pt);
 	void GetTextureScreenPos(CPoint &lt, CPoint &rb);
+	void GetCenterPos(float &x, float &y);
 
 	// 实现
 protected:

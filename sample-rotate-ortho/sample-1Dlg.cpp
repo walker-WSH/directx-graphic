@@ -224,36 +224,37 @@ void MulValue(std::optional<float> &value, float step)
 		value = step;
 }
 
-void Csample1Dlg::OnBnClickedButtonRotate()
+void Csample1Dlg::GetCenterPos(float &x, float &y)
 {
-	AddValue(m_rotate.z, 90.f);
-	
-	auto value = (int)m_rotate.z.value();
-	m_rotate.z = value % 360;
+	std::vector<WorldVector> worldList;
+	worldList.push_back(m_scale);
+	worldList.push_back(m_rotate);
+	worldList.push_back(m_move);
+	auto matrix = GetWorldMatrix(&worldList);
 
-	switch ((int)m_rotate.z.value()) {
-	case 90:
-		AddValue(m_move.x, (float)m_texMainImgInfo.height);
-		break;
+	XMVECTOR center1 = XMVectorSet((float)m_texMainImgInfo.width / 2, (float)m_texMainImgInfo.height / 2, 0.0f, 1.0f);
+	XMVECTOR center2 = XMVector4Transform(center1, matrix);
 
-	case 180:
-		AddValue(m_move.x, (float)m_texMainImgInfo.width - (float)m_texMainImgInfo.height);
-		AddValue(m_move.y, (float)m_texMainImgInfo.height);
-		break;
+	x = (LONG)center2.m128_f32[0];
+	y = (LONG)center2.m128_f32[1];
+}
 
-	case 270:
-		AddValue(m_move.x, -(float)m_texMainImgInfo.width);
-		AddValue(m_move.y, (float)m_texMainImgInfo.width - (float)m_texMainImgInfo.height);
-		break;
+void Csample1Dlg::OnBnClickedButtonRotate() // 绕自己中心点旋转
+{
+	float oldX, oldY;
+	GetCenterPos(oldX, oldY);
 
-	case 360:
-	case 0:
-		AddValue(m_move.y, -(float)m_texMainImgInfo.width);
-		break;
+	AddValue(m_rotate.z, 45);
+	m_rotate.z = (int)m_rotate.z.value() % 360;
 
-	default:
-		break;
-	}
+	float newX, newY;
+	GetCenterPos(newX, newY);
+
+	auto offsetX = oldX - newX;
+	auto offsetY = oldY - newY;
+
+	AddValue(m_move.x, offsetX);
+	AddValue(m_move.y, offsetY);
 }
 
 void Csample1Dlg::OnBnClickedButtonAddMove()

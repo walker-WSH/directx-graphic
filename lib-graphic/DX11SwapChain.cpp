@@ -77,12 +77,12 @@ HRESULT DX11SwapChain::TestResizeSwapChain()
 		ID3D11RenderTargetView *pRenderView = nullptr;
 		DX11GraphicBase::m_graphicSession.D3DContext()->OMSetRenderTargets(1, &pRenderView,
 										   nullptr);
-
 		m_pRenderTargetViewLinear = nullptr;
 		m_pRenderTargetView = nullptr;
 		m_pSwapBackTexture2D = nullptr;
 		ZeroMemory(&m_descTexture, sizeof(D3D11_TEXTURE2D_DESC));
 
+		// 执行resize之前 要清空基于这个swapchain创建的对象
 		HRESULT hr = m_pSwapChain->ResizeBuffers(1, m_dwWidth, m_dwHeight,
 							 m_dxgiFormatTexture, 0);
 		if (FAILED(hr)) {

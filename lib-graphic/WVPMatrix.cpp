@@ -106,13 +106,17 @@ XMMATRIX GetWorldMatrix(const std::vector<WorldVector> *worldList)
 		} break;
 
 		case WORLD_TYPE::VECTOR_SCALE: {
+			auto origin = outputWorldMatrix.r[3]; // 存储原来的值
 			XMMATRIX temp = XMMatrixScaling(item.x.value_or(1.f), item.y.value_or(1.f), item.z.value_or(1.f));
 			outputWorldMatrix *= temp;
+			outputWorldMatrix.r[3] = origin; // 恢复原来的值
 		} break;
 
 		case WORLD_TYPE::VECTOR_ROTATE: {
+			auto origin = outputWorldMatrix.r[3]; // 存储原来的值
 			XMMATRIX temp = GetRotateMatrix(item);
 			outputWorldMatrix *= temp;
+			outputWorldMatrix.r[3] = origin; // 恢复原来的值
 		} break;
 
 		default:
