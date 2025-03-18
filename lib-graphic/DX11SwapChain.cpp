@@ -118,7 +118,7 @@ HRESULT DX11SwapChain::InitSwapChain()
 
 	HRESULT hr = DX11GraphicBase::m_graphicSession.D3DFactory()->CreateSwapChain(
 		DX11GraphicBase::m_graphicSession.D3DDevice().Get(), &sd,
-		m_pSwapChain.GetAddressOf());
+		m_pSwapChain.ReleaseAndGetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateSwapChain %ux%u %X", m_dwWidth, m_dwHeight, this);
 		assert(false);
@@ -132,7 +132,7 @@ HRESULT DX11SwapChain::CreateTargetView()
 {
 	HRESULT hr = m_pSwapChain->GetBuffer(
 		0, __uuidof(ID3D11Texture2D),
-		reinterpret_cast<void **>(m_pSwapBackTexture2D.GetAddressOf()));
+		reinterpret_cast<void **>(m_pSwapBackTexture2D.ReleaseAndGetAddressOf()));
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "m_pSwapChain->GetBuffer %X", this);
 		assert(false);
@@ -142,7 +142,7 @@ HRESULT DX11SwapChain::CreateTargetView()
 
 	ComPtr<IDXGISurface1> sfc;
 	hr = m_pSwapChain->GetBuffer(0, __uuidof(IDXGISurface1),
-				     reinterpret_cast<void **>(sfc.GetAddressOf()));
+				     reinterpret_cast<void **>(sfc.ReleaseAndGetAddressOf()));
 	assert(SUCCEEDED(hr));
 	if (SUCCEEDED(hr)) {
 		// Here we ignore the result of building shared D2D, because we can not ensure it is valid on different format.
@@ -156,7 +156,7 @@ HRESULT DX11SwapChain::CreateTargetView()
 
 	rtv.Format = m_dxgiFormatView;
 	hr = DX11GraphicBase::m_graphicSession.D3DDevice()->CreateRenderTargetView(
-		m_pSwapBackTexture2D.Get(), &rtv, m_pRenderTargetView.GetAddressOf());
+		m_pSwapBackTexture2D.Get(), &rtv, m_pRenderTargetView.ReleaseAndGetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateRenderTargetView %X", this);
 		assert(false);
@@ -165,7 +165,7 @@ HRESULT DX11SwapChain::CreateTargetView()
 
 	rtv.Format = m_dxgiFormatViewLinear;
 	hr = DX11GraphicBase::m_graphicSession.D3DDevice()->CreateRenderTargetView(
-		m_pSwapBackTexture2D.Get(), &rtv, m_pRenderTargetViewLinear.GetAddressOf());
+		m_pSwapBackTexture2D.Get(), &rtv, m_pRenderTargetViewLinear.ReleaseAndGetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateRenderTargetView SRGB %X", this);
 		assert(false);

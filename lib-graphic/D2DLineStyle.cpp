@@ -17,7 +17,7 @@ bool D2DLineStyle::BuildGraphic()
 		D2D1::StrokeStyleProperties(D2D1_CAP_STYLE_ROUND, D2D1_CAP_STYLE_ROUND,
 					    D2D1_CAP_STYLE_ROUND, D2D1_LINE_JOIN_ROUND, 10.0f,
 					    (D2D1_DASH_STYLE)m_style, 0.0f),
-		nullptr, 0, m_pStrokeStyle.GetAddressOf());
+		nullptr, 0, m_pStrokeStyle.ReleaseAndGetAddressOf());
 	if (FAILED(hr)) {
 		LOG_WARN("CreateStrokeStyle failed with 0x%x, m_style:%d, D2DLineStyle:%X", hr,
 			 (int)m_style, this);

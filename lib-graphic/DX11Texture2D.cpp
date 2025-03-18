@@ -132,7 +132,7 @@ bool DX11Texture2D::InitWriteTexture()
 	desc.Usage = D3D11_USAGE_DYNAMIC;
 
 	HRESULT hr = DX11GraphicBase::m_graphicSession.D3DDevice()->CreateTexture2D(
-		&desc, nullptr, m_pTexture2D.GetAddressOf());
+		&desc, nullptr, m_pTexture2D.ReleaseAndGetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateTexture2D for write, %ux%u format:%d %X",
 			       m_textureInfo.width, m_textureInfo.height, (int)m_textureInfo.format,
@@ -170,7 +170,7 @@ bool DX11Texture2D::InitReadTexture()
 	desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
 
 	HRESULT hr = DX11GraphicBase::m_graphicSession.D3DDevice()->CreateTexture2D(
-		&desc, nullptr, m_pTexture2D.GetAddressOf());
+		&desc, nullptr, m_pTexture2D.ReleaseAndGetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateTexture2D for read, %ux%u format:%d %X",
 			       m_textureInfo.width, m_textureInfo.height, (int)m_textureInfo.format,
@@ -231,7 +231,7 @@ bool DX11Texture2D::InitTargetTexture(bool cube)
 	}
 
 	HRESULT hr = DX11GraphicBase::m_graphicSession.D3DDevice()->CreateTexture2D(
-		&desc, nullptr, m_pTexture2D.GetAddressOf());
+		&desc, nullptr, m_pTexture2D.ReleaseAndGetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateTexture2D for target, %ux%u format:%d %X",
 			       m_textureInfo.width, m_textureInfo.height, (int)m_textureInfo.format,
@@ -241,7 +241,7 @@ bool DX11Texture2D::InitTargetTexture(bool cube)
 	}
 
 	hr = DX11GraphicBase::m_graphicSession.D3DDevice()->CreateRenderTargetView(
-		m_pTexture2D.Get(), nullptr, m_pRenderTargetView.GetAddressOf());
+		m_pTexture2D.Get(), nullptr, m_pRenderTargetView.ReleaseAndGetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateRenderTargetView %X", this);
 		assert(false);
@@ -253,7 +253,7 @@ bool DX11Texture2D::InitTargetTexture(bool cube)
 
 	ComPtr<IDXGIResource> pDXGIRes = nullptr;
 	hr = m_pTexture2D->QueryInterface(__uuidof(IDXGIResource),
-					  (LPVOID *)(pDXGIRes.GetAddressOf()));
+					  (LPVOID *)(pDXGIRes.ReleaseAndGetAddressOf()));
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "query-IDXGIResource %X", this);
 		assert(false);
@@ -269,7 +269,7 @@ bool DX11Texture2D::InitTargetTexture(bool cube)
 
 	ComPtr<IDXGISurface1> sfc;
 	hr = DX11GraphicBase::m_graphicSession.D3DDevice()->OpenSharedResource(
-		m_hSharedHandle, __uuidof(IDXGISurface1), (LPVOID *)(sfc.GetAddressOf()));
+		m_hSharedHandle, __uuidof(IDXGISurface1), (LPVOID *)(sfc.ReleaseAndGetAddressOf()));
 	if (SUCCEEDED(hr))
 		D2DRenderTarget::BuildD2DFromDXGI(sfc, m_textureInfo.format);
 
@@ -280,7 +280,7 @@ bool DX11Texture2D::InitSharedTexture()
 {
 	HRESULT hr = DX11GraphicBase::m_graphicSession.D3DDevice()->OpenSharedResource(
 		(HANDLE)m_hSharedHandle, __uuidof(ID3D11Texture2D),
-		(void **)m_pTexture2D.GetAddressOf());
+		(void **)m_pTexture2D.ReleaseAndGetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "OpenSharedResource HANDLE:%X %X", m_hSharedHandle, this);
 		return false;
@@ -335,21 +335,21 @@ ComPtr<ID3D11Texture2D> DX11Texture2D::LoadImageTexture()
 
 	HRESULT hr = D3DX11CreateShaderResourceViewFromFile(
 		DX11GraphicBase::m_graphicSession.D3DDevice().Get(), m_strImagePath.c_str(),
-		nullptr, nullptr, pTextureResView.GetAddressOf(), nullptr);
+		nullptr, nullptr, pTextureResView.ReleaseAndGetAddressOf(), nullptr);
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "D3DX11CreateShaderResourceViewFromFile %X", this);
 		assert(false);
 		return nullptr;
 	}
 
-	pTextureResView->GetResource(pResource.GetAddressOf());
+	pTextureResView->GetResource(pResource.ReleaseAndGetAddressOf());
 	if (!pResource) {
 		CHECK_DX_ERROR(hr, "m_pTextureResView->GetResource %X", this);
 		assert(false);
 		return nullptr;
 	}
 
-	hr = pResource->QueryInterface<ID3D11Texture2D>(pTexture2D.GetAddressOf());
+	hr = pResource->QueryInterface<ID3D11Texture2D>(pTexture2D.ReleaseAndGetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "QueryInterfaceID3D11Texture2D %X", this);
 		assert(false);
@@ -395,7 +395,7 @@ bool DX11Texture2D::InitResourceView()
 	}
 
 	HRESULT hr = DX11GraphicBase::m_graphicSession.D3DDevice()->CreateShaderResourceView(
-		m_pTexture2D.Get(), &viewDesc, m_pTextureResView.GetAddressOf());
+		m_pTexture2D.Get(), &viewDesc, m_pTextureResView.ReleaseAndGetAddressOf());
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "CreateShaderResourceView %X", this);
 		assert(false);
@@ -404,7 +404,7 @@ bool DX11Texture2D::InitResourceView()
 
 	if (desc.MiscFlags & D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX) {
 		hr = m_pTexture2D->QueryInterface(__uuidof(IDXGIKeyedMutex),
-						  (void **)m_pKeyedMutex.GetAddressOf());
+						  (void **)m_pKeyedMutex.ReleaseAndGetAddressOf());
 		if (FAILED(hr)) {
 			CHECK_DX_ERROR(hr, "IDXGIKeyedMutex failed %X", this);
 			assert(false);

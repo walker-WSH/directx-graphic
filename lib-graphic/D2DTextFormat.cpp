@@ -75,7 +75,7 @@ bool D2DTextFormat::BuildGraphic()
 	case TEXT_WORD_WRAP::WORD_WRAPPING_NO_WRAP_WITH_ELLIPSIS:
 		m_pTextFormat->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
 		hr = wf->CreateEllipsisTrimmingSign(m_pTextFormat.Get(),
-						    m_pTextCutShow.GetAddressOf());
+						    m_pTextCutShow.ReleaseAndGetAddressOf());
 		if (SUCCEEDED(hr)) {
 			DWRITE_TRIMMING sc_trimming = {DWRITE_TRIMMING_GRANULARITY_CHARACTER, 0, 0};
 			m_pTextFormat->SetTrimming(&sc_trimming, m_pTextCutShow.Get());

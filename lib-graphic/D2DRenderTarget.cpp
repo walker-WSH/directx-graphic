@@ -491,7 +491,7 @@ bool D2DRenderTarget::BuildD2DFromDXGI(ComPtr<IDXGISurface1> sfc, DXGI_FORMAT fo
 		D2D1_RENDER_TARGET_TYPE_DEFAULT,
 		D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED));
 	hr = m_graphicSession.D2DFactory()->CreateDxgiSurfaceRenderTarget(
-		sfc.Get(), &dsProps, m_pRenderTarget.GetAddressOf());
+		sfc.Get(), &dsProps, m_pRenderTarget.ReleaseAndGetAddressOf());
 	if (FAILED(hr)) {
 		LOG_WARN("CreateDxgiSurfaceRenderTarget failed with 0x%x, D2DRenderTarget: %X", hr,
 			 this);
@@ -506,7 +506,7 @@ bool D2DRenderTarget::BuildD2DFromDXGI(ComPtr<IDXGISurface1> sfc, DXGI_FORMAT fo
 	* Create other D2D objects
 	--------------------------------------------------------------------------------------------*/
 	D2D1::ColorF d2dColor(0.f, 0.f, 0.f, 1.f);
-	hr = m_pRenderTarget->CreateSolidColorBrush(d2dColor, m_pSolidBrush.GetAddressOf());
+	hr = m_pRenderTarget->CreateSolidColorBrush(d2dColor, m_pSolidBrush.ReleaseAndGetAddressOf());
 	if (FAILED(hr)) {
 		LOG_WARN("CreateSolidColorBrush failed with 0x%x, D2DRenderTarget: %X", hr, this);
 		assert(false);

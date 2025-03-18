@@ -263,7 +263,7 @@ size_t WICBitsPerPixel(REFGUID targetGuid) noexcept
 		return 0;
 
 	ComPtr<IWICComponentInfo> cinfo;
-	if (FAILED(pWIC->CreateComponentInfo(targetGuid, cinfo.GetAddressOf())))
+	if (FAILED(pWIC->CreateComponentInfo(targetGuid, cinfo.ReleaseAndGetAddressOf())))
 		return 0;
 
 	WICComponentType type;
@@ -503,7 +503,7 @@ HRESULT CreateTextureFromWIC(_In_ ID3D11Device *d3dDevice, _In_opt_ ID3D11Device
 		format = MakeSRGB(format);
 	} else if (!(loadFlags & WIC_LOADER_IGNORE_SRGB)) {
 		ComPtr<IWICMetadataQueryReader> metareader;
-		if (SUCCEEDED(frame->GetMetadataQueryReader(metareader.GetAddressOf()))) {
+		if (SUCCEEDED(frame->GetMetadataQueryReader(metareader.ReleaseAndGetAddressOf()))) {
 			GUID containerFormat;
 			if (SUCCEEDED(metareader->GetContainerFormat(&containerFormat))) {
 				bool sRGB = false;
@@ -582,7 +582,7 @@ HRESULT CreateTextureFromWIC(_In_ ID3D11Device *d3dDevice, _In_opt_ ID3D11Device
 			return E_NOINTERFACE;
 
 		ComPtr<IWICBitmapScaler> scaler;
-		hr = pWIC->CreateBitmapScaler(scaler.GetAddressOf());
+		hr = pWIC->CreateBitmapScaler(scaler.ReleaseAndGetAddressOf());
 		if (FAILED(hr))
 			return hr;
 
@@ -603,7 +603,7 @@ HRESULT CreateTextureFromWIC(_In_ ID3D11Device *d3dDevice, _In_opt_ ID3D11Device
 				return hr;
 		} else {
 			ComPtr<IWICFormatConverter> FC;
-			hr = pWIC->CreateFormatConverter(FC.GetAddressOf());
+			hr = pWIC->CreateFormatConverter(FC.ReleaseAndGetAddressOf());
 			if (FAILED(hr))
 				return hr;
 
@@ -631,7 +631,7 @@ HRESULT CreateTextureFromWIC(_In_ ID3D11Device *d3dDevice, _In_opt_ ID3D11Device
 			return E_NOINTERFACE;
 
 		ComPtr<IWICFormatConverter> FC;
-		hr = pWIC->CreateFormatConverter(FC.GetAddressOf());
+		hr = pWIC->CreateFormatConverter(FC.ReleaseAndGetAddressOf());
 		if (FAILED(hr))
 			return hr;
 
@@ -828,7 +828,7 @@ _Use_decl_annotations_ HRESULT DirectX::CreateWICTextureFromMemoryEx(
 
 	// Create input stream for memory
 	ComPtr<IWICStream> stream;
-	HRESULT hr = pWIC->CreateStream(stream.GetAddressOf());
+	HRESULT hr = pWIC->CreateStream(stream.ReleaseAndGetAddressOf());
 	if (FAILED(hr))
 		return hr;
 
@@ -840,12 +840,12 @@ _Use_decl_annotations_ HRESULT DirectX::CreateWICTextureFromMemoryEx(
 	// Initialize WIC
 	ComPtr<IWICBitmapDecoder> decoder;
 	hr = pWIC->CreateDecoderFromStream(stream.Get(), nullptr, WICDecodeMetadataCacheOnDemand,
-					   decoder.GetAddressOf());
+					   decoder.ReleaseAndGetAddressOf());
 	if (FAILED(hr))
 		return hr;
 
 	ComPtr<IWICBitmapFrameDecode> frame;
-	hr = decoder->GetFrame(0, frame.GetAddressOf());
+	hr = decoder->GetFrame(0, frame.ReleaseAndGetAddressOf());
 	if (FAILED(hr))
 		return hr;
 
@@ -924,12 +924,12 @@ _Use_decl_annotations_ HRESULT DirectX::CreateWICTextureFromFileEx(
 	ComPtr<IWICBitmapDecoder> decoder;
 	HRESULT hr = pWIC->CreateDecoderFromFilename(fileName, nullptr, GENERIC_READ,
 						     WICDecodeMetadataCacheOnDemand,
-						     decoder.GetAddressOf());
+						     decoder.ReleaseAndGetAddressOf());
 	if (FAILED(hr))
 		return hr;
 
 	ComPtr<IWICBitmapFrameDecode> frame;
-	hr = decoder->GetFrame(0, frame.GetAddressOf());
+	hr = decoder->GetFrame(0, frame.ReleaseAndGetAddressOf());
 	if (FAILED(hr))
 		return hr;
 

@@ -26,7 +26,7 @@ void EnumD3DAdapters(void *userdata,
 	}
 
 	ComPtr<IDXGIAdapter1> adapter;
-	for (uint32_t i = 0; factory->EnumAdapters1(i, adapter.GetAddressOf()) == S_OK; ++i) {
+	for (uint32_t i = 0; factory->EnumAdapters1(i, adapter.ReleaseAndGetAddressOf()) == S_OK; ++i) {
 		DXGI_ADAPTER_DESC desc;
 		hr = adapter->GetDesc(&desc);
 		if (FAILED(hr))
