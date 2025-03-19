@@ -62,6 +62,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sample-texture", "sample-te
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sample-texture-ortho", "sample-rotate-ortho\sample-2.vcxproj", "{89073A71-E191-4958-8A32-F960CECE7C68}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sample-texture-center", "sample-texture-center\sample-3.vcxproj", "{A7314A2E-CB82-4F2F-84EA-722B97BA12DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -174,6 +176,14 @@ Global
 		{89073A71-E191-4958-8A32-F960CECE7C68}.Release|x64.Build.0 = Release|x64
 		{89073A71-E191-4958-8A32-F960CECE7C68}.Release|x86.ActiveCfg = Release|Win32
 		{89073A71-E191-4958-8A32-F960CECE7C68}.Release|x86.Build.0 = Release|Win32
+		{A7314A2E-CB82-4F2F-84EA-722B97BA12DA}.Debug|x64.ActiveCfg = Debug|x64
+		{A7314A2E-CB82-4F2F-84EA-722B97BA12DA}.Debug|x64.Build.0 = Debug|x64
+		{A7314A2E-CB82-4F2F-84EA-722B97BA12DA}.Debug|x86.ActiveCfg = Debug|Win32
+		{A7314A2E-CB82-4F2F-84EA-722B97BA12DA}.Debug|x86.Build.0 = Debug|Win32
+		{A7314A2E-CB82-4F2F-84EA-722B97BA12DA}.Release|x64.ActiveCfg = Release|x64
+		{A7314A2E-CB82-4F2F-84EA-722B97BA12DA}.Release|x64.Build.0 = Release|x64
+		{A7314A2E-CB82-4F2F-84EA-722B97BA12DA}.Release|x86.ActiveCfg = Release|Win32
+		{A7314A2E-CB82-4F2F-84EA-722B97BA12DA}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
