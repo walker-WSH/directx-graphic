@@ -87,8 +87,8 @@ public:
 	// render
 	virtual bool BeginRenderCanvas(texture_handle hdl,
 				       IGeometryInterface **geometryInterface = nullptr);
-	virtual bool BeginRenderWindow(display_handle hdl,
-				       IGeometryInterface **geometryInterface = nullptr);
+	virtual bool BeginRenderWindow(display_handle hdl, IGeometryInterface **geometryInterface = nullptr);
+	virtual void SetViewports(float left, float top, float width, float height);
 	virtual void SwitchRenderTarget(bool enableSRGB);
 	virtual void ClearBackground(const ColorRGBA *bkClr);
 	virtual void SetBlendState(VIDEO_BLEND_TYPE type);

@@ -780,22 +780,36 @@ void DX11GraphicSession::SetRenderContext(ID3DRenderTarget *target, uint32_t wid
 	CHECK_GRAPHIC_CONTEXT;
 
 	m_pD3DTarget = target;
-	SwitchRenderTarget(false);
 
-	D3D11_VIEWPORT vp;
-	memset(&vp, 0, sizeof(vp));
-	vp.MinDepth = 0.f;
-	vp.MaxDepth = 1.0f;
-	vp.TopLeftX = (float)0;
-	vp.TopLeftY = (float)0;
-	vp.Width = (float)width;
-	vp.Height = (float)height;
-	m_pDeviceContext->RSSetViewports(1, &vp);
+	SwitchRenderTarget(false);
+	SetViewports(0.f, 0.f, (float)width, (float)height);
 
 	assert(!m_bDuringRendering);
 	m_bDuringRendering = true;
 	m_pCurrentSwapChain = swapChain.Get();
 	EnterContext(std::source_location::current());
+}
+
+void DX11GraphicSession::SetViewports(float left, float top, float width, float height)
+{
+	CHECK_GRAPHIC_CONTEXT;
+
+	if (!m_pDeviceContext) {
+		assert(false);
+		return;
+	}
+
+	D3D11_VIEWPORT vp;
+	memset(&vp, 0, sizeof(vp));
+
+	vp.MinDepth = 0.f;
+	vp.MaxDepth = 1.0f;
+	vp.TopLeftX = left;
+	vp.TopLeftY = top;
+	vp.Width = width;
+	vp.Height = height;
+
+	m_pDeviceContext->RSSetViewports(1, &vp);
 }
 
 void DX11GraphicSession::UpdateShaderBuffer(ComPtr<ID3D11Buffer> buffer, const void *data,
