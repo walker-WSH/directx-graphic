@@ -289,11 +289,12 @@ bool DX11Texture2D::InitTargetTexture(bool cube)
 		return false;
 	}
 
-	ComPtr<IDXGISurface1> sfc;
-	hr = DX11GraphicBase::m_graphicSession.D3DDevice()->OpenSharedResource(
-		m_hSharedHandle, __uuidof(IDXGISurface1), (LPVOID *)(sfc.ReleaseAndGetAddressOf()));
-	if (SUCCEEDED(hr))
-		D2DRenderTarget::BuildD2DFromDXGI(sfc, m_textureInfo.format);
+	// 低端intel集显 启用mass生成的共享纹理画布 此处打开可能会crash
+	//ComPtr<IDXGISurface1> sfc;
+	//hr = DX11GraphicBase::m_graphicSession.D3DDevice()->OpenSharedResource(
+	//	m_hSharedHandle, __uuidof(IDXGISurface1), (LPVOID *)(sfc.ReleaseAndGetAddressOf()));
+	//if (SUCCEEDED(hr))
+	//	D2DRenderTarget::BuildD2DFromDXGI(sfc, m_textureInfo.format);
 
 	return true;
 }
