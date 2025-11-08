@@ -229,7 +229,7 @@ void Csample1Dlg::render()
 		vcif.height = cy;
 		vcif.format = DXGI_FORMAT_B8G8R8A8_UNORM;
 		vcif.usage = TEXTURE_USAGE::CANVAS_TARGET;
-		vcif.enableMSAA = true;
+		vcif.enableMSAA = true; // 低端intel集显可能会crash
 		texCanvas = pGraphic->CreateTexture(vcif);
 	}
 
@@ -238,6 +238,9 @@ void Csample1Dlg::render()
 		pGraphic->SetBlendState(VIDEO_BLEND_TYPE::BLEND_NORMAL);
 		RenderTexture(SIZE(cx, cy), rcWindow, nullptr);
 		pGraphic->EndRender();
+
+		HANDLE tex = pGraphic->GetSharedHandle(texCanvas);
+		ATLTRACE("----- shared texture handle: %0X \n", tex);
 	}
 
 	if (pGraphic->BeginRenderWindow(display)) {
