@@ -229,7 +229,7 @@ void Csample1Dlg::render()
 		vcif.height = cy;
 		vcif.format = DXGI_FORMAT_B8G8R8A8_UNORM;
 		vcif.usage = TEXTURE_USAGE::CANVAS_TARGET;
-		vcif.sampleCount = 8;
+		vcif.enableMSAA = true;
 		texCanvas = pGraphic->CreateTexture(vcif);
 	}
 

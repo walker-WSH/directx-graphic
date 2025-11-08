@@ -206,9 +206,31 @@ bool DX11Texture2D::InitTargetTexture(bool cube)
 	desc.Format = m_textureInfo.format;
 	desc.MipLevels = 1;
 	desc.ArraySize = cube ? 6 : 1;
-	desc.SampleDesc.Count = m_textureInfo.sampleCount;
 	desc.Usage = D3D11_USAGE_DEFAULT;
 	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+
+	/*
+	desc.SampleDesc.Count = 1;      // 无MSAA
+	desc.SampleDesc.Count = 2;      // 2x MSAA（性能与质量的平衡）
+	desc.SampleDesc.Count = 4;      // 4x MSAA（最常用，效果明显）
+	desc.SampleDesc.Count = 8;      // 8x MSAA（高质量，性能开销大）
+	*/
+	if (m_textureInfo.enableMSAA) {
+		UINT qualityLevels; // 检查设备支持的MSAA级别
+		DX11GraphicBase::m_graphicSession.D3DDevice()->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 4, &qualityLevels);
+
+		if (qualityLevels > 0) {
+			desc.SampleDesc.Count = 4;
+			desc.SampleDesc.Quality = qualityLevels - 1;
+		} else { // 不支持4x MSAA，尝试2x
+			DX11GraphicBase::m_graphicSession.D3DDevice()->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 2, &qualityLevels);
+			desc.SampleDesc.Count = 2;
+			desc.SampleDesc.Quality = qualityLevels - 1;
+		}
+	} else {
+		desc.SampleDesc.Count = 1;
+		desc.SampleDesc.Quality = 0;
+	}
 
 	if (cube) {
 		desc.MiscFlags |= D3D11_RESOURCE_MISC_TEXTURECUBE; //  cube must include
@@ -387,7 +409,7 @@ bool DX11Texture2D::InitResourceView()
 	if (desc.MiscFlags & D3D11_RESOURCE_MISC_TEXTURECUBE) {
 		viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
 	} else {
-		if (m_textureInfo.sampleCount > 1) {
+		if (m_textureInfo.enableMSAA) {
 			viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DMS;
 		} else {
 			viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
