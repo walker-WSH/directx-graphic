@@ -232,20 +232,23 @@ bool DX11Texture2D::InitTargetTexture(bool cube)
 		desc.SampleDesc.Quality = 0;
 	}
 
+	bool msaaEnabled = desc.SampleDesc.Count > 1;
+
 	if (cube) {
 		desc.MiscFlags |= D3D11_RESOURCE_MISC_TEXTURECUBE; //  cube must include
 
 	} else {
-		if (m_nCreateFlags & CREATE_TEXTURE_FLAG_SHARED_MUTEX) {
-			desc.MiscFlags |= D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX;
-		} else {
-			desc.MiscFlags |= D3D11_RESOURCE_MISC_SHARED;
+		if (!msaaEnabled) {
+			if (m_nCreateFlags & CREATE_TEXTURE_FLAG_SHARED_MUTEX) {
+				desc.MiscFlags |= D3D11_RESOURCE_MISC_SHARED_KEYEDMUTEX;
+			} else {
+				desc.MiscFlags |= D3D11_RESOURCE_MISC_SHARED;
+			}
 		}
 
 		if (m_nCreateFlags & CREATE_TEXTURE_FLAG_GDI_SHARED) {
 			if (DXGI_FORMAT_B8G8R8A8_UNORM == m_textureInfo.format) {
-				desc.MiscFlags |=
-					D3D11_RESOURCE_MISC_GDI_COMPATIBLE; //  cube must not include
+				desc.MiscFlags |= D3D11_RESOURCE_MISC_GDI_COMPATIBLE; //  cube must not include
 			} else {
 				assert(false && "unsupported format");
 			}
@@ -273,29 +276,30 @@ bool DX11Texture2D::InitTargetTexture(bool cube)
 	if (!InitResourceView())
 		return false;
 
-	ComPtr<IDXGIResource> pDXGIRes = nullptr;
-	hr = m_pTexture2D->QueryInterface(__uuidof(IDXGIResource),
-					  (LPVOID *)(pDXGIRes.ReleaseAndGetAddressOf()));
-	if (FAILED(hr)) {
-		CHECK_DX_ERROR(hr, "query-IDXGIResource %X", this);
-		assert(false);
-		return false;
+	if (!msaaEnabled) {
+		// 启用mass的共享纹理画布 其handle调用 OpenSharedResource 会crash
+
+		ComPtr<IDXGIResource> pDXGIRes = nullptr;
+		hr = m_pTexture2D->QueryInterface(__uuidof(IDXGIResource), (LPVOID *)(pDXGIRes.ReleaseAndGetAddressOf()));
+		if (FAILED(hr)) {
+			CHECK_DX_ERROR(hr, "query-IDXGIResource %X", this);
+			assert(false);
+			return false;
+		}
+
+		hr = pDXGIRes->GetSharedHandle(&m_hSharedHandle);
+		if (FAILED(hr)) {
+			CHECK_DX_ERROR(hr, "GetSharedHandle %X", this);
+			assert(false);
+			return false;
+		}
+
+		ComPtr<IDXGISurface1> sfc;
+		hr = DX11GraphicBase::m_graphicSession.D3DDevice()->OpenSharedResource(m_hSharedHandle, __uuidof(IDXGISurface1), (LPVOID *)(sfc.ReleaseAndGetAddressOf()));
+		if (SUCCEEDED(hr))
+			D2DRenderTarget::BuildD2DFromDXGI(sfc, m_textureInfo.format);
 	}
-
-	hr = pDXGIRes->GetSharedHandle(&m_hSharedHandle);
-	if (FAILED(hr)) {
-		CHECK_DX_ERROR(hr, "GetSharedHandle %X", this);
-		assert(false);
-		return false;
-	}
-
-	// 低端intel集显 启用mass生成的共享纹理画布 此处打开可能会crash
-	//ComPtr<IDXGISurface1> sfc;
-	//hr = DX11GraphicBase::m_graphicSession.D3DDevice()->OpenSharedResource(
-	//	m_hSharedHandle, __uuidof(IDXGISurface1), (LPVOID *)(sfc.ReleaseAndGetAddressOf()));
-	//if (SUCCEEDED(hr))
-	//	D2DRenderTarget::BuildD2DFromDXGI(sfc, m_textureInfo.format);
-
+	
 	return true;
 }
 
