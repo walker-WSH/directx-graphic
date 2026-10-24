@@ -569,12 +569,14 @@ bool DX11GraphicSession::BuildAllDX()
 	DXGI_ADAPTER_DESC descAdapter;
 	m_pAdapter->GetDesc(&descAdapter);
 
+	UINT createDeviceFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+#ifdef _DEBUG
+	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
+
 	D3D_FEATURE_LEVEL levelUsed = D3D_FEATURE_LEVEL_10_0;
-	hr = D3D11CreateDevice(m_pAdapter.Get(), D3D_DRIVER_TYPE_UNKNOWN, nullptr,
-			       D3D11_CREATE_DEVICE_BGRA_SUPPORT, featureLevels.data(),
-			       (uint32_t)featureLevels.size(), D3D11_SDK_VERSION,
-			       m_pDX11Device.ReleaseAndGetAddressOf(), &levelUsed,
-			       m_pDeviceContext.ReleaseAndGetAddressOf());
+	hr = D3D11CreateDevice(m_pAdapter.Get(), D3D_DRIVER_TYPE_UNKNOWN, nullptr, createDeviceFlags, featureLevels.data(), (uint32_t)featureLevels.size(), D3D11_SDK_VERSION,
+			       m_pDX11Device.ReleaseAndGetAddressOf(), &levelUsed, m_pDeviceContext.ReleaseAndGetAddressOf());
 
 	if (FAILED(hr)) {
 		CHECK_DX_ERROR(hr, "D3D11CreateDevice");
